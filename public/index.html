@@ -135,8 +135,8 @@ header{display:flex;align-items:center;justify-content:space-between;padding:28p
   <div class="panel active" id="panel-generate">
     <div class="steps" id="steps">
       <div class="step-item active" id="si-0"><div class="step-dot active" id="sd-0">1</div><div class="step-label">Business Info</div></div>
-      <div class="step-item" id="si-1"><div class="step-dot" id="sd-1">2</div><div class="step-label">Research</div></div>
-      <div class="step-item" id="si-2"><div class="step-dot" id="sd-2">3</div><div class="step-label">Generate</div></div>
+      <div class="step-item" id="si-1"><div class="step-dot" id="sd-1">2</div><div class="step-label">Generating</div></div>
+      <div class="step-item" id="si-2"><div class="step-dot" id="sd-2">3</div><div class="step-label">Building</div></div>
       <div class="step-item" id="si-3"><div class="step-dot" id="sd-3">4</div><div class="step-label">Review</div></div>
     </div>
     <div class="card card-accent">
@@ -386,29 +386,16 @@ async function startGenerate() {
   ].filter(Boolean).join('\n');
 
   try {
-    // ── Call 1: Research + outline (fast, no web search) ───────────────────
+    // ── Single combined call: research + JSON in one shot ──────────────────
     setStep(1);
-    glog('Researching niche and building outline\u2026');
+    glog('Generating topical map\u2026 (this takes ~15 seconds)');
 
-    var researchPrompt = 'You are an expert SEO content strategist.\n\nAnalyze this business and produce a topical authority map outline:\n\n' + bizContext + '\n\nBased on your deep knowledge of this niche, identify:\n- 6-8 core content topics this business should own\n- 3-5 subtopics per core topic\n- Key search patterns and content opportunities\n\nProvide a concise research summary (not the final JSON yet) covering the core topics, why each matters for this business, and what content formats perform best in this niche.';
+    var combinedPrompt = 'You are an expert SEO content strategist.\n\nBusiness details:\n' + bizContext + '\n\nGenerate a complete topical authority map for this business as a JSON object.\n\nReturn ONLY valid JSON, no markdown fences, no explanation before or after.\n\nRequired JSON format:\n{\n  "businessName": "' + name + '",\n  "rootLabel": "Short\\nName",\n  "coreTopics": [\n    {\n      "id": "c1",\n      "label": "Topic\\nName",\n      "desc": "One sentence description",\n      "subtopics": [\n        {\n          "id": "c1s1",\n          "label": "Subtopic Name",\n          "contentIdeas": [\n            {\n              "id": "c1s1a",\n              "label": "Page Title",\n              "pri": "High",\n              "intent": "Informational",\n              "query": "exact search query",\n              "desc": "1-2 sentences on what this covers.",\n              "fmt": "Blog Post",\n              "link": "Core Topic Name"\n            }\n          ]\n        }\n      ]\n    }\n  ]\n}\n\nRequirements:\n- 5-6 core topics specific to this business\n- 3 subtopics per core topic\n- 3 content ideas per subtopic\n- pri: High / Medium / Low\n- intent: Informational / Commercial / Transactional / Navigational\n- fmt: Blog Post / Guide / FAQ Page / Service Page / Listicle / Comparison Page\n- link must exactly match one of your core topic labels\n- rootLabel: use \\n to split the name across 2 lines\n- Make every topic, query, and title specific to ' + name + '\n- Return ONLY the JSON object';
 
-    var researchRes = await callClaude(
-      [{ role: 'user', content: researchPrompt }],
-      'You are an expert SEO content strategist with deep knowledge of all business niches. Provide specific, actionable research summaries.',
-      2000
-    );
-    var researchSummary = extractText(researchRes);
-    glog('\u2713 Niche research complete', 'ok');
-
-    // ── Call 2: Generate full JSON map ──────────────────────────────────────
     setStep(2);
-    glog('Generating full topical map structure\u2026');
-
-    var genPrompt = 'Based on this research about ' + name + ':\n\n' + researchSummary.slice(0, 1500) + '\n\nGenerate a topical authority map as JSON. Return ONLY valid JSON, no markdown.\n\nFormat:\n{\n  "businessName": "' + name + '",\n  "rootLabel": "Short\\nName",\n  "coreTopics": [{ "id": "c1", "label": "Topic\\nName", "desc": "one sentence", "subtopics": [{ "id": "c1s1", "label": "Subtopic", "contentIdeas": [{ "id": "c1s1a", "label": "Page Title", "pri": "High", "intent": "Informational", "query": "search query", "desc": "1-2 sentences.", "fmt": "Blog Post", "link": "Core Topic Name" }] }] }] }\n\nRules: 6-7 core topics, 3-4 subtopics each, 3-4 content ideas each. pri: High/Medium/Low. intent: Informational/Commercial/Transactional/Navigational. fmt: Blog Post/Guide/FAQ Page/Service Page/Listicle/Comparison Page. link must match a core topic label. Return ONLY the JSON.';
-
     var genRes = await callClaude(
-      [{ role: 'user', content: genPrompt }],
-      'You are an expert SEO content strategist. Generate topical authority map data as valid JSON only. No markdown, no explanation, just the raw JSON object.',
+      [{ role: 'user', content: combinedPrompt }],
+      'You are an expert SEO content strategist. Return valid JSON only — no markdown, no preamble, just the raw JSON object.',
       4000
     );
 
@@ -421,7 +408,7 @@ async function startGenerate() {
     } catch(e) {
       var match = jsonText.match(/\{[\s\S]*\}/);
       if (match) { try { mapData = JSON.parse(match[0]); } catch(e2) { throw new Error('JSON parse failed: ' + e2.message); } }
-      else throw new Error('Could not find JSON in response');
+      else throw new Error('Could not find JSON in response. Raw: ' + jsonText.slice(0,200));
     }
 
     generatedMapData = mapData;
@@ -455,15 +442,14 @@ async function startGenerate() {
     var finalHTML = finalBefore + '\n' + treeJS + '\n' + finalAfter;
     generatedHTML = finalHTML;
 
-    // Preview
     document.getElementById('map-iframe').srcdoc = finalHTML;
 
-    // Stats
     var hi = mapData.coreTopics.reduce(function(s,ct) {
       return s + ct.subtopics.reduce(function(ss,st) {
         return ss + st.contentIdeas.filter(function(ci) { return ci.pri === 'High'; }).length;
       }, 0);
     }, 0);
+
     document.getElementById('stats-row').innerHTML =
       '<div class="stat-box"><div class="stat-num">' + mapData.coreTopics.length + '</div><div class="stat-lbl">Core Topics</div></div>' +
       '<div class="stat-box"><div class="stat-num">' + totalSubs + '</div><div class="stat-lbl">Subtopics</div></div>' +
@@ -473,7 +459,6 @@ async function startGenerate() {
     document.getElementById('preview-title').textContent = bizName + ' \u2014 Topical Authority Map';
     document.getElementById('preview-area').style.display = 'block';
 
-    // Pre-fill deploy tab
     document.getElementById('deploy-name').value = bizName;
     document.getElementById('deploy-slug').value = toSlug(bizName);
     updateUrlPreview();
@@ -481,9 +466,8 @@ async function startGenerate() {
     checkDeployReady();
 
     glog('');
-    glog('\uD83C\uDF89 Done! Download HTML or Excel below, or deploy directly.', 'ok');
-    setStep(3);
-
+    glog('\uD83C\uDF89 Done! Download HTML or Excel, or deploy directly.', 'ok');
+    setStep(3)
   } catch(e) {
     glog('\u2717 Error: ' + e.message, 'err');
     setStep(0);
