@@ -395,7 +395,7 @@ async function startGenerate() {
     var researchRes = await callClaude(
       [{ role: 'user', content: researchPrompt }],
       'You are an expert SEO content strategist with deep knowledge of all business niches. Provide specific, actionable research summaries.',
-      3000
+      2000
     );
     var researchSummary = extractText(researchRes);
     glog('\u2713 Niche research complete', 'ok');
@@ -404,12 +404,12 @@ async function startGenerate() {
     setStep(2);
     glog('Generating full topical map structure\u2026');
 
-    var genPrompt = 'Based on this research about ' + name + ':\n\n' + researchSummary + '\n\nNow generate the complete topical authority map as a JSON object. Return ONLY valid JSON with no markdown fences, no explanation.\n\nRequired format:\n{\n  "businessName": "' + name + '",\n  "rootLabel": "Short\\nName",\n  "coreTopics": [\n    {\n      "id": "c1",\n      "label": "Topic\\nName",\n      "desc": "One sentence description",\n      "subtopics": [\n        {\n          "id": "c1s1",\n          "label": "Subtopic Name",\n          "contentIdeas": [\n            {\n              "id": "c1s1a",\n              "label": "Page Title",\n              "pri": "High",\n              "intent": "Informational",\n              "query": "exact search query someone types",\n              "desc": "1-2 sentences describing what this page covers and why it matters.",\n              "fmt": "Blog Post",\n              "link": "Core Topic Name"\n            }\n          ]\n        }\n      ]\n    }\n  ]\n}\n\nRules:\n- 6-8 core topics\n- 3-5 subtopics per core topic\n- 4-5 content ideas per subtopic (80-120 total)\n- pri: High / Medium / Low\n- intent: Informational / Commercial / Transactional / Navigational\n- fmt: Blog Post / Guide / FAQ Page / Service Page / Landing Page / Listicle / Comparison Page / Case Study\n- link: must be the name of one of your core topics\n- rootLabel: split business name with \\n if more than 2 words\n- Make everything specific to ' + name + ' — real topics, real queries\n- Return ONLY the JSON object, nothing else';
+    var genPrompt = 'Based on this research about ' + name + ':\n\n' + researchSummary.slice(0, 1500) + '\n\nGenerate a topical authority map as JSON. Return ONLY valid JSON, no markdown.\n\nFormat:\n{\n  "businessName": "' + name + '",\n  "rootLabel": "Short\\nName",\n  "coreTopics": [{ "id": "c1", "label": "Topic\\nName", "desc": "one sentence", "subtopics": [{ "id": "c1s1", "label": "Subtopic", "contentIdeas": [{ "id": "c1s1a", "label": "Page Title", "pri": "High", "intent": "Informational", "query": "search query", "desc": "1-2 sentences.", "fmt": "Blog Post", "link": "Core Topic Name" }] }] }] }\n\nRules: 6-7 core topics, 3-4 subtopics each, 3-4 content ideas each. pri: High/Medium/Low. intent: Informational/Commercial/Transactional/Navigational. fmt: Blog Post/Guide/FAQ Page/Service Page/Listicle/Comparison Page. link must match a core topic label. Return ONLY the JSON.';
 
     var genRes = await callClaude(
       [{ role: 'user', content: genPrompt }],
       'You are an expert SEO content strategist. Generate topical authority map data as valid JSON only. No markdown, no explanation, just the raw JSON object.',
-      8000
+      4000
     );
 
     var jsonText = extractText(genRes).trim()
