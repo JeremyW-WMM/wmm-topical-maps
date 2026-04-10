@@ -197,13 +197,13 @@ function unlock() {
     document.getElementById('app').style.display = 'block';
     pat = localStorage.getItem(LS_PAT) || '';
     if (pat) {
-      document.getElementById('pat-badge').textContent = 'PAT: ' + pat.slice(0,8) + '••••';
+      document.getElementById('pat-badge').textContent = 'PAT: ' + pat.slice(0,8) + '****';
     } else {
       var p = prompt('Enter your GitHub Personal Access Token:');
       if (p && p.trim()) {
         pat = p.trim();
         localStorage.setItem(LS_PAT, pat);
-        document.getElementById('pat-badge').textContent = 'PAT: ' + pat.slice(0,8) + '••••';
+        document.getElementById('pat-badge').textContent = 'PAT: ' + pat.slice(0,8) + '****';
       }
     }
     loadMaps(); checkReady();
@@ -224,7 +224,7 @@ if (sessionStorage.getItem(LS_UNLOCKED)) {
   pat = localStorage.getItem(LS_PAT) || '';
   document.getElementById('lock').style.display = 'none';
   document.getElementById('app').style.display = 'block';
-  document.getElementById('pat-badge').textContent = pat ? 'PAT: ' + pat.slice(0,8) + '••••' : 'PAT: not set';
+  document.getElementById('pat-badge').textContent = pat ? 'PAT: ' + pat.slice(0,8) + '****' : 'PAT: not set';
   loadMaps();
 }
 document.getElementById('pw-input').addEventListener('keydown', function(e) { if (e.key==='Enter') unlock(); });
