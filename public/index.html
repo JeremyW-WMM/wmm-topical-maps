@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>WMM Topical Maps</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -168,6 +169,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:28p
         <h3 id="preview-title">Topical Map Preview</h3>
         <div class="preview-actions">
           <button class="btn btn-sm" onclick="downloadMap()">↓ Download HTML</button>
+          <button class="btn btn-sm" onclick="downloadExcel()" id="xlsx-btn">↓ Download Excel</button>
           <button class="btn btn-sm btn-accent" onclick="goToDeploy()">↑ Deploy to Web →</button>
         </div>
       </div>
@@ -248,9 +250,10 @@ var MAP_BEFORE = "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"U
 var MAP_AFTER  = "\n\n// \u2500\u2500 Layout engine \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nconst svg = document.getElementById(\"svg\");\nconst wrap = document.querySelector(\"#canvas-wrap\");\nlet vx=0,vy=0,vscale=1,dragging=false,lastX,lastY;\nlet collapsed = new Set();\n\nconst PRI_COLORS = {High:\"#22c55e\",Medium:\"#f59e0b\",Low:\"#94a3b8\"};\n\nfunction getColor(node) {\n  let n = node;\n  while(n.parent && !n.color) n = n.parent;\n  return n.color || \"#2563eb\";\n}\n\nfunction assignParents(node, parent=null) {\n  node.parent = parent;\n  if(node.children) node.children.forEach(c => assignParents(c, node));\n}\nassignParents(tree);\n\nfunction countVisible(node) {\n  if(!node.children || node.children.length===0) return 1;\n  if(collapsed.has(node.id)) return 1;\n  return 1 + node.children.reduce((s,c) => s+countVisible(c), 0);\n}\n\n// Minimum height each leaf node needs\nconst LEAF_H = { 0: 0, 1: 52, 2: 38, 3: 26 };\nconst GAP_X  = { 0: 370, 1: 310, 2: 260 };\nconst MIN_GAP = { 0: 20, 1: 16, 2: 12 };\n\n// Returns the total vertical span a subtree needs\nfunction subtreeH(node, depth) {\n  if(!node.children || node.children.length===0 || collapsed.has(node.id)) {\n    return LEAF_H[depth] || 26;\n  }\n  const children = node.children;\n  const childDepth = depth + 1;\n  const total = children.reduce((s,c) => s + subtreeH(c, childDepth), 0);\n  const gaps  = (children.length - 1) * (MIN_GAP[depth] || 12);\n  return Math.max(total + gaps, LEAF_H[depth] || 26);\n}\n\nfunction layout(node, x, y, depth) {\n  node.x = x; node.y = y; node.depth = depth;\n  if(!node.children || node.children.length===0 || collapsed.has(node.id)) return;\n  const children = node.children;\n  const childDepth = depth + 1;\n  const childX = x + (GAP_X[depth] || 260);\n\n  // Compute each child's span and lay them out top-to-bottom centered on y\n  const spans = children.map(c => subtreeH(c, childDepth));\n  const gap   = MIN_GAP[depth] || 12;\n  const totalH = spans.reduce((s,v) => s+v, 0) + gap*(children.length-1);\n\n  let cursor = y - totalH/2;\n  children.forEach((child, i) => {\n    const cy = cursor + spans[i]/2;\n    layout(child, childX, cy, childDepth);\n    cursor += spans[i] + gap;\n  });\n}\n\nfunction render() {\n  layout(tree, 80, 0, 0);\n  svg.innerHTML = \"\";\n  drawLinks(tree);\n  drawNodes(tree);\n  const allN = getAllNodes(tree);\n  document.getElementById(\"vis-count\").textContent = allN.filter(n=>isVisible(n)).length;\n}\n\nfunction isVisible(node) {\n  let n = node.parent;\n  while(n) {\n    if(collapsed.has(n.id)) return false;\n    n = n.parent;\n  }\n  return true;\n}\n\nfunction getAllNodes(node) {\n  const out = [node];\n  if(node.children) node.children.forEach(c => out.push(...getAllNodes(c)));\n  return out;\n}\n\nfunction drawLinks(node) {\n  if(!node.children || collapsed.has(node.id)) return;\n  const color = getColor(node);\n  node.children.forEach(child => {\n    const line = document.createElementNS(\"http://www.w3.org/2000/svg\",\"path\");\n    const mx = (node.x + child.x) / 2;\n    line.setAttribute(\"d\",`M${node.x} ${node.y} C${mx} ${node.y}, ${mx} ${child.y}, ${child.x} ${child.y}`);\n    line.setAttribute(\"stroke\", color);\n    line.setAttribute(\"stroke-width\", node.depth===0 ? \"2.5\" : node.depth===1 ? \"1.5\" : \"1\");\n    line.setAttribute(\"fill\",\"none\");\n    line.setAttribute(\"opacity\",\"0.5\");\n    svg.appendChild(line);\n    drawLinks(child);\n  });\n}\n\nfunction drawNodes(node) {\n  const color = getColor(node);\n  const depth = node.depth;\n  const isRoot = depth===0;\n  const isCT   = depth===1;\n  const isST   = depth===2;\n  const isCI   = depth===3;\n\n  const g = document.createElementNS(\"http://www.w3.org/2000/svg\",\"g\");\n  g.setAttribute(\"transform\",`translate(${node.x},${node.y})`);\n  g.style.cursor = (node.children && node.children.length) ? \"pointer\" : \"default\";\n\n  if(isRoot) {\n    const rx=48, ry=30;\n    const el = document.createElementNS(\"http://www.w3.org/2000/svg\",\"ellipse\");\n    el.setAttribute(\"rx\",rx); el.setAttribute(\"ry\",ry);\n    el.setAttribute(\"fill\",\"#0f1923\"); el.setAttribute(\"stroke\",\"#4a8ac4\"); el.setAttribute(\"stroke-width\",\"2\");\n    g.appendChild(el);\n    const t = svgText(node.label, 0, 0, \"13\", \"bold\", \"#e8f0fb\", true);\n    g.appendChild(t);\n  } else if(isCT) {\n    const w=150, h=52;\n    const clipIdCT = \"clip_ct_\"+node.id;\n    const clipElCT = document.createElementNS(\"http://www.w3.org/2000/svg\",\"clipPath\");\n    clipElCT.setAttribute(\"id\", clipIdCT);\n    const clipRctCT = document.createElementNS(\"http://www.w3.org/2000/svg\",\"rect\");\n    clipRctCT.setAttribute(\"x\", String(-w/2+4)); clipRctCT.setAttribute(\"y\", String(-h/2));\n    clipRctCT.setAttribute(\"width\", String(w-24)); clipRctCT.setAttribute(\"height\", String(h));\n    clipElCT.appendChild(clipRctCT);\n    g.appendChild(clipElCT);\n    const rect = roundRect(-w/2,-h/2,w,h,10, \"#0f1923\", \"1\");\n    rect.setAttribute(\"stroke\", color); rect.setAttribute(\"stroke-width\",\"2\");\n    g.appendChild(rect);\n    const t = svgText(node.label, 0, 0, \"11\", \"bold\", \"#fff\", true);\n    t.setAttribute(\"clip-path\",\"url(#\"+clipIdCT+\")\");\n    g.appendChild(t);\n    const coll = collapsed.has(node.id);\n    const ind = svgText(coll?\"+\":\"\u2212\", w/2-14, -h/2+14, \"14\",\"bold\", color, false);\n    g.appendChild(ind);\n  } else if(isST) {\n    const w=165, h=34;\n    const clipId = \"clip_st_\"+node.id;\n    const clipEl = document.createElementNS(\"http://www.w3.org/2000/svg\",\"clipPath\");\n    clipEl.setAttribute(\"id\", clipId);\n    const clipRct = document.createElementNS(\"http://www.w3.org/2000/svg\",\"rect\");\n    clipRct.setAttribute(\"x\", String(-w/2+3)); clipRct.setAttribute(\"y\", String(-h/2));\n    clipRct.setAttribute(\"width\", String(w-22)); clipRct.setAttribute(\"height\", String(h));\n    clipEl.appendChild(clipRct);\n    g.appendChild(clipEl);\n    const rect = roundRect(-w/2,-h/2,w,h,7, \"#0f1923\", \"1\");\n    rect.setAttribute(\"stroke\", color); rect.setAttribute(\"stroke-width\",\"1\");\n    g.appendChild(rect);\n    const t = document.createElementNS(\"http://www.w3.org/2000/svg\",\"text\");\n    t.setAttribute(\"x\",\"0\"); t.setAttribute(\"y\",\"0\");\n    t.setAttribute(\"text-anchor\",\"middle\"); t.setAttribute(\"dominant-baseline\",\"central\");\n    t.setAttribute(\"font-size\",\"10\"); t.setAttribute(\"font-weight\",\"600\");\n    t.setAttribute(\"fill\",color); t.setAttribute(\"font-family\",\"'Segoe UI',Arial,sans-serif\");\n    t.setAttribute(\"clip-path\",\"url(#\"+clipId+\")\");\n    t.textContent = node.label;\n    g.appendChild(t);\n    const coll = collapsed.has(node.id);\n    const ind = svgText(coll?\"+\":\"\u2212\", w/2-10, -h/2+12, \"11\",\"bold\", color, false);\n    g.appendChild(ind);\n  } else if(isCI) {\n    const w=190, h=28;\n    const priColor = PRI_COLORS[node.pri] || \"#94a3b8\";\n    // clip path so text never escapes the box\n    const clipId = \"clip_\"+node.id;\n    const clipEl = document.createElementNS(\"http://www.w3.org/2000/svg\",\"clipPath\");\n    clipEl.setAttribute(\"id\", clipId);\n    const clipRect = document.createElementNS(\"http://www.w3.org/2000/svg\",\"rect\");\n    clipRect.setAttribute(\"x\", -w/2+2); clipRect.setAttribute(\"y\", -h/2);\n    clipRect.setAttribute(\"width\", w-4); clipRect.setAttribute(\"height\", h);\n    clipEl.appendChild(clipRect);\n    g.appendChild(clipEl);\n    const rect = roundRect(-w/2,-h/2,w,h,5, \"#0f1923\", \"1\");\n    rect.setAttribute(\"stroke\", color); rect.setAttribute(\"stroke-width\",\"0.8\"); rect.setAttribute(\"stroke-opacity\",\"0.5\");\n    g.appendChild(rect);\n    // priority dot\n    const dot = document.createElementNS(\"http://www.w3.org/2000/svg\",\"circle\");\n    dot.setAttribute(\"cx\",-w/2+10); dot.setAttribute(\"cy\",0);\n    dot.setAttribute(\"r\",\"4\"); dot.setAttribute(\"fill\",priColor);\n    g.appendChild(dot);\n    const t = document.createElementNS(\"http://www.w3.org/2000/svg\",\"text\");\n    t.setAttribute(\"x\", -w/2+20);\n    t.setAttribute(\"y\", \"0\");\n    t.setAttribute(\"text-anchor\",\"start\");\n    t.setAttribute(\"dominant-baseline\",\"central\");\n    t.setAttribute(\"font-size\",\"9.5\");\n    t.setAttribute(\"font-weight\",\"normal\");\n    t.setAttribute(\"fill\",\"#c8ddf0\");\n    t.setAttribute(\"font-family\",\"'Segoe UI',Arial,sans-serif\");\n    t.setAttribute(\"clip-path\",`url(#${clipId})`);\n    t.textContent = node.label;\n    g.appendChild(t);\n  }\n\n  g.addEventListener(\"click\", (e) => {\n    e.stopPropagation();\n    if(node.children && node.children.length) {\n      if(collapsed.has(node.id)) collapsed.delete(node.id);\n      else collapsed.add(node.id);\n      render();\n    }\n  });\n\n  if(node.depth === 3) {\n    g.addEventListener(\"click\", (e) => {\n      e.stopPropagation();\n      openPanel(node);\n    });\n  } else if(node.desc) {\n    g.addEventListener(\"click\", (e) => {\n      e.stopPropagation();\n      openPanelDesc(node);\n    });\n  }\n\n  svg.appendChild(g);\n  if(node.children && !collapsed.has(node.id)) node.children.forEach(c => drawNodes(c));\n}\n\nfunction roundRect(x,y,w,h,r,fill,opacity) {\n  const el = document.createElementNS(\"http://www.w3.org/2000/svg\",\"rect\");\n  el.setAttribute(\"x\",x); el.setAttribute(\"y\",y); el.setAttribute(\"width\",w); el.setAttribute(\"height\",h);\n  el.setAttribute(\"rx\",r); el.setAttribute(\"fill\",fill); el.setAttribute(\"fill-opacity\",opacity||\"1\");\n  return el;\n}\n\nfunction svgText(text, x, y, size, weight, color, multiline) {\n  const lines = text.split(\"\\n\");\n  if(lines.length===1 || !multiline) {\n    const t = document.createElementNS(\"http://www.w3.org/2000/svg\",\"text\");\n    t.setAttribute(\"x\",x); t.setAttribute(\"y\",y);\n    t.setAttribute(\"text-anchor\",\"middle\"); t.setAttribute(\"dominant-baseline\",\"central\");\n    t.setAttribute(\"font-size\",size); t.setAttribute(\"font-weight\",weight);\n    t.setAttribute(\"fill\",color); t.setAttribute(\"font-family\",\"'Segoe UI',Arial,sans-serif\");\n    t.textContent = lines[0];\n    return t;\n  }\n  const g = document.createElementNS(\"http://www.w3.org/2000/svg\",\"g\");\n  const lh = parseFloat(size) + 3;\n  const startY = y - (lines.length-1)*lh/2;\n  lines.forEach((line,i) => {\n    const t = document.createElementNS(\"http://www.w3.org/2000/svg\",\"text\");\n    t.setAttribute(\"x\",x); t.setAttribute(\"y\",startY + i*lh);\n    t.setAttribute(\"text-anchor\",\"middle\"); t.setAttribute(\"dominant-baseline\",\"central\");\n    t.setAttribute(\"font-size\",size); t.setAttribute(\"font-weight\",weight);\n    t.setAttribute(\"fill\",color); t.setAttribute(\"font-family\",\"'Segoe UI',Arial,sans-serif\");\n    t.textContent = line;\n    g.appendChild(t);\n  });\n  return g;\n}\n\n// \u2500\u2500 Pan & Zoom \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nfunction applyTransform() {\n  svg.setAttribute(\"viewBox\",`${vx} ${vy} ${wrap.clientWidth/vscale} ${wrap.clientHeight/vscale}`);\n}\n\nwrap.addEventListener(\"mousedown\", e => { dragging=true; lastX=e.clientX; lastY=e.clientY; wrap.classList.add(\"dragging\"); });\nwindow.addEventListener(\"mouseup\", () => { dragging=false; wrap.classList.remove(\"dragging\"); });\nwindow.addEventListener(\"mousemove\", e => {\n  if(!dragging) return;\n  vx -= (e.clientX-lastX)/vscale; vy -= (e.clientY-lastY)/vscale;\n  lastX=e.clientX; lastY=e.clientY; applyTransform();\n});\nwrap.addEventListener(\"wheel\", e => {\n  e.preventDefault();\n  const factor = e.deltaY < 0 ? 1.1 : 0.91;\n  const mx = vx + e.offsetX/vscale, my = vy + e.offsetY/vscale;\n  vscale *= factor;\n  vx = mx - e.offsetX/vscale; vy = my - e.offsetY/vscale;\n  applyTransform();\n}, {passive:false});\n\nfunction resetView() { vx=-100; vy=-600; vscale=0.55; applyTransform(); }\nfunction expandAll()  { collapsed.clear(); render(); }\nfunction collapseAll(){ tree.children.forEach(c=>collapsed.add(c.id)); render(); }\nfunction downloadSVG() {\n  const s = new XMLSerializer().serializeToString(svg);\n  const blob = new Blob([s],{type:\"image/svg+xml\"});\n  const a = document.createElement(\"a\"); a.href=URL.createObjectURL(blob);\n  a.download=\"partner-in-aging-topical-map.svg\"; a.click();\n}\n\n// \u2500\u2500 Info Panel \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nfunction closePanel() {\n  document.getElementById(\"info-panel\").classList.add(\"hidden\");\n}\nfunction openPanel(node) {\n  const panel = document.getElementById(\"info-panel\");\n  const inner = document.getElementById(\"panel-inner\");\n  const color = getColor(node);\n  const pc = PRI_COLORS[node.pri] || \"#94a3b8\";\n  const intentColors = {Informational:\"#60a5fa\",Commercial:\"#f59e0b\",Transactional:\"#34d399\",Navigational:\"#a78bfa\"};\n  const ic = intentColors[node.intent] || \"#94a3b8\";\n\n  let html = `<div style=\"font-size:14px;font-weight:700;color:#fff;line-height:1.4;margin-bottom:14px;padding-right:20px\">${node.label}<\/div>`;\n\n  if(node.query) {\n    html += `<div class=\"pf-label\">Sample Query<\/div>`;\n    html += `<div class=\"pf-value\" style=\"font-style:italic;color:#93c5fd\">\"${node.query}\"<\/div>`;\n  }\n  if(node.desc) {\n    html += `<div class=\"pf-label\">Description<\/div>`;\n    html += `<div class=\"pf-value\">${node.desc}<\/div>`;\n  }\n  html += `<div class=\"pf-label\">Details<\/div><div>`;\n  if(node.pri)    html += `<span class=\"pf-badge\" style=\"background:${pc}22;color:${pc};border:1px solid ${pc}55\">\u25cf ${node.pri}<\/span>`;\n  if(node.intent) html += `<span class=\"pf-badge\" style=\"background:${ic}22;color:${ic};border:1px solid ${ic}55\">${node.intent}<\/span>`;\n  if(node.fmt)    html += `<span class=\"pf-badge\" style=\"background:#1a2d4588;color:#a8c2e0;border:1px solid #2d4a6e\">${node.fmt}<\/span>`;\n  html += `<\/div>`;\n  if(node.link) {\n    html += `<div class=\"pf-label\">Internal Linking Target<\/div>`;\n    html += `<div class=\"pf-value\" style=\"color:${color}\">\u2192 ${node.link}<\/div>`;\n  }\n\n  inner.innerHTML = html;\n  panel.classList.remove(\"hidden\");\n}\nfunction openPanelDesc(node) {\n  const panel = document.getElementById(\"info-panel\");\n  const inner = document.getElementById(\"panel-inner\");\n  const color = getColor(node);\n  let html = `<div style=\"font-size:14px;font-weight:700;color:#fff;line-height:1.4;margin-bottom:10px;padding-right:20px\">${node.label.replace(/\\n/,\" \")}<\/div>`;\n  if(node.desc) html += `<div class=\"pf-label\">About<\/div><div class=\"pf-value\">${node.desc}<\/div>`;\n  inner.innerHTML = html;\n  panel.classList.remove(\"hidden\");\n}\n\n// \u2500\u2500 Legend \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nconst li = document.getElementById(\"legend-items\");\ntree.children.forEach(ct => {\n  const d = document.createElement(\"div\"); d.className=\"leg-item\";\n  d.innerHTML=`<div class=\"leg-dot\" style=\"background:${ct.color}\"><\/div>${ct.label.replace(\"\\n\",\" \")}`;\n  li.appendChild(d);\n});\n// Priority legend\nconst pdiv = document.createElement(\"div\"); \npdiv.innerHTML=`<div style=\"border-top:1px solid #2d4a6e;margin:8px 0 6px\"><\/div><div style=\"font-size:11px;color:#6b8cae;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px\">Priority<\/div>`;\nli.appendChild(pdiv);\n[[\"High\",\"#22c55e\"],[\"Medium\",\"#f59e0b\"],[\"Low\",\"#94a3b8\"]].forEach(([p,c]) => {\n  const d = document.createElement(\"div\"); d.className=\"leg-item\";\n  d.innerHTML=`<div class=\"leg-dot\" style=\"background:${c}\"><\/div>${p}`;\n  li.appendChild(d);\n});\n\n// \u2500\u2500 Init \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nwindow.addEventListener(\"resize\", () => applyTransform());\n// Start with subtopics collapsed for clean view\ntree.children.forEach(ct => ct.children && ct.children.forEach(st => collapsed.add(st.id)));\nrender();\nresetView();\n<\/script>\n<\/body>\n<\/html>\n";
 
 // ── State ─────────────────────────────────────────────────────────────────────
-var generatedHTML = null;
-var deployContent = null;
-var deleteTarget  = null;
+var generatedHTML    = null;
+var generatedMapData = null;
+var deployContent    = null;
+var deleteTarget     = null;
 
 // ── Ready check (called on input events and on load) ──────────────────────────
 function checkGenReady() {
@@ -335,7 +338,7 @@ function utf8ToBase64(str) {
 }
 
 // ── Anthropic API ─────────────────────────────────────────────────────────────
-async function callClaude(apiKey, messages, system, maxTokens, useSearch) {
+async function callClaude(messages, system, maxTokens) {
   maxTokens = maxTokens || 8000;
   var payload = {
     model: 'claude-sonnet-4-20250514',
@@ -343,19 +346,16 @@ async function callClaude(apiKey, messages, system, maxTokens, useSearch) {
     system: system,
     messages: messages
   };
-  if (useSearch) {
-    payload.tools = [{ type: 'web_search_20250305', name: 'web_search' }];
-  }
   var r = await fetch('/.netlify/functions/maps', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ action: 'claude', payload: payload })
   });
-  if (!r.ok) {
-    var err = await r.json().catch(function() { return {}; });
-    throw new Error((err.error && err.error.message) || ('HTTP ' + r.status));
+  var data = await r.json().catch(function() { return { error: { message: 'HTTP ' + r.status } }; });
+  if (!r.ok || data.error) {
+    throw new Error((data.error && data.error.message) || ('HTTP ' + r.status));
   }
-  return r.json();
+  return data;
 }
 
 function extractText(response) {
@@ -365,92 +365,51 @@ function extractText(response) {
     .join('\n');
 }
 
-async function callClaudeWithSearch(apiKey, messages, system, maxTokens, onSearch) {
-  var msgs = messages.slice();
-  for (var iter = 0; iter < 8; iter++) {
-    var res = await callClaude(apiKey, msgs, system, maxTokens, true);
-    var toolUses = (res.content || []).filter(function(b) { return b.type === 'tool_use'; });
-    if (!toolUses.length || res.stop_reason === 'end_turn') return res;
-    msgs.push({ role: 'assistant', content: res.content });
-    var results = toolUses.map(function(tu) {
-      if (onSearch) onSearch(tu.input && tu.input.query ? tu.input.query : '…');
-      return { type: 'tool_result', tool_use_id: tu.id, content: 'Search completed.' };
-    });
-    msgs.push({ role: 'user', content: results });
-  }
-  throw new Error('Too many search iterations');
-}
 
-// ── Build tree JS from Claude JSON ────────────────────────────────────────────
-function buildTreeJS(data) {
-  var COLORS = ['#2563eb','#16a34a','#dc2626','#9333ea','#ea580c','#0891b2','#65a30d','#db2777'];
-
-  function esc(s) {
-    return (s || '').replace(/\\/g,'\\\\').replace(/"/g,'\\"').replace(/\n/g,'\\n').replace(/'/g,"\\'");
-  }
-
-  var ctNodes = data.coreTopics.map(function(ct, ci) {
-    var color = COLORS[ci % COLORS.length];
-    var stNodes = ct.subtopics.map(function(st) {
-      var ciNodes = st.contentIdeas.map(function(item) {
-        return '{id:"' + item.id + '",label:"' + esc(item.label) + '",pri:"' + item.pri +
-          '",intent:"' + item.intent + '",query:"' + esc(item.query) + '",desc:"' +
-          esc(item.desc) + '",fmt:"' + item.fmt + '",link:"' + esc(item.link) + '"}';
-      });
-      return '{ id:"' + st.id + '", label:"' + esc(st.label) + '", children:[\n        ' +
-        ciNodes.join(',\n        ') + '\n      ]}';
-    });
-    return '    { id:"' + ct.id + '", label:"' + esc(ct.label) + '", color:"' + color +
-      '", desc:"' + esc(ct.desc) + '", children:[\n      ' +
-      stNodes.join(',\n      ') + '\n    ]}';
-  });
-
-  var rootLabel = esc(data.rootLabel || data.businessName);
-  return 'const tree = {\n  id:"root", label:"' + rootLabel + '", children:[\n' +
-    ctNodes.join(',\n') + '\n  ]\n};';
-}
-
-// ── Generate flow ─────────────────────────────────────────────────────────────
 async function startGenerate() {
   clearGlog();
   document.getElementById('preview-area').style.display = 'none';
   var btn = document.getElementById('gen-btn');
-  btn.disabled = true;
-  btn.classList.add('loading');
-  btn.textContent = 'Generating…';
-  generatedHTML = null;
+  btn.disabled = true; btn.classList.add('loading'); btn.textContent = 'Generating\u2026';
+  generatedHTML = null; generatedMapData = null;
 
   var name     = document.getElementById('biz-name').value.trim();
   var url      = document.getElementById('biz-url').value.trim();
   var desc     = document.getElementById('biz-desc').value.trim();
   var location = document.getElementById('biz-location').value.trim();
 
-  try {
-    // Step 1: Research
-    setStep(1);
-    glog('Researching niche and search demand…');
-    var bizContext = ['Business: ' + name, url ? 'Website: ' + url : '', desc ? 'Description: ' + desc : '', location ? 'Location: ' + location : ''].filter(Boolean).join('\n');
+  var bizContext = [
+    'Business: ' + name,
+    url      ? 'Website: '     + url      : '',
+    desc     ? 'Description: ' + desc     : '',
+    location ? 'Location: '    + location : ''
+  ].filter(Boolean).join('\n');
 
-    var researchRes = await callClaudeWithSearch(
-      null,
-      [{ role: 'user', content: 'Research this business for a topical authority map:\n\n' + bizContext + '\n\nUse web search to find:\n1. Most searched topics in this niche\n2. Competitor content strategies\n3. Common questions people ask\n4. What content formats rank well\n\nProvide a research summary covering the 6-7 most important core topics, key subtopics, search patterns, and content format recommendations.' }],
-      'You are an expert SEO content strategist. Research the given business and niche to identify the most important content topics for a topical authority map. Use web search to ground your findings in real search demand.',
-      4000,
-      function(q) { glog('<span class="dim">↻ Searching: ' + q + '</span>'); }
+  try {
+    // ── Call 1: Research + outline (fast, no web search) ───────────────────
+    setStep(1);
+    glog('Researching niche and building outline\u2026');
+
+    var researchPrompt = 'You are an expert SEO content strategist.\n\nAnalyze this business and produce a topical authority map outline:\n\n' + bizContext + '\n\nBased on your deep knowledge of this niche, identify:\n- 6-8 core content topics this business should own\n- 3-5 subtopics per core topic\n- Key search patterns and content opportunities\n\nProvide a concise research summary (not the final JSON yet) covering the core topics, why each matters for this business, and what content formats perform best in this niche.';
+
+    var researchRes = await callClaude(
+      [{ role: 'user', content: researchPrompt }],
+      'You are an expert SEO content strategist with deep knowledge of all business niches. Provide specific, actionable research summaries.',
+      3000
     );
     var researchSummary = extractText(researchRes);
-    glog('✓ Research complete', 'ok');
+    glog('\u2713 Niche research complete', 'ok');
 
-    // Step 2: Generate JSON
+    // ── Call 2: Generate full JSON map ──────────────────────────────────────
     setStep(2);
-    glog('Generating map structure…');
+    glog('Generating full topical map structure\u2026');
 
-    var genPrompt = 'Based on this research about ' + name + ':\n\n' + researchSummary + '\n\nGenerate a complete topical authority map as JSON. Return ONLY valid JSON, no markdown, no explanation.\n\nFormat:\n{\n  "businessName": "' + name + '",\n  "rootLabel": "Short\\nName",\n  "coreTopics": [\n    {\n      "id": "c1",\n      "label": "Topic\\nName",\n      "desc": "One sentence description",\n      "subtopics": [\n        {\n          "id": "c1s1",\n          "label": "Subtopic",\n          "contentIdeas": [\n            {\n              "id": "c1s1a",\n              "label": "Page Title",\n              "pri": "High",\n              "intent": "Informational",\n              "query": "search query someone types",\n              "desc": "1-2 sentences on what this covers.",\n              "fmt": "Blog Post",\n              "link": "Core Topic Name"\n            }\n          ]\n        }\n      ]\n    }\n  ]\n}\n\nRules: 6-8 core topics, 3-5 subtopics each, 4-5 content ideas each. pri: High/Medium/Low. intent: Informational/Commercial/Transactional/Navigational. fmt: Blog Post/Guide/FAQ Page/Service Page/Landing Page/Listicle/Comparison Page/Case Study. Return ONLY the JSON object.';
+    var genPrompt = 'Based on this research about ' + name + ':\n\n' + researchSummary + '\n\nNow generate the complete topical authority map as a JSON object. Return ONLY valid JSON with no markdown fences, no explanation.\n\nRequired format:\n{\n  "businessName": "' + name + '",\n  "rootLabel": "Short\\nName",\n  "coreTopics": [\n    {\n      "id": "c1",\n      "label": "Topic\\nName",\n      "desc": "One sentence description",\n      "subtopics": [\n        {\n          "id": "c1s1",\n          "label": "Subtopic Name",\n          "contentIdeas": [\n            {\n              "id": "c1s1a",\n              "label": "Page Title",\n              "pri": "High",\n              "intent": "Informational",\n              "query": "exact search query someone types",\n              "desc": "1-2 sentences describing what this page covers and why it matters.",\n              "fmt": "Blog Post",\n              "link": "Core Topic Name"\n            }\n          ]\n        }\n      ]\n    }\n  ]\n}\n\nRules:\n- 6-8 core topics\n- 3-5 subtopics per core topic\n- 4-5 content ideas per subtopic (80-120 total)\n- pri: High / Medium / Low\n- intent: Informational / Commercial / Transactional / Navigational\n- fmt: Blog Post / Guide / FAQ Page / Service Page / Landing Page / Listicle / Comparison Page / Case Study\n- link: must be the name of one of your core topics\n- rootLabel: split business name with \\n if more than 2 words\n- Make everything specific to ' + name + ' — real topics, real queries\n- Return ONLY the JSON object, nothing else';
 
-    var genRes = await callClaude(null,
+    var genRes = await callClaude(
       [{ role: 'user', content: genPrompt }],
-      'You are an expert SEO content strategist. Generate topical authority map data as valid JSON only. No markdown fences, no explanation, just the raw JSON object.',
-      8000, false
+      'You are an expert SEO content strategist. Generate topical authority map data as valid JSON only. No markdown, no explanation, just the raw JSON object.',
+      8000
     );
 
     var jsonText = extractText(genRes).trim()
@@ -461,48 +420,50 @@ async function startGenerate() {
       mapData = JSON.parse(jsonText);
     } catch(e) {
       var match = jsonText.match(/\{[\s\S]*\}/);
-      if (match) mapData = JSON.parse(match[0]);
-      else throw new Error('Could not parse map JSON: ' + e.message);
+      if (match) { try { mapData = JSON.parse(match[0]); } catch(e2) { throw new Error('JSON parse failed: ' + e2.message); } }
+      else throw new Error('Could not find JSON in response');
     }
-    glog('✓ Map structure generated', 'ok');
+
+    generatedMapData = mapData;
+    glog('\u2713 Map structure generated', 'ok');
 
     var totalIdeas = mapData.coreTopics.reduce(function(s,ct) {
       return s + ct.subtopics.reduce(function(ss,st) { return ss + st.contentIdeas.length; }, 0);
     }, 0);
     var totalSubs = mapData.coreTopics.reduce(function(s,ct) { return s + ct.subtopics.length; }, 0);
-    glog('✓ ' + mapData.coreTopics.length + ' core topics · ' + totalSubs + ' subtopics · ' + totalIdeas + ' content ideas', 'ok');
+    glog('\u2713 ' + mapData.coreTopics.length + ' core topics \u00b7 ' + totalSubs + ' subtopics \u00b7 ' + totalIdeas + ' content ideas', 'ok');
 
-    // Step 3: Build HTML
+    // ── Build HTML ──────────────────────────────────────────────────────────
     setStep(3);
-    glog('Building interactive map…');
+    glog('Building interactive map\u2026');
 
-    var treeJS = buildTreeJS(mapData);
+    var treeJS  = buildTreeJS(mapData);
     var bizName = mapData.businessName;
     var bizUrl  = url || '';
+    var bizSlug = bizUrl.replace('https://','').replace('http://','') || bizName.toLowerCase().replace(/\s+/g,'') + '.com';
 
     var finalBefore = MAP_BEFORE
       .replace('Partner in Aging \u2013 Topical Authority Map', bizName + ' \u2013 Topical Authority Map')
-      .replace(/Partner\\nin Aging/g, (mapData.rootLabel || bizName).replace(/\n/g,'\\n'))
+      .replace(/Partner\\\\nin Aging/g, (mapData.rootLabel || bizName).replace(/\n/g,'\\n'))
       .replace(/Partner in Aging \u2014 Topical Authority Map/g, bizName + ' \u2014 Topical Authority Map')
-      .replace('partnerinaging.com', bizUrl.replace('https://','').replace('http://','') || bizName.toLowerCase().replace(/\s+/g,'') + '.com');
+      .replace('partnerinaging.com', bizSlug);
 
     var finalAfter = MAP_AFTER
       .replace(/Partner in Aging/g, bizName)
-      .replace(/partnerinaging\.com/g, bizUrl.replace('https://','').replace('http://','') || '');
+      .replace(/partnerinaging\.com/g, bizSlug);
 
     var finalHTML = finalBefore + '\n' + treeJS + '\n' + finalAfter;
     generatedHTML = finalHTML;
 
-    // Load preview in iframe using srcdoc to avoid blank-page issues
-    var iframe = document.getElementById('map-iframe');
-    iframe.srcdoc = finalHTML;
+    // Preview
+    document.getElementById('map-iframe').srcdoc = finalHTML;
 
+    // Stats
     var hi = mapData.coreTopics.reduce(function(s,ct) {
       return s + ct.subtopics.reduce(function(ss,st) {
         return ss + st.contentIdeas.filter(function(ci) { return ci.pri === 'High'; }).length;
       }, 0);
     }, 0);
-
     document.getElementById('stats-row').innerHTML =
       '<div class="stat-box"><div class="stat-num">' + mapData.coreTopics.length + '</div><div class="stat-lbl">Core Topics</div></div>' +
       '<div class="stat-box"><div class="stat-num">' + totalSubs + '</div><div class="stat-lbl">Subtopics</div></div>' +
@@ -520,7 +481,7 @@ async function startGenerate() {
     checkDeployReady();
 
     glog('');
-    glog('\uD83C\uDF89 Map ready! Preview below. Hit \u201cDeploy to Web\u201d to publish.', 'ok');
+    glog('\uD83C\uDF89 Done! Download HTML or Excel below, or deploy directly.', 'ok');
     setStep(3);
 
   } catch(e) {
@@ -528,9 +489,7 @@ async function startGenerate() {
     setStep(0);
   }
 
-  btn.disabled = false;
-  btn.classList.remove('loading');
-  btn.textContent = '\u26A1 Generate Topical Map';
+  btn.disabled = false; btn.classList.remove('loading'); btn.textContent = '\u26A1 Generate Topical Map';
   checkGenReady();
 }
 window.startGenerate = startGenerate;
@@ -547,6 +506,87 @@ function downloadMap() {
   toast('HTML downloaded');
 }
 window.downloadMap = downloadMap;
+
+function downloadExcel() {
+  if (!generatedMapData) return;
+  var btn = document.getElementById('xlsx-btn');
+  btn.textContent = 'Building…';
+  btn.disabled = true;
+
+  try {
+    var wb = XLSX.utils.book_new();
+    var mapRows = [['Level','Core Topic','Subtopic','Content Idea / Page Title','Search Intent','Sample Query','Brief Description','Content Format','Priority Tier','Internal Linking Target']];
+
+    var COLORS = { High: 'FF22c55e', Medium: 'FFf59e0b', Low: 'FF94a3b8' };
+    var bizName = generatedMapData.businessName;
+
+    generatedMapData.coreTopics.forEach(function(ct) {
+      mapRows.push(['Core Topic', ct.label.replace(/\n/g,' '), '', '', '', '', ct.desc || '', '', '', '']);
+      ct.subtopics.forEach(function(st) {
+        mapRows.push(['Subtopic', ct.label.replace(/\n/g,' '), st.label, '', '', '', '', '', '', '']);
+        st.contentIdeas.forEach(function(ci) {
+          mapRows.push(['Content Idea', ct.label.replace(/\n/g,' '), st.label, ci.label, ci.intent || '', ci.query || '', ci.desc || '', ci.fmt || '', ci.pri || '', ci.link || '']);
+        });
+      });
+    });
+
+    var ws = XLSX.utils.aoa_to_sheet(mapRows);
+
+    // Column widths
+    ws['!cols'] = [
+      {wch:14},{wch:24},{wch:26},{wch:44},{wch:16},{wch:44},{wch:60},{wch:20},{wch:14},{wch:28}
+    ];
+    ws['!freeze'] = { xSplit: 0, ySplit: 1 };
+
+    XLSX.utils.book_append_sheet(wb, ws, 'Topical Map');
+
+    // Summary sheet
+    var totalIdeas = generatedMapData.coreTopics.reduce(function(s,ct){
+      return s + ct.subtopics.reduce(function(ss,st){ return ss + st.contentIdeas.length; },0);
+    },0);
+    var totalSubs = generatedMapData.coreTopics.reduce(function(s,ct){ return s + ct.subtopics.length; },0);
+    var hi = 0, med = 0, lo = 0;
+    generatedMapData.coreTopics.forEach(function(ct){
+      ct.subtopics.forEach(function(st){
+        st.contentIdeas.forEach(function(ci){
+          if (ci.pri==='High') hi++;
+          else if (ci.pri==='Medium') med++;
+          else lo++;
+        });
+      });
+    });
+
+    var sumRows = [
+      ['WMM Topical Authority Map — Summary'],
+      [''],
+      ['Business', bizName],
+      ['Generated', new Date().toLocaleDateString()],
+      [''],
+      ['STRUCTURE'],
+      ['Core Topics', generatedMapData.coreTopics.length],
+      ['Subtopics', totalSubs],
+      ['Total Content Ideas', totalIdeas],
+      [''],
+      ['PRIORITY BREAKDOWN'],
+      ['High Priority', hi],
+      ['Medium Priority', med],
+      ['Low Priority', lo]
+    ];
+    var ws2 = XLSX.utils.aoa_to_sheet(sumRows);
+    ws2['!cols'] = [{wch:26},{wch:20}];
+    XLSX.utils.book_append_sheet(wb, ws2, 'Summary');
+
+    var slug = toSlug(bizName);
+    XLSX.writeFile(wb, slug + '-topical-authority-map.xlsx');
+    toast('✓ Excel downloaded');
+  } catch(e) {
+    toast('Excel error: ' + e.message);
+  }
+
+  btn.textContent = '↓ Download Excel';
+  btn.disabled = false;
+}
+window.downloadExcel = downloadExcel;
 
 function goToDeploy() {
   switchTab('deploy');
