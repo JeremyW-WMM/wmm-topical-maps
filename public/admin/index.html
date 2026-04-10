@@ -279,22 +279,34 @@ async function dm() {
 function cl() { navigator.clipboard.writeText(document.getElementById('lu').href).then(function() { tst('Copied!'); }); }
 async function lm() {
   var g = document.getElementById('mg');
+  g.innerHTML = '';
   g.innerHTML = '<div class="sk"></div><div class="sk"></div><div class="sk"></div>';
   if (!pat) { g.innerHTML = '<div class="em">No PAT - lock and unlock to enter one.</div>'; return; }
   var res = await gh('GET', '/contents/public');
   if (res.s !== 200 || !Array.isArray(res.d)) { g.innerHTML = '<div class="em">No maps yet.</div>'; return; }
   var dirs = res.d.filter(function(i) { return i.type === 'dir'; });
   if (!dirs.length) { g.innerHTML = '<div class="em">No maps deployed yet.</div>'; return; }
-  g.innerHTML = dirs.map(function(d) {
-    var url = BASE + '/' + d.name;
-    return '<div class="mc"><div class="ms">' + d.name + '</div><div class="mu">' + url.replace('https://','') + '</div>' +
-      '<div class="ma">' +
-      '<a class="mb" href="' + url + '" target="_blank">View</a>' +
-      '<button class="mb" onclick="cu('' + url + '')">Copy</button>' +
-      '<button class="mb dl" onclick="od('' + d.name + '')">Remove</button>' +
-      '</div></div>';
-  }).join('');
+  g.innerHTML = '';
+  for (var i = 0; i < dirs.length; i++) {
+    var url = BASE + '/' + dirs[i].name;
+    var card = document.createElement('div');
+    card.className = 'mc';
+    var nameDiv = document.createElement('div'); nameDiv.className = 'ms'; nameDiv.textContent = dirs[i].name;
+    var urlDiv  = document.createElement('div'); urlDiv.className  = 'mu'; urlDiv.textContent  = url.replace('https://','');
+    var actDiv  = document.createElement('div'); actDiv.className  = 'ma';
+    var viewA   = document.createElement('a');   viewA.className   = 'mb'; viewA.textContent = 'View'; viewA.href = url; viewA.target = '_blank';
+    var copyB   = document.createElement('button'); copyB.className = 'mb'; copyB.textContent = 'Copy';
+    var delB    = document.createElement('button'); delB.className  = 'mb dl'; delB.textContent = 'Remove';
+    (function(u, n) {
+      copyB.addEventListener('click', function() { cu(u); });
+      delB.addEventListener('click',  function() { od(n); });
+    })(url, dirs[i].name);
+    actDiv.appendChild(viewA); actDiv.appendChild(copyB); actDiv.appendChild(delB);
+    card.appendChild(nameDiv); card.appendChild(urlDiv); card.appendChild(actDiv);
+    g.appendChild(card);
+  }
 }
+
 function cu(url) { navigator.clipboard.writeText(url).then(function() { tst('Copied!'); }); }
 function od(s) { dt = s; document.getElementById('dmp').textContent = 'Remove "' + s + '"? URL stops working after ~20s.'; document.getElementById('delm').classList.add('op'); }
 function cd() { document.getElementById('delm').classList.remove('op'); dt = null; }
