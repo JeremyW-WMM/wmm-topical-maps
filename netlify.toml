@@ -2,12 +2,11 @@
   publish = "public"
   functions = "netlify/functions"
 
-# Extend function timeout to 60s (max on Netlify Pro, 26s on free)
 [functions]
   node_bundler = "esbuild"
 
 [functions."maps"]
-  timeout = 60
+  timeout = 26
 
 [[headers]]
   for = "/*"
