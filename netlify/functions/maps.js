@@ -1,8 +1,8 @@
 const https = require("https");
 
-const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
+const GITHUB_TOKEN  = process.env.GITHUB_TOKEN;
 const ANTHROPIC_KEY = process.env.ANTHROPIC_API_KEY;
-const REPO = "JeremyW-WMM/wmm-topical-maps";
+const REPO          = "JeremyW-WMM/wmm-topical-maps";
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
@@ -10,6 +10,7 @@ const CORS = {
   "Content-Type": "application/json"
 };
 
+// ── HTTP helper ───────────────────────────────────────────────────────────────
 function request(hostname, path, method, headers, body) {
   return new Promise((resolve, reject) => {
     const data = body ? JSON.stringify(body) : null;
@@ -46,24 +47,23 @@ function ghRequest(method, path, body = null) {
 function anthropicRequest(payload) {
   return new Promise((resolve, reject) => {
     const data = JSON.stringify(payload);
-    const opts = {
-      hostname: "api.anthropic.com",
-      path: "/v1/messages",
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Content-Length": Buffer.byteLength(data),
-        "x-api-key": ANTHROPIC_KEY,
-        "anthropic-version": "2023-06-01",
-        "anthropic-beta": "web-search-2025-03-05"
-      }
+    const headers = {
+      "Content-Type": "application/json",
+      "Content-Length": Buffer.byteLength(data),
+      "x-api-key": ANTHROPIC_KEY,
+      "anthropic-version": "2023-06-01"
     };
+    // Only add beta header if using web search
+    if (payload.tools && payload.tools.some(t => t.type && t.type.includes("web_search"))) {
+      headers["anthropic-beta"] = "web-search-2025-03-05";
+    }
+    const opts = { hostname: "api.anthropic.com", path: "/v1/messages", method: "POST", headers };
     const req = https.request(opts, res => {
       let raw = "";
       res.on("data", d => raw += d);
       res.on("end", () => {
         try { resolve({ status: res.statusCode, data: JSON.parse(raw) }); }
-        catch { resolve({ status: res.statusCode, data: { error: { message: raw } } }); }
+        catch { resolve({ status: res.statusCode, data: { error: { message: raw.slice(0, 500) } } }); }
       });
     });
     req.on("error", reject);
@@ -81,6 +81,7 @@ exports.handler = async (event) => {
 
   const { action } = body;
 
+  // ── Claude proxy (single call, no tool use loops) ─────────────────────────
   if (action === "claude") {
     if (!ANTHROPIC_KEY) return { statusCode: 500, headers: CORS, body: JSON.stringify({ error: "ANTHROPIC_API_KEY not set in Netlify environment variables." }) };
     try {
@@ -91,6 +92,7 @@ exports.handler = async (event) => {
     }
   }
 
+  // ── GitHub: list ──────────────────────────────────────────────────────────
   if (action === "list") {
     if (!GITHUB_TOKEN) return { statusCode: 500, headers: CORS, body: JSON.stringify({ error: "GITHUB_TOKEN not set." }) };
     const res = await ghRequest("GET", `/repos/${REPO}/contents/public`);
@@ -103,6 +105,7 @@ exports.handler = async (event) => {
     return { statusCode: 200, headers: CORS, body: JSON.stringify({ maps }) };
   }
 
+  // ── GitHub: deploy ────────────────────────────────────────────────────────
   if (action === "deploy") {
     if (!GITHUB_TOKEN) return { statusCode: 500, headers: CORS, body: JSON.stringify({ error: "GITHUB_TOKEN not set." }) };
     const { slug, content } = body;
@@ -122,6 +125,7 @@ exports.handler = async (event) => {
     return { statusCode: result.status, headers: CORS, body: JSON.stringify({ error: result.data.message }) };
   }
 
+  // ── GitHub: delete ────────────────────────────────────────────────────────
   if (action === "delete") {
     if (!GITHUB_TOKEN) return { statusCode: 500, headers: CORS, body: JSON.stringify({ error: "GITHUB_TOKEN not set." }) };
     const { slug } = body;
