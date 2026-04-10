@@ -158,11 +158,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:28p
           <label>Location (city/state or national)</label>
           <input type="text" id="biz-location" placeholder="National / San Diego, CA">
         </div>
-        <div class="field">
-          <label>Anthropic API Key</label>
-          <input type="password" id="api-key" placeholder="sk-ant-••••••••••••">
         </div>
-      </div>
       <button class="btn btn-primary" id="gen-btn" onclick="startGenerate()">⚡ Generate Topical Map</button>
     </div>
     <div class="log" id="gen-log"></div>
@@ -259,8 +255,7 @@ var deleteTarget  = null;
 // ── Ready check (called on input events and on load) ──────────────────────────
 function checkGenReady() {
   var name = document.getElementById('biz-name').value.trim();
-  var key  = document.getElementById('api-key').value.trim();
-  document.getElementById('gen-btn').disabled = !(name && key);
+  document.getElementById('gen-btn').disabled = !name;
 }
 function checkDeployReady() {
   var slug = document.getElementById('deploy-slug').value.trim();
@@ -269,7 +264,10 @@ function checkDeployReady() {
 
 // Attach input listeners after DOM is ready
 document.getElementById('biz-name').addEventListener('input', checkGenReady);
-document.getElementById('api-key').addEventListener('input', checkGenReady);
+document.getElementById('biz-name').addEventListener('paste', function() { setTimeout(checkGenReady, 0); });
+document.getElementById('biz-url').addEventListener('paste', function() {});
+document.getElementById('biz-desc').addEventListener('paste', function() {});
+document.getElementById('biz-location').addEventListener('paste', function() {});
 document.getElementById('deploy-slug').addEventListener('input', function() { updateUrlPreview(); checkDeployReady(); });
 checkGenReady();
 checkDeployReady();
@@ -339,19 +337,19 @@ function utf8ToBase64(str) {
 // ── Anthropic API ─────────────────────────────────────────────────────────────
 async function callClaude(apiKey, messages, system, maxTokens, useSearch) {
   maxTokens = maxTokens || 8000;
-  var body = {
+  var payload = {
     model: 'claude-sonnet-4-20250514',
     max_tokens: maxTokens,
     system: system,
     messages: messages
   };
   if (useSearch) {
-    body.tools = [{ type: 'web_search_20250305', name: 'web_search' }];
+    payload.tools = [{ type: 'web_search_20250305', name: 'web_search' }];
   }
-  var r = await fetch('https://api.anthropic.com/v1/messages', {
+  var r = await fetch('/.netlify/functions/maps', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body)
+    body: JSON.stringify({ action: 'claude', payload: payload })
   });
   if (!r.ok) {
     var err = await r.json().catch(function() { return {}; });
@@ -426,7 +424,6 @@ async function startGenerate() {
   var url      = document.getElementById('biz-url').value.trim();
   var desc     = document.getElementById('biz-desc').value.trim();
   var location = document.getElementById('biz-location').value.trim();
-  var apiKey   = document.getElementById('api-key').value.trim();
 
   try {
     // Step 1: Research
@@ -435,7 +432,7 @@ async function startGenerate() {
     var bizContext = ['Business: ' + name, url ? 'Website: ' + url : '', desc ? 'Description: ' + desc : '', location ? 'Location: ' + location : ''].filter(Boolean).join('\n');
 
     var researchRes = await callClaudeWithSearch(
-      apiKey,
+      null,
       [{ role: 'user', content: 'Research this business for a topical authority map:\n\n' + bizContext + '\n\nUse web search to find:\n1. Most searched topics in this niche\n2. Competitor content strategies\n3. Common questions people ask\n4. What content formats rank well\n\nProvide a research summary covering the 6-7 most important core topics, key subtopics, search patterns, and content format recommendations.' }],
       'You are an expert SEO content strategist. Research the given business and niche to identify the most important content topics for a topical authority map. Use web search to ground your findings in real search demand.',
       4000,
@@ -450,7 +447,7 @@ async function startGenerate() {
 
     var genPrompt = 'Based on this research about ' + name + ':\n\n' + researchSummary + '\n\nGenerate a complete topical authority map as JSON. Return ONLY valid JSON, no markdown, no explanation.\n\nFormat:\n{\n  "businessName": "' + name + '",\n  "rootLabel": "Short\\nName",\n  "coreTopics": [\n    {\n      "id": "c1",\n      "label": "Topic\\nName",\n      "desc": "One sentence description",\n      "subtopics": [\n        {\n          "id": "c1s1",\n          "label": "Subtopic",\n          "contentIdeas": [\n            {\n              "id": "c1s1a",\n              "label": "Page Title",\n              "pri": "High",\n              "intent": "Informational",\n              "query": "search query someone types",\n              "desc": "1-2 sentences on what this covers.",\n              "fmt": "Blog Post",\n              "link": "Core Topic Name"\n            }\n          ]\n        }\n      ]\n    }\n  ]\n}\n\nRules: 6-8 core topics, 3-5 subtopics each, 4-5 content ideas each. pri: High/Medium/Low. intent: Informational/Commercial/Transactional/Navigational. fmt: Blog Post/Guide/FAQ Page/Service Page/Landing Page/Listicle/Comparison Page/Case Study. Return ONLY the JSON object.';
 
-    var genRes = await callClaude(apiKey,
+    var genRes = await callClaude(null,
       [{ role: 'user', content: genPrompt }],
       'You are an expert SEO content strategist. Generate topical authority map data as valid JSON only. No markdown fences, no explanation, just the raw JSON object.',
       8000, false
