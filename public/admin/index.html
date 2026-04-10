@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WMM Topical Maps — Admin</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0d1117;font-family:'Segoe UI',system-ui,sans-serif;color:#c9d1d9;min-height:100vh}
+
+/* Lock screen */
+#lock{position:fixed;inset:0;background:#0d1117;display:flex;align-items:center;justify-content:center;z-index:1000;padding:24px}
+.lock-box{width:100%;max-width:360px;text-align:center}
+.lock-icon{font-size:40px;margin-bottom:16px}
+.lock-box h2{font-size:18px;font-weight:700;color:#58a6ff;margin-bottom:6px}
+.lock-box p{font-size:12px;color:#484f58;margin-bottom:24px;font-family:'Courier New',monospace}
+.lock-box input{width:100%;background:#010409;border:1px solid #21262d;border-radius:7px;padding:11px 14px;color:#c9d1d9;font-size:14px;outline:none;text-align:center;letter-spacing:3px;transition:border-color .15s;margin-bottom:12px}
+.lock-box input:focus{border-color:#58a6ff}
+.lock-box button{width:100%;padding:11px;background:#238636;border:1px solid #2ea043;border-radius:7px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;transition:background .15s}
+.lock-box button:hover{background:#2ea043}
+.lock-err{color:#f85149;font-size:12px;margin-top:8px;display:none;font-family:'Courier New',monospace}
+
+/* Main app */
+#app{display:none;max-width:820px;margin:0 auto;padding:24px}
+header{display:flex;align-items:center;justify-content:space-between;padding-bottom:20px;border-bottom:1px solid #21262d;margin-bottom:28px}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-mark{width:32px;height:32px;background:#1a4a9e;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px}
+.logo-text{font-size:14px;font-weight:700;color:#e6edf3}
+.logo-sub{font-size:10px;color:#484f58;font-family:'Courier New',monospace;margin-top:1px}
+.header-right{display:flex;align-items:center;gap:10px}
+.lock-btn{background:none;border:1px solid #21262d;border-radius:6px;color:#484f58;padding:5px 12px;font-size:11px;cursor:pointer;font-family:'Courier New',monospace;transition:all .15s}
+.lock-btn:hover{border-color:#58a6ff;color:#58a6ff}
+.pat-badge{font-family:'Courier New',monospace;font-size:10px;color:#484f58;background:#010409;border:1px solid #21262d;border-radius:5px;padding:4px 10px}
+
+/* Section */
+.section{margin-bottom:32px}
+.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.section-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:#484f58}
+
+/* Deploy card */
+.card{background:#161b22;border:1px solid #21262d;border-radius:12px;padding:22px;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#1a4a9e,#7c3aed)}
+.field{margin-bottom:14px}
+.field label{display:block;font-family:'Courier New',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:#484f58;margin-bottom:6px}
+.field input{width:100%;background:#010409;border:1px solid #21262d;border-radius:7px;padding:9px 13px;color:#c9d1d9;font-family:'Courier New',monospace;font-size:13px;outline:none;transition:border-color .15s}
+.field input:focus{border-color:#58a6ff}
+.field input::placeholder{color:#2a3547}
+.drop-zone{border:2px dashed #21262d;border-radius:8px;padding:22px;text-align:center;cursor:pointer;transition:all .2s;position:relative}
+.drop-zone:hover,.drop-zone.over{border-color:#58a6ff;background:#58a6ff08}
+.drop-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.drop-zone .dz-icon{font-size:22px;margin-bottom:6px}
+.drop-zone .dz-text{font-size:12px;color:#484f58;font-family:'Courier New',monospace}
+.drop-zone .dz-file{font-size:12px;color:#3fb950;font-weight:700;margin-top:5px;font-family:'Courier New',monospace}
+.url-prev{background:#010409;border:1px solid #21262d;border-radius:6px;padding:7px 12px;font-family:'Courier New',monospace;font-size:11px;color:#484f58;margin:10px 0;display:flex;align-items:center;gap:6px;min-height:30px;transition:all .15s}
+.url-prev.active{color:#58a6ff;border-color:#1f3a6e}
+.url-dot{width:5px;height:5px;border-radius:50%;background:#484f58;flex-shrink:0}
+.url-prev.active .url-dot{background:#58a6ff;box-shadow:0 0 5px #58a6ff}
+.push-btn{width:100%;padding:11px;background:#238636;border:1px solid #2ea043;border-radius:8px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;margin-top:4px}
+.push-btn:hover:not(:disabled){background:#2ea043;box-shadow:0 3px 12px #23863640}
+.push-btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* Log */
+.log{background:#010409;border:1px solid #21262d;border-radius:8px;padding:12px 14px;font-family:'Courier New',monospace;font-size:11px;line-height:1.9;margin-top:14px;display:none;max-height:180px;overflow-y:auto}
+.ok{color:#3fb950}.err{color:#f85149}.info{color:#58a6ff}.dim{color:#2a3547}
+
+/* Success */
+.success-bar{background:#0f2a1a;border:1px solid #1a5c32;border-radius:8px;padding:11px 15px;margin-top:12px;display:none;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.success-bar a{font-family:'Courier New',monospace;font-size:12px;color:#3fb950;text-decoration:none;font-weight:600}
+.success-bar a:hover{text-decoration:underline}
+.copy-btn{padding:4px 12px;background:#1a5c3222;border:1px solid #22c55e44;border-radius:5px;color:#3fb950;font-family:'Courier New',monospace;font-size:10px;cursor:pointer;white-space:nowrap}
+.copy-btn:hover{background:#22c55e22}
+
+/* Maps grid */
+.maps-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.map-card{background:#161b22;border:1px solid #21262d;border-radius:10px;padding:16px;transition:border-color .15s;position:relative;overflow:hidden}
+.map-card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:#58a6ff;opacity:.5}
+.map-card:hover{border-color:#30363d}
+.map-slug{font-size:13px;font-weight:700;color:#e6edf3;margin-bottom:4px}
+.map-url{font-family:'Courier New',monospace;font-size:10px;color:#484f58;margin-bottom:13px;word-break:break-all}
+.map-actions{display:flex;gap:7px}
+.map-btn{flex:1;padding:6px 8px;border-radius:6px;font-family:'Courier New',monospace;font-size:10px;cursor:pointer;border:1px solid #21262d;background:transparent;color:#484f58;transition:all .15s;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:4px}
+.map-btn:hover{background:#21262d;color:#c9d1d9;border-color:#58a6ff}
+.map-btn.del:hover{background:#f8514910;border-color:#f8514960;color:#f85149}
+.empty{text-align:center;padding:40px 20px;color:#2a3547;border:1px dashed #21262d;border-radius:10px;font-family:'Courier New',monospace;font-size:12px;line-height:2}
+.skel{background:linear-gradient(90deg,#161b22 25%,#21262d 50%,#161b22 75%);background-size:200% 100%;animation:sk 1.3s ease infinite;border-radius:8px;height:88px}
+@keyframes sk{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* Delete modal */
+.modal-bg{position:fixed;inset:0;background:#00000088;backdrop-filter:blur(3px);z-index:50;display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;pointer-events:none;transition:opacity .2s}
+.modal-bg.open{opacity:1;pointer-events:all}
+.modal{background:#161b22;border:1px solid #30363d;border-radius:12px;padding:24px;width:100%;max-width:340px;transform:translateY(12px);transition:transform .2s}
+.modal-bg.open .modal{transform:translateY(0)}
+.modal h3{font-size:15px;font-weight:700;margin-bottom:8px;color:#e6edf3}
+.modal p{font-size:12px;color:#8b949e;line-height:1.6;margin-bottom:20px;font-family:'Courier New',monospace}
+.modal-actions{display:flex;gap:8px}
+.modal-btn{flex:1;padding:9px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;border:1px solid #21262d;background:transparent;color:#8b949e;transition:all .15s}
+.modal-btn:hover{background:#21262d;color:#c9d1d9}
+.modal-btn.danger{background:#f8514912;border-color:#f8514950;color:#f85149}
+.modal-btn.danger:hover{background:#f8514922}
+
+/* Toast */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(12px);background:#21262d;border:1px solid #30363d;border-radius:8px;padding:9px 18px;font-family:'Courier New',monospace;font-size:12px;color:#c9d1d9;z-index:200;opacity:0;transition:all .22s;white-space:nowrap;box-shadow:0 6px 24px #00000050}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<!-- Lock screen -->
+<div id="lock">
+  <div class="lock-box">
+    <div class="lock-icon">🔒</div>
+    <h2>WMM Topical Maps</h2>
+    <p>Enter admin password to continue</p>
+    <input type="password" id="pw-input" placeholder="••••••••" onkeydown="if(event.key==='Enter')unlock()">
+    <button onclick="unlock()">Unlock</button>
+    <div class="lock-err" id="lock-err">Incorrect password</div>
+  </div>
+</div>
+
+<!-- Main app -->
+<div id="app">
+  <header>
+    <div class="logo">
+      <div class="logo-mark">🗺</div>
+      <div>
+        <div class="logo-text">WMM Topical Maps</div>
+        <div class="logo-sub">Admin Dashboard</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="pat-badge" id="pat-badge">PAT: ••••••••</div>
+      <button class="lock-btn" onclick="lockApp()">🔒 Lock</button>
+    </div>
+  </header>
+
+  <!-- Deploy section -->
+  <div class="section">
+    <div class="section-head">
+      <div class="section-title">Deploy New Map</div>
+    </div>
+    <div class="card">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+        <div class="field">
+          <label>Client Name</label>
+          <input type="text" id="client-name" placeholder="Partner in Aging" oninput="onName()">
+        </div>
+        <div class="field">
+          <label>URL Slug</label>
+          <input type="text" id="slug" placeholder="partner-in-aging" oninput="onSlug()">
+        </div>
+      </div>
+      <div class="field">
+        <label>Map HTML File</label>
+        <div class="drop-zone" id="dz">
+          <input type="file" id="file-input" accept=".html" onchange="onFile(this.files[0])">
+          <div class="dz-icon">📄</div>
+          <div class="dz-text">Drop .html file or click to browse</div>
+          <div class="dz-file" id="dz-file"></div>
+        </div>
+      </div>
+      <div class="url-prev" id="url-prev">
+        <div class="url-dot"></div>
+        <span id="url-prev-text">Enter a slug to preview URL</span>
+      </div>
+      <button class="push-btn" id="push-btn" onclick="pushMap()" disabled>↑ &nbsp;Deploy Map</button>
+      <div class="log" id="push-log"></div>
+      <div class="success-bar" id="success-bar">
+        <span style="font-size:12px">🚀 Live at:</span>
+        <a id="live-url" href="#" target="_blank"></a>
+        <button class="copy-btn" onclick="copyLive()">Copy Link</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Maps section -->
+  <div class="section">
+    <div class="section-head">
+      <div class="section-title">Deployed Maps</div>
+      <button class="lock-btn" onclick="loadMaps()">↻ Refresh</button>
+    </div>
+    <div class="maps-grid" id="maps-grid">
+      <div class="skel"></div>
+      <div class="skel"></div>
+      <div class="skel"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Delete modal -->
+<div class="modal-bg" id="del-modal">
+  <div class="modal">
+    <h3>Remove map?</h3>
+    <p id="del-msg">This will delete the file from GitHub. The URL will stop working after Netlify redeploys (~20s).</p>
+    <div class="modal-actions">
+      <button class="modal-btn" onclick="closeDel()">Cancel</button>
+      <button class="modal-btn danger" onclick="confirmDel()">Delete</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function() {
+'use strict';
+
+// ── Config ────────────────────────────────────────────────────────────────────
+var REPO        = 'JeremyW-WMM/wmm-topical-maps';
+var ADMIN_PW    = 'wmm2026';          // Change this to your preferred password
+var LS_PAT      = 'wmm_maps_pat';
+var LS_UNLOCKED = 'wmm_maps_unlocked';
+var BASE_URL    = 'https://topicalmaps.weissmediamarketing.com';
+
+// ── State ─────────────────────────────────────────────────────────────────────
+var pat         = '';
+var fileContent = null;
+var delTarget   = null;
+
+// ── Lock / unlock ─────────────────────────────────────────────────────────────
+function unlock() {
+  var pw = document.getElementById('pw-input').value;
+  if (pw === ADMIN_PW) {
+    sessionStorage.setItem(LS_UNLOCKED, '1');
+    document.getElementById('lock').style.display = 'none';
+    document.getElementById('app').style.display  = 'block';
+    pat = localStorage.getItem(LS_PAT) || '';
+    if (pat) {
+      document.getElementById('pat-badge').textContent = 'PAT: ' + pat.slice(0,8) + '••••';
+    } else {
+      // First time — prompt for PAT
+      var p = prompt('Enter your GitHub Personal Access Token (saved locally for future visits):');
+      if (p && p.trim()) {
+        pat = p.trim();
+        localStorage.setItem(LS_PAT, pat);
+        document.getElementById('pat-badge').textContent = 'PAT: ' + pat.slice(0,8) + '••••';
+      }
+    }
+    loadMaps();
+    checkReady();
+  } else {
+    var err = document.getElementById('lock-err');
+    err.style.display = 'block';
+    setTimeout(function() { err.style.display = 'none'; }, 2000);
+    document.getElementById('pw-input').value = '';
+  }
+}
+
+function lockApp() {
+  sessionStorage.removeItem(LS_UNLOCKED);
+  document.getElementById('lock').style.display = 'flex';
+  document.getElementById('app').style.display  = 'none';
+  document.getElementById('pw-input').value = '';
+}
+
+// Auto-unlock if session is still active
+if (sessionStorage.getItem(LS_UNLOCKED)) {
+  pat = localStorage.getItem(LS_PAT) || '';
+  document.getElementById('lock').style.display = 'none';
+  document.getElementById('app').style.display  = 'block';
+  document.getElementById('pat-badge').textContent = pat ? 'PAT: ' + pat.slice(0,8) + '••••' : 'PAT: not set';
+  loadMaps();
+}
+
+document.getElementById('pw-input').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') unlock();
+});
+window.unlock = unlock;
+window.lockApp = lockApp;
+
+// ── Utilities ─────────────────────────────────────────────────────────────────
+function toast(msg, dur) {
+  dur = dur || 2500;
+  var el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(function() { el.classList.remove('show'); }, dur);
+}
+
+function plog(msg, cls) {
+  cls = cls || 'info';
+  var el = document.getElementById('push-log');
+  el.style.display = 'block';
+  el.innerHTML += '<div class="' + cls + '">' + msg + '</div>';
+  el.scrollTop = el.scrollHeight;
+}
+
+function toSlug(s) {
+  return s.toLowerCase().replace(/[^a-z0-9\s-]/g,'').trim().replace(/\s+/g,'-').replace(/-+/g,'-');
+}
+
+function utf8ToBase64(str) {
+  var bytes = new TextEncoder().encode(str);
+  var bin = ''; var C = 8192;
+  for (var i = 0; i < bytes.length; i += C)
+    bin += String.fromCharCode.apply(null, bytes.subarray(i, i + C));
+  return btoa(bin);
+}
+
+// ── GitHub API ────────────────────────────────────────────────────────────────
+async function gh(method, path, body) {
+  var opts = {
+    method: method,
+    headers: {
+      'Authorization': 'token ' + pat,
+      'Accept': 'application/vnd.github.v3+json',
+      'Content-Type': 'application/json',
+      'User-Agent': 'WMM-Maps-Admin'
+    }
+  };
+  if (body) opts.body = JSON.stringify(body);
+  var r = await fetch('https://api.github.com/repos/' + REPO + path, opts);
+  return { status: r.status, data: await r.json().catch(function() { return {}; }) };
+}
+
+// ── Input handlers ────────────────────────────────────────────────────────────
+function onName() {
+  var name = document.getElementById('client-name').value;
+  document.getElementById('slug').value = toSlug(name);
+  updatePreview();
+  checkReady();
+}
+function onSlug() { updatePreview(); checkReady(); }
+window.onName = onName;
+window.onSlug = onSlug;
+
+function updatePreview() {
+  var slug = document.getElementById('slug').value.trim();
+  var prev = document.getElementById('url-prev');
+  var txt  = document.getElementById('url-prev-text');
+  if (slug) {
+    txt.textContent = BASE_URL.replace('https://','') + '/' + toSlug(slug);
+    prev.classList.add('active');
+  } else {
+    txt.textContent = 'Enter a slug to preview URL';
+    prev.classList.remove('active');
+  }
+}
+
+function onFile(file) {
+  if (!file) return;
+  document.getElementById('dz-file').textContent = file.name;
+  var reader = new FileReader();
+  reader.onload = function(e) { fileContent = e.target.result; checkReady(); };
+  reader.readAsText(file, 'UTF-8');
+}
+window.onFile = onFile;
+
+var dz = document.getElementById('dz');
+dz.addEventListener('dragover',  function(e) { e.preventDefault(); dz.classList.add('over'); });
+dz.addEventListener('dragleave', function()  { dz.classList.remove('over'); });
+dz.addEventListener('drop', function(e) {
+  e.preventDefault(); dz.classList.remove('over');
+  var f = e.dataTransfer.files[0];
+  if (f && f.name.endsWith('.html')) onFile(f);
+  else toast('Please drop an .html file');
+});
+
+function checkReady() {
+  var slug = document.getElementById('slug').value.trim();
+  document.getElementById('push-btn').disabled = !(slug && fileContent && pat);
+}
+
+// ── Deploy ────────────────────────────────────────────────────────────────────
+async function pushMap() {
+  var slug = toSlug(document.getElementById('slug').value.trim());
+  if (!slug || !fileContent || !pat) return;
+
+  document.getElementById('push-log').innerHTML = '';
+  document.getElementById('push-log').style.display = 'block';
+  document.getElementById('success-bar').style.display = 'none';
+  var btn = document.getElementById('push-btn');
+  btn.disabled = true; btn.textContent = 'Deploying\u2026';
+
+  plog('<span class="dim">\u25b8 public/' + slug + '/index.html</span>');
+
+  var path = '/contents/public/' + slug + '/index.html';
+  var existing = await gh('GET', path);
+  var sha = existing.status === 200 ? existing.data.sha : null;
+  plog(sha ? '<span class="dim">Updating existing file\u2026</span>' : '<span class="dim">Creating new file\u2026</span>');
+
+  var encoded = utf8ToBase64(fileContent);
+  var body = { message: 'Deploy topical map: ' + slug, content: encoded };
+  if (sha) body.sha = sha;
+
+  var result = await gh('PUT', path, body);
+  if (result.status === 200 || result.status === 201) {
+    plog('\u2713 Pushed to GitHub', 'ok');
+    plog('\u23f3 Netlify deploying\u2026 (~20 seconds)', 'info');
+    var url = BASE_URL + '/' + slug;
+    document.getElementById('live-url').href = url;
+    document.getElementById('live-url').textContent = url.replace('https://','');
+    document.getElementById('success-bar').style.display = 'flex';
+    toast('\u2713 Deployed!');
+    setTimeout(loadMaps, 3000);
+  } else {
+    plog('\u2717 ' + (result.data.message || 'Push failed'), 'err');
+    toast('Deploy failed');
+  }
+
+  btn.disabled = false; btn.textContent = '\u2191 \u00a0Deploy Map';
+  checkReady();
+}
+window.pushMap = pushMap;
+
+function copyLive() {
+  navigator.clipboard.writeText(document.getElementById('live-url').href)
+    .then(function() { toast('Link copied!'); });
+}
+window.copyLive = copyLive;
+
+// ── Load maps ─────────────────────────────────────────────────────────────────
+async function loadMaps() {
+  var grid = document.getElementById('maps-grid');
+  grid.innerHTML = '<div class="skel"></div><div class="skel"></div><div class="skel"></div>';
+
+  if (!pat) {
+    grid.innerHTML = '<div class="empty">\uD83D\uDD12 No PAT set \u2014 lock and unlock to enter one.</div>';
+    return;
+  }
+
+  var res = await gh('GET', '/contents/public');
+  if (res.status === 404 || !Array.isArray(res.data)) {
+    grid.innerHTML = '<div class="empty">No maps deployed yet.<br>Use the form above to deploy your first one.</div>';
+    return;
+  }
+
+  var dirs = res.data.filter(function(i) { return i.type === 'dir'; });
+  if (!dirs.length) {
+    grid.innerHTML = '<div class="empty">\uD83D\uDDFA No maps deployed yet.<br>Use the form above to deploy your first one.</div>';
+    return;
+  }
+
+  grid.innerHTML = dirs.map(function(d) {
+    var url = BASE_URL + '/' + d.name;
+    return '<div class="map-card">' +
+      '<div class="map-slug">' + d.name + '</div>' +
+      '<div class="map-url">' + url.replace('https://','') + '</div>' +
+      '<div class="map-actions">' +
+        '<a class="map-btn" href="' + url + '" target="_blank">\u2197 View</a>' +
+        '<button class="map-btn" onclick="copyUrl(\'' + url + '\')">&#x2398; Copy</button>' +
+        '<button class="map-btn del" onclick="openDel(\'' + d.name + '\')">\u2715 Remove</button>' +
+      '</div></div>';
+  }).join('');
+}
+window.loadMaps = loadMaps;
+
+function copyUrl(url) {
+  navigator.clipboard.writeText(url).then(function() { toast('Link copied!'); });
+}
+window.copyUrl = copyUrl;
+
+// ── Delete ────────────────────────────────────────────────────────────────────
+function openDel(slug) {
+  delTarget = slug;
+  document.getElementById('del-msg').textContent =
+    'Remove "' + slug + '"? The URL will stop working after Netlify redeploys (~20s).';
+  document.getElementById('del-modal').classList.add('open');
+}
+function closeDel() {
+  document.getElementById('del-modal').classList.remove('open');
+  delTarget = null;
+}
+window.openDel  = openDel;
+window.closeDel = closeDel;
+
+document.getElementById('del-modal').addEventListener('click', function(e) {
+  if (e.target.id === 'del-modal') closeDel();
+});
+
+async function confirmDel() {
+  if (!delTarget) return;
+  closeDel();
+  toast('Removing ' + delTarget + '\u2026');
+
+  var path = '/contents/public/' + delTarget + '/index.html';
+  var ex   = await gh('GET', path);
+  if (ex.status !== 200) { toast('\u2717 File not found'); return; }
+
+  var res = await gh('DELETE', path, {
+    message: 'Remove topical map: ' + delTarget,
+    sha: ex.data.sha
+  });
+
+  if (res.status === 200) { toast('\u2713 Removed'); loadMaps(); }
+  else toast('\u2717 Delete failed: ' + (res.data.message || ''));
+}
+window.confirmDel = confirmDel;
+
+})();
+</script>
+</body>
+</html>
