@@ -3,197 +3,240 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WMM Topical Maps — Admin</title>
+<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAABCGlDQ1BJQ0MgUHJvZmlsZQAAeJxjYGA8wQAELAYMDLl5JUVB7k4KEZFRCuwPGBiBEAwSk4sLGHADoKpv1yBqL+viUYcLcKakFicD6Q9ArFIEtBxopAiQLZIOYWuA2EkQtg2IXV5SUAJkB4DYRSFBzkB2CpCtkY7ETkJiJxcUgdT3ANk2uTmlyQh3M/Ck5oUGA2kOIJZhKGYIYnBncAL5H6IkfxEDg8VXBgbmCQixpJkMDNtbGRgkbiHEVBYwMPC3MDBsO48QQ4RJQWJRIliIBYiZ0tIYGD4tZ2DgjWRgEL7AwMAVDQsIHG5TALvNnSEfCNMZchhSgSKeDHkMyQx6QJYRgwGDIYMZAKbWPz9HbOBQAAADmklEQVR4nO2XT2jcRRTH35vZnd1mfxs8aISIECOGUBC1erG3BW960Ju3XgJ6ELGIoFhJBakI0nqIB7301kPoURAEIULFXgTxuB5r3Pwjm/3tb37zm92Z+XrIb8Ov6e52t0ZDwe9t2TfvfebNzHvvR/QwCwADEKcSfH19XR6DOR2QNE3PFyAkAJ5mfWlSw9yxIKJARGyMeVkp9blzzmqtf/Xef8/MPw1AmNlPA3I/3bWrZrP5WL/f7wCAMWYlTdMnkyT5Smv9RbvdXihAy3s8HdPYcwMg8rNFs9msWGs/01q/sbm52c1NPDM/MjMzcyeKovdCCD8oVbmktX4XQJWZfcHHdAB5GgMzhziOH11cXPxZKfVxqVSa3djYcHlWJBF5ALy9vR3V6/Ufa7WZFQHRNcZ8rbV+feBjVDZGAjCz73Q65+M4XhZClIUQLxKRJyI3Pz9/dCQhBMnMqFQqZ62133U6nWfORGeue+8/IqIX0jRdS5Lk+VF34i6A/F3z7u5u3Vr7ZRRFt5RSS1mW6RBClu946C0H0FNKvaqUugBA1uv1nVqttuql/5aIVrTWFwGo46/keAaYmTE7O/u0Uup9IQQDMFJKMS5bBXkicszsjTFXe73exXql/nsURe8Q0XKWZU8wM4oQo5yGEIInIkwYeCA5sFdKLZbL5atbW1uPA2Dv/V80JHvj7sDIdE+iEIKhwwuKfNdqmN2/WT4FHWbk8IcQ+K8BJtL/AA8FwAO/hJMCsMwspu3zQzR0/bhmNChEizs7O/pB+7uUUub+7DQALISQRMTlcnltYWHhJhH1B/8tLS3dt88PdHBwsE9ExMxP0eEwMxogb5uslPrDWnvZe59IKavlcvk1Zq7kZr1Go5GNC5q33kBEbm5urpEkyZoQ4na1Wv3zsDDyUVG6JwPMDGZOq9Xqp/v7++estTcAkBBChRCclPKTOI5XmHkoBADPzJ6ZZ7z3JKVsSCmv1Wq1b5jZFYOPFYCjebHb7b7S7/dvoyDnnAWANE0/AMDtdvscAGeMuZIkyQVjzA2t9UvHsjKd8nFKEhGtrq4KY8zbru/uAID33gFwaZp+SES0t7d3FgCstbfSNH2zGPgfv6Cik1arNWetveacy/Kh9K04jpe11tezLLvUarVq+ZqJPlqmIgNQYmZHRJQkyXNKqSsAqr1e7xdmvhlF0W8D4JMey4sQXDzPbrf7bBHwBArWxCBH1fFUvxFPLfBJ6W8EKzgKaBvrpgAAAABJRU5ErkJggg==">
+<title>WMM Topical Maps</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:#0d1117;font-family:'Segoe UI',system-ui,sans-serif;color:#c9d1d9;min-height:100vh}
-
-/* Lock screen */
-#lock{position:fixed;inset:0;background:#0d1117;display:flex;align-items:center;justify-content:center;z-index:1000;padding:24px}
-.lock-box{width:100%;max-width:360px;text-align:center}
-.lock-icon{font-size:40px;margin-bottom:16px}
-.lock-box h2{font-size:18px;font-weight:700;color:#58a6ff;margin-bottom:6px}
-.lock-box p{font-size:12px;color:#484f58;margin-bottom:24px;font-family:'Courier New',monospace}
-.lock-box input{width:100%;background:#010409;border:1px solid #21262d;border-radius:7px;padding:11px 14px;color:#c9d1d9;font-size:14px;outline:none;text-align:center;letter-spacing:3px;transition:border-color .15s;margin-bottom:12px}
-.lock-box input:focus{border-color:#58a6ff}
-.lock-box button{width:100%;padding:11px;background:#238636;border:1px solid #2ea043;border-radius:7px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;transition:background .15s}
-.lock-box button:hover{background:#2ea043}
-.lock-err{color:#f85149;font-size:12px;margin-top:8px;display:none;font-family:'Courier New',monospace}
-
-/* Main app */
-#app{display:none;max-width:820px;margin:0 auto;padding:24px}
-header{display:flex;align-items:center;justify-content:space-between;padding-bottom:20px;border-bottom:1px solid #21262d;margin-bottom:28px}
-.logo{display:flex;align-items:center;gap:10px}
-.logo-mark{width:32px;height:32px;background:#1a4a9e;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px}
-.logo-text{font-size:14px;font-weight:700;color:#e6edf3}
-.logo-sub{font-size:10px;color:#484f58;font-family:'Courier New',monospace;margin-top:1px}
-.header-right{display:flex;align-items:center;gap:10px}
-.lock-btn{background:none;border:1px solid #21262d;border-radius:6px;color:#484f58;padding:5px 12px;font-size:11px;cursor:pointer;font-family:'Courier New',monospace;transition:all .15s}
-.lock-btn:hover{border-color:#58a6ff;color:#58a6ff}
-.pat-badge{font-family:'Courier New',monospace;font-size:10px;color:#484f58;background:#010409;border:1px solid #21262d;border-radius:5px;padding:4px 10px}
-
-/* Section */
-.section{margin-bottom:32px}
-.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-.section-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:#484f58}
-
-/* Deploy card */
-.card{background:#161b22;border:1px solid #21262d;border-radius:12px;padding:22px;position:relative;overflow:hidden}
-.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#1a4a9e,#7c3aed)}
-.field{margin-bottom:14px}
-.field label{display:block;font-family:'Courier New',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:#484f58;margin-bottom:6px}
-.field input{width:100%;background:#010409;border:1px solid #21262d;border-radius:7px;padding:9px 13px;color:#c9d1d9;font-family:'Courier New',monospace;font-size:13px;outline:none;transition:border-color .15s}
-.field input:focus{border-color:#58a6ff}
-.field input::placeholder{color:#2a3547}
-.drop-zone{border:2px dashed #21262d;border-radius:8px;padding:22px;text-align:center;cursor:pointer;transition:all .2s;position:relative}
-.drop-zone:hover,.drop-zone.over{border-color:#58a6ff;background:#58a6ff08}
-.drop-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
-.drop-zone .dz-icon{font-size:22px;margin-bottom:6px}
-.drop-zone .dz-text{font-size:12px;color:#484f58;font-family:'Courier New',monospace}
-.drop-zone .dz-file{font-size:12px;color:#3fb950;font-weight:700;margin-top:5px;font-family:'Courier New',monospace}
-.url-prev{background:#010409;border:1px solid #21262d;border-radius:6px;padding:7px 12px;font-family:'Courier New',monospace;font-size:11px;color:#484f58;margin:10px 0;display:flex;align-items:center;gap:6px;min-height:30px;transition:all .15s}
-.url-prev.active{color:#58a6ff;border-color:#1f3a6e}
-.url-dot{width:5px;height:5px;border-radius:50%;background:#484f58;flex-shrink:0}
-.url-prev.active .url-dot{background:#58a6ff;box-shadow:0 0 5px #58a6ff}
-.push-btn{width:100%;padding:11px;background:#238636;border:1px solid #2ea043;border-radius:8px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;margin-top:4px}
-.push-btn:hover:not(:disabled){background:#2ea043;box-shadow:0 3px 12px #23863640}
-.push-btn:disabled{opacity:.4;cursor:not-allowed}
-
-/* Log */
-.log{background:#010409;border:1px solid #21262d;border-radius:8px;padding:12px 14px;font-family:'Courier New',monospace;font-size:11px;line-height:1.9;margin-top:14px;display:none;max-height:180px;overflow-y:auto}
-.ok{color:#3fb950}.err{color:#f85149}.info{color:#58a6ff}.dim{color:#2a3547}
-
-/* Success */
-.success-bar{background:#0f2a1a;border:1px solid #1a5c32;border-radius:8px;padding:11px 15px;margin-top:12px;display:none;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
-.success-bar a{font-family:'Courier New',monospace;font-size:12px;color:#3fb950;text-decoration:none;font-weight:600}
-.success-bar a:hover{text-decoration:underline}
-.copy-btn{padding:4px 12px;background:#1a5c3222;border:1px solid #22c55e44;border-radius:5px;color:#3fb950;font-family:'Courier New',monospace;font-size:10px;cursor:pointer;white-space:nowrap}
-.copy-btn:hover{background:#22c55e22}
-
-/* Maps grid */
-.maps-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
-.map-card{background:#161b22;border:1px solid #21262d;border-radius:10px;padding:16px;transition:border-color .15s;position:relative;overflow:hidden}
-.map-card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:#58a6ff;opacity:.5}
-.map-card:hover{border-color:#30363d}
-.map-slug{font-size:13px;font-weight:700;color:#e6edf3;margin-bottom:4px}
-.map-url{font-family:'Courier New',monospace;font-size:10px;color:#484f58;margin-bottom:13px;word-break:break-all}
+:root{
+  --bg:#080c12;--surface:#0d1420;--surface2:#111c2e;--border:#1c2d47;--border2:#243a5a;
+  --accent:#2d7cf6;--green:#22c55e;--red:#ef4444;--amber:#f59e0b;
+  --text:#e2eaf5;--muted:#4e6a8a;--sub:#8ba8c8;
+  --mono:'DM Mono',monospace;--display:'Syne',sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--display);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:48px 48px;opacity:.3;pointer-events:none;z-index:0}
+#app{position:relative;z-index:1;max-width:860px;margin:0 auto;padding:0 24px 80px}
+header{display:flex;align-items:center;justify-content:space-between;padding:28px 0 36px;border-bottom:1px solid var(--border);margin-bottom:36px}
+.logo{display:flex;align-items:center;gap:14px}
+.logo-mark{width:36px;height:36px;background:var(--accent);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;box-shadow:0 0 18px #2d7cf438}
+.logo-text{font-size:14px;font-weight:700;letter-spacing:.3px}
+.logo-sub{font-size:10px;color:var(--muted);font-family:var(--mono);margin-top:2px}
+.header-badge{font-family:var(--mono);font-size:11px;color:var(--muted);background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:5px 12px}
+.tabs{display:flex;gap:4px;margin-bottom:28px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:4px}
+.tab{flex:1;padding:9px;border-radius:7px;border:none;background:transparent;color:var(--muted);font-family:var(--display);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;letter-spacing:.2px}
+.tab:hover{color:var(--text)}
+.tab.active{background:var(--surface2);color:var(--text);box-shadow:0 1px 4px #00000040}
+.panel{display:none}.panel.active{display:block}
+.field{margin-bottom:16px}
+.field label{display:block;font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:7px}
+.field input,.field textarea{width:100%;background:var(--bg);border:1px solid var(--border2);border-radius:8px;padding:10px 14px;color:var(--text);font-family:var(--mono);font-size:13px;outline:none;transition:border-color .15s,box-shadow .15s;resize:vertical}
+.field input:focus,.field textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px #2d7cf612}
+.field input::placeholder,.field textarea::placeholder{color:var(--muted)}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:24px;position:relative;overflow:hidden}
+.card-accent::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),#7c3aed)}
+.btn{padding:11px 20px;border-radius:9px;font-family:var(--display);font-size:13px;font-weight:700;cursor:pointer;border:none;transition:all .2s;letter-spacing:.2px}
+.btn-primary{background:var(--accent);color:#fff;width:100%;margin-top:4px}
+.btn-primary:hover:not(:disabled){background:#3d8cf8;box-shadow:0 4px 18px #2d7cf440;transform:translateY(-1px)}
+.btn-primary:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+.btn-sm{padding:6px 14px;font-size:12px;background:var(--surface2);color:var(--sub);border:1px solid var(--border2);border-radius:7px;cursor:pointer;font-family:var(--display);font-weight:600;transition:all .15s}
+.btn-sm:hover{color:var(--text);border-color:var(--accent)}
+.btn-accent{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn-accent:hover{background:#3d8cf8}
+.btn.loading{position:relative;overflow:hidden}
+.btn.loading::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,#ffffff15,transparent);animation:shimmer 1.1s infinite}
+@keyframes shimmer{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+.steps{display:flex;margin-bottom:24px}
+.step-item{flex:1;display:flex;flex-direction:column;align-items:center;position:relative}
+.step-item:not(:last-child)::after{content:'';position:absolute;top:13px;left:50%;width:100%;height:1px;background:var(--border)}
+.step-dot{width:26px;height:26px;border-radius:50%;border:2px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--muted);position:relative;z-index:1;transition:all .3s}
+.step-dot.active{border-color:var(--accent);color:var(--accent)}
+.step-dot.done{border-color:var(--green);background:var(--green);color:#fff}
+.step-label{font-size:10px;color:var(--muted);margin-top:6px;font-family:var(--mono);text-align:center}
+.step-item.active .step-label{color:var(--accent)}
+.step-item.done .step-label{color:var(--green)}
+.log{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px 16px;font-family:var(--mono);font-size:12px;line-height:1.9;display:none;max-height:200px;overflow-y:auto;margin-top:16px}
+.log::-webkit-scrollbar{width:4px}
+.log::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.ok{color:var(--green)}.err{color:var(--red)}.info{color:var(--accent)}.dim{color:var(--muted)}
+#preview-area{display:none;margin-top:16px}
+.preview-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.preview-header h3{font-size:13px;font-weight:700}
+.preview-actions{display:flex;gap:8px}
+#map-iframe{width:100%;height:480px;border:1px solid var(--border);border-radius:10px;background:var(--surface)}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0}
+.stat-box{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;text-align:center}
+.stat-num{font-size:22px;font-weight:800;color:var(--accent);font-family:var(--mono)}
+.stat-lbl{font-size:10px;color:var(--muted);margin-top:3px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.6px}
+.maps-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.map-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;transition:border-color .2s;position:relative;overflow:hidden}
+.map-card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:var(--accent);opacity:.7}
+.map-card:hover{border-color:var(--border2)}
+.map-slug{font-size:13px;font-weight:700;margin-bottom:5px}
+.map-url{font-family:var(--mono);font-size:10px;color:var(--muted);margin-bottom:14px;word-break:break-all}
 .map-actions{display:flex;gap:7px}
-.map-btn{flex:1;padding:6px 8px;border-radius:6px;font-family:'Courier New',monospace;font-size:10px;cursor:pointer;border:1px solid #21262d;background:transparent;color:#484f58;transition:all .15s;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:4px}
-.map-btn:hover{background:#21262d;color:#c9d1d9;border-color:#58a6ff}
-.map-btn.del:hover{background:#f8514910;border-color:#f8514960;color:#f85149}
-.empty{text-align:center;padding:40px 20px;color:#2a3547;border:1px dashed #21262d;border-radius:10px;font-family:'Courier New',monospace;font-size:12px;line-height:2}
-.skel{background:linear-gradient(90deg,#161b22 25%,#21262d 50%,#161b22 75%);background-size:200% 100%;animation:sk 1.3s ease infinite;border-radius:8px;height:88px}
-@keyframes sk{0%{background-position:200% 0}100%{background-position:-200% 0}}
-
-/* Delete modal */
-.modal-bg{position:fixed;inset:0;background:#00000088;backdrop-filter:blur(3px);z-index:50;display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;pointer-events:none;transition:opacity .2s}
-.modal-bg.open{opacity:1;pointer-events:all}
-.modal{background:#161b22;border:1px solid #30363d;border-radius:12px;padding:24px;width:100%;max-width:340px;transform:translateY(12px);transition:transform .2s}
-.modal-bg.open .modal{transform:translateY(0)}
-.modal h3{font-size:15px;font-weight:700;margin-bottom:8px;color:#e6edf3}
-.modal p{font-size:12px;color:#8b949e;line-height:1.6;margin-bottom:20px;font-family:'Courier New',monospace}
-.modal-actions{display:flex;gap:8px}
-.modal-btn{flex:1;padding:9px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;border:1px solid #21262d;background:transparent;color:#8b949e;transition:all .15s}
-.modal-btn:hover{background:#21262d;color:#c9d1d9}
-.modal-btn.danger{background:#f8514912;border-color:#f8514950;color:#f85149}
-.modal-btn.danger:hover{background:#f8514922}
-
-/* Toast */
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(12px);background:#21262d;border:1px solid #30363d;border-radius:8px;padding:9px 18px;font-family:'Courier New',monospace;font-size:12px;color:#c9d1d9;z-index:200;opacity:0;transition:all .22s;white-space:nowrap;box-shadow:0 6px 24px #00000050}
+.map-btn{flex:1;padding:6px 8px;border-radius:6px;font-family:var(--mono);font-size:11px;cursor:pointer;border:1px solid var(--border2);background:transparent;color:var(--sub);transition:all .15s;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:4px}
+.map-btn:hover{background:var(--surface2);color:var(--text);border-color:var(--accent)}
+.map-btn.del{color:#ef444460}.map-btn.del:hover{background:#ef444410;border-color:#ef444460;color:var(--red)}
+.empty{text-align:center;padding:48px 20px;color:var(--muted);border:1px dashed var(--border);border-radius:12px;font-family:var(--mono);font-size:12px;line-height:2}
+.skeleton{background:linear-gradient(90deg,var(--surface) 25%,var(--surface2) 50%,var(--surface) 75%);background-size:200% 100%;animation:skel 1.3s ease infinite;border-radius:8px}
+@keyframes skel{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.url-preview{background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:8px 14px;font-family:var(--mono);font-size:12px;color:var(--muted);margin:12px 0;display:flex;align-items:center;gap:6px;min-height:34px}
+.url-preview.active{color:var(--accent);border-color:var(--border2)}
+.url-dot{width:6px;height:6px;border-radius:50%;background:var(--muted);flex-shrink:0}
+.url-preview.active .url-dot{background:var(--accent);box-shadow:0 0 6px var(--accent)}
+.success-banner{background:#0f2a1a;border:1px solid #1a5c32;border-radius:10px;padding:14px 18px;display:none;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:14px}
+.live-url{font-family:var(--mono);font-size:13px;color:var(--green);font-weight:500;text-decoration:none}
+.copy-url-btn{padding:5px 14px;background:#1a5c3222;border:1px solid #22c55e44;border-radius:6px;color:var(--green);font-family:var(--mono);font-size:11px;cursor:pointer}
+.copy-url-btn:hover{background:#22c55e22}
+.modal-backdrop{position:fixed;inset:0;background:#00000080;backdrop-filter:blur(4px);z-index:100;display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;pointer-events:none;transition:opacity .2s}
+.modal-backdrop.open{opacity:1;pointer-events:all}
+.modal{background:var(--surface);border:1px solid var(--border2);border-radius:14px;padding:26px;width:100%;max-width:360px;transform:translateY(14px);transition:transform .2s}
+.modal-backdrop.open .modal{transform:translateY(0)}
+.modal h3{font-size:15px;font-weight:700;margin-bottom:8px}
+.modal p{font-size:12px;color:var(--sub);line-height:1.6;margin-bottom:22px;font-family:var(--mono)}
+.modal-actions{display:flex;gap:10px}
+.modal-btn{flex:1;padding:9px;border-radius:7px;font-family:var(--display);font-size:13px;font-weight:600;cursor:pointer;border:1px solid var(--border2);background:transparent;color:var(--sub);transition:all .15s}
+.modal-btn:hover{background:var(--surface2);color:var(--text)}
+.modal-btn.danger{background:#ef444415;border-color:#ef444450;color:var(--red)}
+.modal-btn.danger:hover{background:#ef444425}
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(14px);background:var(--surface2);border:1px solid var(--border2);border-radius:10px;padding:10px 20px;font-family:var(--mono);font-size:12px;color:var(--text);z-index:200;opacity:0;transition:all .25s;white-space:nowrap;box-shadow:0 8px 28px #00000060}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.section-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.drop-zone{border:2px dashed var(--border2);border-radius:10px;padding:22px;text-align:center;cursor:pointer;position:relative;transition:all .2s;margin-bottom:4px}
+.drop-zone:hover{border-color:var(--accent);background:#2d7cf608}
+.drop-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+@media(max-width:540px){.row2{grid-template-columns:1fr}.stats-row{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
 <body>
-
-<!-- Lock screen -->
-<div id="lock">
-  <div class="lock-box">
-    <div class="lock-icon">🔒</div>
-    <h2>WMM Topical Maps</h2>
-    <p>Enter admin password to continue</p>
-    <input type="password" id="pw-input" placeholder="••••••••" onkeydown="if(event.key==='Enter')unlock()">
-    <button onclick="unlock()">Unlock</button>
-    <div class="lock-err" id="lock-err">Incorrect password</div>
-  </div>
-</div>
-
-<!-- Main app -->
 <div id="app">
   <header>
     <div class="logo">
       <div class="logo-mark">🗺</div>
       <div>
         <div class="logo-text">WMM Topical Maps</div>
-        <div class="logo-sub">Admin Dashboard</div>
+        <div class="logo-sub">Weiss Media Marketing</div>
       </div>
     </div>
-    <div class="header-right">
-      <div class="pat-badge" id="pat-badge">PAT: ••••••••</div>
-      <button class="lock-btn" onclick="lockApp()">🔒 Lock</button>
-    </div>
+    <div class="header-badge">topicalmaps.weissmediamarketing.com</div>
   </header>
 
-  <!-- Deploy section -->
-  <div class="section">
-    <div class="section-head">
-      <div class="section-title">Deploy New Map</div>
+  <div class="tabs">
+    <button class="tab active" id="tab-generate" onclick="switchTab('generate')">⚡ Generate</button>
+    <button class="tab" id="tab-deploy" onclick="switchTab('deploy')">↑ Deploy</button>
+    <button class="tab" id="tab-maps" onclick="switchTab('maps')">📋 All Maps</button>
+  </div>
+
+  <!-- GENERATE -->
+  <div class="panel active" id="panel-generate">
+    <div class="steps" id="steps">
+      <div class="step-item active" id="si-0"><div class="step-dot active" id="sd-0">1</div><div class="step-label">Business Info</div></div>
+      <div class="step-item" id="si-1"><div class="step-dot" id="sd-1">2</div><div class="step-label">Generating</div></div>
+      <div class="step-item" id="si-2"><div class="step-dot" id="sd-2">3</div><div class="step-label">Building</div></div>
+      <div class="step-item" id="si-3"><div class="step-dot" id="sd-3">4</div><div class="step-label">Review</div></div>
     </div>
-    <div class="card">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+    <div class="card card-accent">
+      <div class="row2">
         <div class="field">
-          <label>Client Name</label>
-          <input type="text" id="client-name" placeholder="Partner in Aging" oninput="onName()">
+          <label>Business Name</label>
+          <input type="text" id="biz-name" placeholder="Partner in Aging">
         </div>
         <div class="field">
-          <label>URL Slug</label>
-          <input type="text" id="slug" placeholder="partner-in-aging" oninput="onSlug()">
+          <label>Website URL (optional)</label>
+          <input type="text" id="biz-url" placeholder="https://partnerinaging.com">
         </div>
       </div>
       <div class="field">
-        <label>Map HTML File</label>
-        <div class="drop-zone" id="dz">
-          <input type="file" id="file-input" accept=".html" onchange="onFile(this.files[0])">
-          <div class="dz-icon">📄</div>
-          <div class="dz-text">Drop .html file or click to browse</div>
-          <div class="dz-file" id="dz-file"></div>
+        <label>Business Description / Niche</label>
+        <textarea id="biz-desc" rows="2" placeholder="e.g. Senior care planning consultancy helping families navigate elder care, Medicare, and living options"></textarea>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label>Location (city/state or national)</label>
+          <input type="text" id="biz-location" placeholder="National / San Diego, CA">
+        </div>
+        </div>
+      <button class="btn btn-primary" id="gen-btn" onclick="startGenerate()">⚡ Generate Topical Map</button>
+    </div>
+    <div class="log" id="gen-log"></div>
+    <div id="preview-area">
+      <div class="stats-row" id="stats-row"></div>
+      <div class="preview-header">
+        <h3 id="preview-title">Topical Map Preview</h3>
+        <div class="preview-actions">
+          <button class="btn btn-sm" onclick="downloadMap()">↓ Download HTML</button>
+          <button class="btn btn-sm" onclick="downloadExcel()" id="xlsx-btn">↓ Download Excel</button>
+          <button class="btn btn-sm btn-accent" onclick="goToDeploy()">↑ Deploy to Web →</button>
         </div>
       </div>
-      <div class="url-prev" id="url-prev">
-        <div class="url-dot"></div>
-        <span id="url-prev-text">Enter a slug to preview URL</span>
+      <iframe id="map-iframe" src="about:blank" sandbox="allow-scripts"></iframe>
+    </div>
+  </div>
+
+  <!-- DEPLOY -->
+  <div class="panel" id="panel-deploy">
+    <div class="card card-accent">
+      <div class="row2">
+        <div class="field">
+          <label>Client Name</label>
+          <input type="text" id="deploy-name" placeholder="Partner in Aging" oninput="handleDeployName()">
+        </div>
+        <div class="field">
+          <label>URL Slug</label>
+          <input type="text" id="deploy-slug" placeholder="partner-in-aging" oninput="updateUrlPreview()">
+        </div>
       </div>
-      <button class="push-btn" id="push-btn" onclick="pushMap()" disabled>↑ &nbsp;Deploy Map</button>
-      <div class="log" id="push-log"></div>
-      <div class="success-bar" id="success-bar">
-        <span style="font-size:12px">🚀 Live at:</span>
-        <a id="live-url" href="#" target="_blank"></a>
-        <button class="copy-btn" onclick="copyLive()">Copy Link</button>
+      <div class="url-preview" id="url-preview">
+        <div class="url-dot"></div>
+        <span id="url-preview-text">Enter a slug to preview the URL</span>
+      </div>
+      <div id="file-field">
+        <div class="field">
+          <label>Map HTML File (or use Generate tab)</label>
+          <div class="drop-zone" id="drop-zone">
+            <input type="file" id="file-input" accept=".html" onchange="handleFileUpload(this.files[0])">
+            <div style="font-size:20px;margin-bottom:6px">📄</div>
+            <div style="font-size:12px;color:var(--sub)">Drop HTML file or click to browse</div>
+            <div id="upload-fname" style="font-size:12px;color:var(--green);font-family:var(--mono);margin-top:5px"></div>
+          </div>
+        </div>
+      </div>
+      <button class="btn btn-primary" id="deploy-btn" onclick="deployMap()">↑ Deploy Map</button>
+      <div class="log" id="deploy-log"></div>
+      <div class="success-banner" id="success-banner">
+        <span style="font-size:13px">🚀 Live at:</span>
+        <a class="live-url" id="live-url" href="#" target="_blank"></a>
+        <button class="copy-url-btn" onclick="copyLiveUrl()">Copy Link</button>
       </div>
     </div>
   </div>
 
-  <!-- Maps section -->
-  <div class="section">
+  <!-- MAPS -->
+  <div class="panel" id="panel-maps">
     <div class="section-head">
       <div class="section-title">Deployed Maps</div>
-      <button class="lock-btn" onclick="loadMaps()">↻ Refresh</button>
+      <button class="btn btn-sm" onclick="loadMaps()">↻ Refresh</button>
     </div>
-    <div class="maps-grid" id="maps-grid">
-      <div class="skel"></div>
-      <div class="skel"></div>
-      <div class="skel"></div>
+    <div id="maps-grid" class="maps-grid">
+      <div style="height:100px" class="skeleton"></div>
+      <div style="height:100px" class="skeleton"></div>
+      <div style="height:100px" class="skeleton"></div>
     </div>
   </div>
 </div>
 
-<!-- Delete modal -->
-<div class="modal-bg" id="del-modal">
+<div class="modal-backdrop" id="del-modal">
   <div class="modal">
-    <h3>Remove map?</h3>
-    <p id="del-msg">This will delete the file from GitHub. The URL will stop working after Netlify redeploys (~20s).</p>
+    <h3>Delete map?</h3>
+    <p>This will permanently remove <strong id="del-slug-label"></strong>. Its URL will stop working immediately.</p>
     <div class="modal-actions">
-      <button class="modal-btn" onclick="closeDel()">Cancel</button>
-      <button class="modal-btn danger" onclick="confirmDel()">Delete</button>
+      <button class="modal-btn" onclick="closeDelModal()">Cancel</button>
+      <button class="modal-btn danger" onclick="confirmDelete()">Delete</button>
     </div>
   </div>
 </div>
@@ -203,84 +246,82 @@ header{display:flex;align-items:center;justify-content:space-between;padding-bot
 (function() {
 'use strict';
 
-// ── Config ────────────────────────────────────────────────────────────────────
-var REPO        = 'JeremyW-WMM/wmm-topical-maps';
-var ADMIN_PW    = 'wmm2026';          // Change this to your preferred password
-var LS_PAT      = 'wmm_maps_pat';
-var LS_UNLOCKED = 'wmm_maps_unlocked';
-var BASE_URL    = 'https://topicalmaps.weissmediamarketing.com';
+// ── Map template (JSON-encoded for safe embedding) ────────────────────────────
+var MAP_BEFORE = "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"UTF-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n<title>Partner in Aging \u2013 Topical Authority Map<\/title>\n<style>\n  *{box-sizing:border-box;margin:0;padding:0}\n  body{background:#0f1923;font-family:'Segoe UI',Arial,sans-serif;color:#e0e6ef;overflow:hidden;user-select:none}\n  #header{position:fixed;top:0;left:0;right:0;z-index:100;background:linear-gradient(90deg,#1a2d45,#0f1923);border-bottom:1px solid #2d4a6e;padding:12px 24px;display:flex;align-items:center;justify-content:space-between}\n  #header h1{font-size:18px;font-weight:700;color:#e8f0fb;letter-spacing:.5px}\n  #header span{font-size:12px;color:#6b8cae}\n  #controls{display:flex;gap:10px;align-items:center}\n  .btn{padding:6px 14px;border-radius:6px;border:1px solid #2d4a6e;background:#1a2d45;color:#a8c2e0;cursor:pointer;font-size:12px;transition:all .2s}\n  .btn:hover{background:#2d4a6e;color:#fff}\n  #canvas-wrap{position:fixed;top:56px;left:0;right:300px;bottom:0;overflow:hidden;cursor:grab;transition:right .2s}\n  #canvas-wrap.dragging{cursor:grabbing}\n  svg{position:absolute;top:0;left:0;width:100%;height:100%}\n  #legend{position:fixed;bottom:16px;left:16px;background:#1a2d45cc;border:1px solid #2d4a6e;border-radius:10px;padding:12px 16px;z-index:100}\n  #legend h3{font-size:11px;color:#6b8cae;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}\n  .leg-item{display:flex;align-items:center;gap:8px;font-size:11px;margin-bottom:5px;color:#c0d4ea}\n  .leg-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}\n  #info-panel{position:fixed;top:64px;right:0;width:300px;bottom:0;background:#111e2d;border-left:1px solid #2d4a6e;z-index:100;overflow-y:auto;display:flex;flex-direction:column;transition:transform .2s}\n  #info-panel.hidden{transform:translateX(300px)}\n  #panel-inner{padding:16px;flex:1}\n  #panel-close{position:absolute;top:10px;right:12px;background:none;border:none;color:#6b8cae;font-size:18px;cursor:pointer;line-height:1}\n  #panel-close:hover{color:#fff}\n  .pf-label{font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:#4a7090;margin:12px 0 3px}\n  .pf-value{font-size:12px;color:#c8ddf0;line-height:1.5}\n  .pf-badge{display:inline-block;padding:2px 9px;border-radius:10px;font-size:11px;font-weight:600;margin-right:4px}\n  #panel-empty{color:#4a7090;font-size:12px;text-align:center;margin-top:40px;line-height:1.8}\n  #stats{position:fixed;bottom:16px;right:16px;background:#1a2d45cc;border:1px solid #2d4a6e;border-radius:10px;padding:12px 16px;z-index:100;font-size:11px;color:#6b8cae;text-align:right}\n  #stats b{color:#a8c2e0}\n<\/style>\n<\/head>\n<body>\n<div id=\"header\">\n  <div>\n    <h1>\ud83e\udde0 Partner in Aging \u2014 Topical Authority Map<\/h1>\n    <span style=\"font-size:11px;color:#4a7090\">partnerinaging.com &nbsp;|&nbsp; 7 Core Topics &nbsp;|&nbsp; 100+ Content Ideas<\/span>\n  <\/div>\n  <div id=\"controls\">\n    <button class=\"btn\" onclick=\"resetView()\">\u229e Reset View<\/button>\n    <button class=\"btn\" onclick=\"expandAll()\">+ Expand All<\/button>\n    <button class=\"btn\" onclick=\"collapseAll()\">\u2212 Collapse All<\/button>\n    <button class=\"btn\" onclick=\"downloadSVG()\">\u2193 Download SVG<\/button>\n  <\/div>\n<\/div>\n\n<div id=\"canvas-wrap\" id=\"cw\">\n  <svg id=\"svg\"><\/svg>\n<\/div>\n\n<div id=\"legend\">\n  <h3>Core Topics<\/h3>\n  <div id=\"legend-items\"><\/div>\n<\/div>\n\n<div id=\"stats\">\n  <div><b id=\"vis-count\">\u2014<\/b> nodes visible<\/div>\n  <div style=\"margin-top:4px\">Scroll to zoom \u00b7 Drag to pan \u00b7 Click to expand<\/div>\n<\/div>\n\n<div id=\"info-panel\" class=\"hidden\">\n  <button id=\"panel-close\" onclick=\"closePanel()\">\u2715<\/button>\n  <div id=\"panel-inner\">\n    <div id=\"panel-empty\">Click any content idea node<br>to see full details here.<\/div>\n  <\/div>\n<\/div>\n\n<script>\nconst COLORS = [\"#2563eb\",\"#16a34a\",\"#dc2626\",\"#9333ea\",\"#ea580c\",\"#0891b2\",\"#65a30d\"];\n";
+var MAP_AFTER  = "\n\n// \u2500\u2500 Layout engine \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nconst svg = document.getElementById(\"svg\");\nconst wrap = document.querySelector(\"#canvas-wrap\");\nlet vx=0,vy=0,vscale=1,dragging=false,lastX,lastY;\nlet collapsed = new Set();\n\nconst PRI_COLORS = {High:\"#22c55e\",Medium:\"#f59e0b\",Low:\"#94a3b8\"};\n\nfunction getColor(node) {\n  let n = node;\n  while(n.parent && !n.color) n = n.parent;\n  return n.color || \"#2563eb\";\n}\n\nfunction assignParents(node, parent=null) {\n  node.parent = parent;\n  if(node.children) node.children.forEach(c => assignParents(c, node));\n}\nassignParents(tree);\n\nfunction countVisible(node) {\n  if(!node.children || node.children.length===0) return 1;\n  if(collapsed.has(node.id)) return 1;\n  return 1 + node.children.reduce((s,c) => s+countVisible(c), 0);\n}\n\n// Minimum height each leaf node needs\nconst LEAF_H = { 0: 0, 1: 52, 2: 38, 3: 26 };\nconst GAP_X  = { 0: 370, 1: 310, 2: 260 };\nconst MIN_GAP = { 0: 20, 1: 16, 2: 12 };\n\n// Returns the total vertical span a subtree needs\nfunction subtreeH(node, depth) {\n  if(!node.children || node.children.length===0 || collapsed.has(node.id)) {\n    return LEAF_H[depth] || 26;\n  }\n  const children = node.children;\n  const childDepth = depth + 1;\n  const total = children.reduce((s,c) => s + subtreeH(c, childDepth), 0);\n  const gaps  = (children.length - 1) * (MIN_GAP[depth] || 12);\n  return Math.max(total + gaps, LEAF_H[depth] || 26);\n}\n\nfunction layout(node, x, y, depth) {\n  node.x = x; node.y = y; node.depth = depth;\n  if(!node.children || node.children.length===0 || collapsed.has(node.id)) return;\n  const children = node.children;\n  const childDepth = depth + 1;\n  const childX = x + (GAP_X[depth] || 260);\n\n  // Compute each child's span and lay them out top-to-bottom centered on y\n  const spans = children.map(c => subtreeH(c, childDepth));\n  const gap   = MIN_GAP[depth] || 12;\n  const totalH = spans.reduce((s,v) => s+v, 0) + gap*(children.length-1);\n\n  let cursor = y - totalH/2;\n  children.forEach((child, i) => {\n    const cy = cursor + spans[i]/2;\n    layout(child, childX, cy, childDepth);\n    cursor += spans[i] + gap;\n  });\n}\n\nfunction render() {\n  layout(tree, 80, 0, 0);\n  svg.innerHTML = \"\";\n  drawLinks(tree);\n  drawNodes(tree);\n  const allN = getAllNodes(tree);\n  document.getElementById(\"vis-count\").textContent = allN.filter(n=>isVisible(n)).length;\n}\n\nfunction isVisible(node) {\n  let n = node.parent;\n  while(n) {\n    if(collapsed.has(n.id)) return false;\n    n = n.parent;\n  }\n  return true;\n}\n\nfunction getAllNodes(node) {\n  const out = [node];\n  if(node.children) node.children.forEach(c => out.push(...getAllNodes(c)));\n  return out;\n}\n\nfunction drawLinks(node) {\n  if(!node.children || collapsed.has(node.id)) return;\n  const color = getColor(node);\n  node.children.forEach(child => {\n    const line = document.createElementNS(\"http://www.w3.org/2000/svg\",\"path\");\n    const mx = (node.x + child.x) / 2;\n    line.setAttribute(\"d\",`M${node.x} ${node.y} C${mx} ${node.y}, ${mx} ${child.y}, ${child.x} ${child.y}`);\n    line.setAttribute(\"stroke\", color);\n    line.setAttribute(\"stroke-width\", node.depth===0 ? \"2.5\" : node.depth===1 ? \"1.5\" : \"1\");\n    line.setAttribute(\"fill\",\"none\");\n    line.setAttribute(\"opacity\",\"0.5\");\n    svg.appendChild(line);\n    drawLinks(child);\n  });\n}\n\nfunction drawNodes(node) {\n  const color = getColor(node);\n  const depth = node.depth;\n  const isRoot = depth===0;\n  const isCT   = depth===1;\n  const isST   = depth===2;\n  const isCI   = depth===3;\n\n  const g = document.createElementNS(\"http://www.w3.org/2000/svg\",\"g\");\n  g.setAttribute(\"transform\",`translate(${node.x},${node.y})`);\n  g.style.cursor = (node.children && node.children.length) ? \"pointer\" : \"default\";\n\n  if(isRoot) {\n    const rx=48, ry=30;\n    const el = document.createElementNS(\"http://www.w3.org/2000/svg\",\"ellipse\");\n    el.setAttribute(\"rx\",rx); el.setAttribute(\"ry\",ry);\n    el.setAttribute(\"fill\",\"#0f1923\"); el.setAttribute(\"stroke\",\"#4a8ac4\"); el.setAttribute(\"stroke-width\",\"2\");\n    g.appendChild(el);\n    const t = svgText(node.label, 0, 0, \"13\", \"bold\", \"#e8f0fb\", true);\n    g.appendChild(t);\n  } else if(isCT) {\n    const w=150, h=52;\n    const clipIdCT = \"clip_ct_\"+node.id;\n    const clipElCT = document.createElementNS(\"http://www.w3.org/2000/svg\",\"clipPath\");\n    clipElCT.setAttribute(\"id\", clipIdCT);\n    const clipRctCT = document.createElementNS(\"http://www.w3.org/2000/svg\",\"rect\");\n    clipRctCT.setAttribute(\"x\", String(-w/2+4)); clipRctCT.setAttribute(\"y\", String(-h/2));\n    clipRctCT.setAttribute(\"width\", String(w-24)); clipRctCT.setAttribute(\"height\", String(h));\n    clipElCT.appendChild(clipRctCT);\n    g.appendChild(clipElCT);\n    const rect = roundRect(-w/2,-h/2,w,h,10, \"#0f1923\", \"1\");\n    rect.setAttribute(\"stroke\", color); rect.setAttribute(\"stroke-width\",\"2\");\n    g.appendChild(rect);\n    const t = svgText(node.label, 0, 0, \"11\", \"bold\", \"#fff\", true);\n    t.setAttribute(\"clip-path\",\"url(#\"+clipIdCT+\")\");\n    g.appendChild(t);\n    const coll = collapsed.has(node.id);\n    const ind = svgText(coll?\"+\":\"\u2212\", w/2-14, -h/2+14, \"14\",\"bold\", color, false);\n    g.appendChild(ind);\n  } else if(isST) {\n    const w=165, h=34;\n    const clipId = \"clip_st_\"+node.id;\n    const clipEl = document.createElementNS(\"http://www.w3.org/2000/svg\",\"clipPath\");\n    clipEl.setAttribute(\"id\", clipId);\n    const clipRct = document.createElementNS(\"http://www.w3.org/2000/svg\",\"rect\");\n    clipRct.setAttribute(\"x\", String(-w/2+3)); clipRct.setAttribute(\"y\", String(-h/2));\n    clipRct.setAttribute(\"width\", String(w-22)); clipRct.setAttribute(\"height\", String(h));\n    clipEl.appendChild(clipRct);\n    g.appendChild(clipEl);\n    const rect = roundRect(-w/2,-h/2,w,h,7, \"#0f1923\", \"1\");\n    rect.setAttribute(\"stroke\", color); rect.setAttribute(\"stroke-width\",\"1\");\n    g.appendChild(rect);\n    const t = document.createElementNS(\"http://www.w3.org/2000/svg\",\"text\");\n    t.setAttribute(\"x\",\"0\"); t.setAttribute(\"y\",\"0\");\n    t.setAttribute(\"text-anchor\",\"middle\"); t.setAttribute(\"dominant-baseline\",\"central\");\n    t.setAttribute(\"font-size\",\"10\"); t.setAttribute(\"font-weight\",\"600\");\n    t.setAttribute(\"fill\",color); t.setAttribute(\"font-family\",\"'Segoe UI',Arial,sans-serif\");\n    t.setAttribute(\"clip-path\",\"url(#\"+clipId+\")\");\n    t.textContent = node.label;\n    g.appendChild(t);\n    const coll = collapsed.has(node.id);\n    const ind = svgText(coll?\"+\":\"\u2212\", w/2-10, -h/2+12, \"11\",\"bold\", color, false);\n    g.appendChild(ind);\n  } else if(isCI) {\n    const w=190, h=28;\n    const priColor = PRI_COLORS[node.pri] || \"#94a3b8\";\n    // clip path so text never escapes the box\n    const clipId = \"clip_\"+node.id;\n    const clipEl = document.createElementNS(\"http://www.w3.org/2000/svg\",\"clipPath\");\n    clipEl.setAttribute(\"id\", clipId);\n    const clipRect = document.createElementNS(\"http://www.w3.org/2000/svg\",\"rect\");\n    clipRect.setAttribute(\"x\", -w/2+2); clipRect.setAttribute(\"y\", -h/2);\n    clipRect.setAttribute(\"width\", w-4); clipRect.setAttribute(\"height\", h);\n    clipEl.appendChild(clipRect);\n    g.appendChild(clipEl);\n    const rect = roundRect(-w/2,-h/2,w,h,5, \"#0f1923\", \"1\");\n    rect.setAttribute(\"stroke\", color); rect.setAttribute(\"stroke-width\",\"0.8\"); rect.setAttribute(\"stroke-opacity\",\"0.5\");\n    g.appendChild(rect);\n    // priority dot\n    const dot = document.createElementNS(\"http://www.w3.org/2000/svg\",\"circle\");\n    dot.setAttribute(\"cx\",-w/2+10); dot.setAttribute(\"cy\",0);\n    dot.setAttribute(\"r\",\"4\"); dot.setAttribute(\"fill\",priColor);\n    g.appendChild(dot);\n    const t = document.createElementNS(\"http://www.w3.org/2000/svg\",\"text\");\n    t.setAttribute(\"x\", -w/2+20);\n    t.setAttribute(\"y\", \"0\");\n    t.setAttribute(\"text-anchor\",\"start\");\n    t.setAttribute(\"dominant-baseline\",\"central\");\n    t.setAttribute(\"font-size\",\"9.5\");\n    t.setAttribute(\"font-weight\",\"normal\");\n    t.setAttribute(\"fill\",\"#c8ddf0\");\n    t.setAttribute(\"font-family\",\"'Segoe UI',Arial,sans-serif\");\n    t.setAttribute(\"clip-path\",`url(#${clipId})`);\n    t.textContent = node.label;\n    g.appendChild(t);\n  }\n\n  g.addEventListener(\"click\", (e) => {\n    e.stopPropagation();\n    if(node.children && node.children.length) {\n      if(collapsed.has(node.id)) collapsed.delete(node.id);\n      else collapsed.add(node.id);\n      render();\n    }\n  });\n\n  if(node.depth === 3) {\n    g.addEventListener(\"click\", (e) => {\n      e.stopPropagation();\n      openPanel(node);\n    });\n  } else if(node.desc) {\n    g.addEventListener(\"click\", (e) => {\n      e.stopPropagation();\n      openPanelDesc(node);\n    });\n  }\n\n  svg.appendChild(g);\n  if(node.children && !collapsed.has(node.id)) node.children.forEach(c => drawNodes(c));\n}\n\nfunction roundRect(x,y,w,h,r,fill,opacity) {\n  const el = document.createElementNS(\"http://www.w3.org/2000/svg\",\"rect\");\n  el.setAttribute(\"x\",x); el.setAttribute(\"y\",y); el.setAttribute(\"width\",w); el.setAttribute(\"height\",h);\n  el.setAttribute(\"rx\",r); el.setAttribute(\"fill\",fill); el.setAttribute(\"fill-opacity\",opacity||\"1\");\n  return el;\n}\n\nfunction svgText(text, x, y, size, weight, color, multiline) {\n  const lines = text.split(\"\\n\");\n  if(lines.length===1 || !multiline) {\n    const t = document.createElementNS(\"http://www.w3.org/2000/svg\",\"text\");\n    t.setAttribute(\"x\",x); t.setAttribute(\"y\",y);\n    t.setAttribute(\"text-anchor\",\"middle\"); t.setAttribute(\"dominant-baseline\",\"central\");\n    t.setAttribute(\"font-size\",size); t.setAttribute(\"font-weight\",weight);\n    t.setAttribute(\"fill\",color); t.setAttribute(\"font-family\",\"'Segoe UI',Arial,sans-serif\");\n    t.textContent = lines[0];\n    return t;\n  }\n  const g = document.createElementNS(\"http://www.w3.org/2000/svg\",\"g\");\n  const lh = parseFloat(size) + 3;\n  const startY = y - (lines.length-1)*lh/2;\n  lines.forEach((line,i) => {\n    const t = document.createElementNS(\"http://www.w3.org/2000/svg\",\"text\");\n    t.setAttribute(\"x\",x); t.setAttribute(\"y\",startY + i*lh);\n    t.setAttribute(\"text-anchor\",\"middle\"); t.setAttribute(\"dominant-baseline\",\"central\");\n    t.setAttribute(\"font-size\",size); t.setAttribute(\"font-weight\",weight);\n    t.setAttribute(\"fill\",color); t.setAttribute(\"font-family\",\"'Segoe UI',Arial,sans-serif\");\n    t.textContent = line;\n    g.appendChild(t);\n  });\n  return g;\n}\n\n// \u2500\u2500 Pan & Zoom \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nfunction applyTransform() {\n  svg.setAttribute(\"viewBox\",`${vx} ${vy} ${wrap.clientWidth/vscale} ${wrap.clientHeight/vscale}`);\n}\n\nwrap.addEventListener(\"mousedown\", e => { dragging=true; lastX=e.clientX; lastY=e.clientY; wrap.classList.add(\"dragging\"); });\nwindow.addEventListener(\"mouseup\", () => { dragging=false; wrap.classList.remove(\"dragging\"); });\nwindow.addEventListener(\"mousemove\", e => {\n  if(!dragging) return;\n  vx -= (e.clientX-lastX)/vscale; vy -= (e.clientY-lastY)/vscale;\n  lastX=e.clientX; lastY=e.clientY; applyTransform();\n});\nwrap.addEventListener(\"wheel\", e => {\n  e.preventDefault();\n  const factor = e.deltaY < 0 ? 1.1 : 0.91;\n  const mx = vx + e.offsetX/vscale, my = vy + e.offsetY/vscale;\n  vscale *= factor;\n  vx = mx - e.offsetX/vscale; vy = my - e.offsetY/vscale;\n  applyTransform();\n}, {passive:false});\n\nfunction resetView() { vx=-100; vy=-600; vscale=0.55; applyTransform(); }\nfunction expandAll()  { collapsed.clear(); render(); }\nfunction collapseAll(){ tree.children.forEach(c=>collapsed.add(c.id)); render(); }\nfunction downloadSVG() {\n  const s = new XMLSerializer().serializeToString(svg);\n  const blob = new Blob([s],{type:\"image/svg+xml\"});\n  const a = document.createElement(\"a\"); a.href=URL.createObjectURL(blob);\n  a.download=\"partner-in-aging-topical-map.svg\"; a.click();\n}\n\n// \u2500\u2500 Info Panel \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nfunction closePanel() {\n  document.getElementById(\"info-panel\").classList.add(\"hidden\");\n}\nfunction openPanel(node) {\n  const panel = document.getElementById(\"info-panel\");\n  const inner = document.getElementById(\"panel-inner\");\n  const color = getColor(node);\n  const pc = PRI_COLORS[node.pri] || \"#94a3b8\";\n  const intentColors = {Informational:\"#60a5fa\",Commercial:\"#f59e0b\",Transactional:\"#34d399\",Navigational:\"#a78bfa\"};\n  const ic = intentColors[node.intent] || \"#94a3b8\";\n\n  let html = `<div style=\"font-size:14px;font-weight:700;color:#fff;line-height:1.4;margin-bottom:14px;padding-right:20px\">${node.label}<\/div>`;\n\n  if(node.query) {\n    html += `<div class=\"pf-label\">Sample Query<\/div>`;\n    html += `<div class=\"pf-value\" style=\"font-style:italic;color:#93c5fd\">\"${node.query}\"<\/div>`;\n  }\n  if(node.desc) {\n    html += `<div class=\"pf-label\">Description<\/div>`;\n    html += `<div class=\"pf-value\">${node.desc}<\/div>`;\n  }\n  html += `<div class=\"pf-label\">Details<\/div><div>`;\n  if(node.pri)    html += `<span class=\"pf-badge\" style=\"background:${pc}22;color:${pc};border:1px solid ${pc}55\">\u25cf ${node.pri}<\/span>`;\n  if(node.intent) html += `<span class=\"pf-badge\" style=\"background:${ic}22;color:${ic};border:1px solid ${ic}55\">${node.intent}<\/span>`;\n  if(node.fmt)    html += `<span class=\"pf-badge\" style=\"background:#1a2d4588;color:#a8c2e0;border:1px solid #2d4a6e\">${node.fmt}<\/span>`;\n  html += `<\/div>`;\n  if(node.link) {\n    html += `<div class=\"pf-label\">Internal Linking Target<\/div>`;\n    html += `<div class=\"pf-value\" style=\"color:${color}\">\u2192 ${node.link}<\/div>`;\n  }\n\n  inner.innerHTML = html;\n  panel.classList.remove(\"hidden\");\n}\nfunction openPanelDesc(node) {\n  const panel = document.getElementById(\"info-panel\");\n  const inner = document.getElementById(\"panel-inner\");\n  const color = getColor(node);\n  let html = `<div style=\"font-size:14px;font-weight:700;color:#fff;line-height:1.4;margin-bottom:10px;padding-right:20px\">${node.label.replace(/\\n/,\" \")}<\/div>`;\n  if(node.desc) html += `<div class=\"pf-label\">About<\/div><div class=\"pf-value\">${node.desc}<\/div>`;\n  inner.innerHTML = html;\n  panel.classList.remove(\"hidden\");\n}\n\n// \u2500\u2500 Legend \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nconst li = document.getElementById(\"legend-items\");\ntree.children.forEach(ct => {\n  const d = document.createElement(\"div\"); d.className=\"leg-item\";\n  d.innerHTML=`<div class=\"leg-dot\" style=\"background:${ct.color}\"><\/div>${ct.label.replace(\"\\n\",\" \")}`;\n  li.appendChild(d);\n});\n// Priority legend\nconst pdiv = document.createElement(\"div\"); \npdiv.innerHTML=`<div style=\"border-top:1px solid #2d4a6e;margin:8px 0 6px\"><\/div><div style=\"font-size:11px;color:#6b8cae;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px\">Priority<\/div>`;\nli.appendChild(pdiv);\n[[\"High\",\"#22c55e\"],[\"Medium\",\"#f59e0b\"],[\"Low\",\"#94a3b8\"]].forEach(([p,c]) => {\n  const d = document.createElement(\"div\"); d.className=\"leg-item\";\n  d.innerHTML=`<div class=\"leg-dot\" style=\"background:${c}\"><\/div>${p}`;\n  li.appendChild(d);\n});\n\n// \u2500\u2500 Init \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nwindow.addEventListener(\"resize\", () => applyTransform());\n// Start with subtopics collapsed for clean view\ntree.children.forEach(ct => ct.children && ct.children.forEach(st => collapsed.add(st.id)));\nrender();\nresetView();\n<\/script>\n<\/body>\n<\/html>\n";
 
 // ── State ─────────────────────────────────────────────────────────────────────
-var pat         = '';
-var fileContent = null;
-var delTarget   = null;
+var generatedHTML    = null;
+var generatedMapData = null;
+var deployContent    = null;
+var deleteTarget     = null;
 
-// ── Lock / unlock ─────────────────────────────────────────────────────────────
-function unlock() {
-  var pw = document.getElementById('pw-input').value;
-  if (pw === ADMIN_PW) {
-    sessionStorage.setItem(LS_UNLOCKED, '1');
-    document.getElementById('lock').style.display = 'none';
-    document.getElementById('app').style.display  = 'block';
-    pat = localStorage.getItem(LS_PAT) || '';
-    if (pat) {
-      document.getElementById('pat-badge').textContent = 'PAT: ' + pat.slice(0,8) + '••••';
-    } else {
-      // First time — prompt for PAT
-      var p = prompt('Enter your GitHub Personal Access Token (saved locally for future visits):');
-      if (p && p.trim()) {
-        pat = p.trim();
-        localStorage.setItem(LS_PAT, pat);
-        document.getElementById('pat-badge').textContent = 'PAT: ' + pat.slice(0,8) + '••••';
-      }
-    }
-    loadMaps();
-    checkReady();
-  } else {
-    var err = document.getElementById('lock-err');
-    err.style.display = 'block';
-    setTimeout(function() { err.style.display = 'none'; }, 2000);
-    document.getElementById('pw-input').value = '';
-  }
+// ── Ready check (called on input events and on load) ──────────────────────────
+function checkGenReady() {
+  var name = document.getElementById('biz-name').value.trim();
+  document.getElementById('gen-btn').disabled = !name;
+}
+function checkDeployReady() {
+  var slug = document.getElementById('deploy-slug').value.trim();
+  document.getElementById('deploy-btn').disabled = !(slug && deployContent);
 }
 
-function lockApp() {
-  sessionStorage.removeItem(LS_UNLOCKED);
-  document.getElementById('lock').style.display = 'flex';
-  document.getElementById('app').style.display  = 'none';
-  document.getElementById('pw-input').value = '';
-}
+// Attach input listeners after DOM is ready
+document.getElementById('biz-name').addEventListener('input', checkGenReady);
+document.getElementById('biz-name').addEventListener('paste', function() { setTimeout(checkGenReady, 0); });
+document.getElementById('biz-url').addEventListener('paste', function() {});
+document.getElementById('biz-desc').addEventListener('paste', function() {});
+document.getElementById('biz-location').addEventListener('paste', function() {});
+document.getElementById('deploy-slug').addEventListener('input', function() { updateUrlPreview(); checkDeployReady(); });
+checkGenReady();
+checkDeployReady();
 
-// Auto-unlock if session is still active
-if (sessionStorage.getItem(LS_UNLOCKED)) {
-  pat = localStorage.getItem(LS_PAT) || '';
-  document.getElementById('lock').style.display = 'none';
-  document.getElementById('app').style.display  = 'block';
-  document.getElementById('pat-badge').textContent = pat ? 'PAT: ' + pat.slice(0,8) + '••••' : 'PAT: not set';
-  loadMaps();
+// ── Tab switching ─────────────────────────────────────────────────────────────
+function switchTab(name) {
+  ['generate','deploy','maps'].forEach(function(n) {
+    document.getElementById('tab-'+n).classList.toggle('active', n === name);
+    document.getElementById('panel-'+n).classList.toggle('active', n === name);
+  });
+  if (name === 'maps') loadMaps();
 }
-
-document.getElementById('pw-input').addEventListener('keydown', function(e) {
-  if (e.key === 'Enter') unlock();
-});
-window.unlock = unlock;
-window.lockApp = lockApp;
+window.switchTab = switchTab;
 
 // ── Utilities ─────────────────────────────────────────────────────────────────
 function toast(msg, dur) {
-  dur = dur || 2500;
+  dur = dur || 2800;
   var el = document.getElementById('toast');
   el.textContent = msg;
   el.classList.add('show');
   setTimeout(function() { el.classList.remove('show'); }, dur);
 }
 
-function plog(msg, cls) {
+function glog(msg, cls) {
   cls = cls || 'info';
-  var el = document.getElementById('push-log');
+  var el = document.getElementById('gen-log');
   el.style.display = 'block';
   el.innerHTML += '<div class="' + cls + '">' + msg + '</div>';
   el.scrollTop = el.scrollHeight;
+}
+function dlog(msg, cls) {
+  cls = cls || 'info';
+  var el = document.getElementById('deploy-log');
+  el.style.display = 'block';
+  el.innerHTML += '<div class="' + cls + '">' + msg + '</div>';
+  el.scrollTop = el.scrollHeight;
+}
+function clearGlog() {
+  var el = document.getElementById('gen-log');
+  el.innerHTML = ''; el.style.display = 'none';
+}
+
+function setStep(n) {
+  for (var i = 0; i < 4; i++) {
+    var si  = document.getElementById('si-' + i);
+    var dot = document.getElementById('sd-' + i);
+    si.className  = 'step-item' + (i < n ? ' done' : i === n ? ' active' : '');
+    dot.className = 'step-dot'  + (i < n ? ' done' : i === n ? ' active' : '');
+    dot.textContent = i < n ? '✓' : String(i + 1);
+  }
 }
 
 function toSlug(s) {
@@ -289,201 +330,412 @@ function toSlug(s) {
 
 function utf8ToBase64(str) {
   var bytes = new TextEncoder().encode(str);
-  var bin = ''; var C = 8192;
-  for (var i = 0; i < bytes.length; i += C)
-    bin += String.fromCharCode.apply(null, bytes.subarray(i, i + C));
-  return btoa(bin);
+  var binary = '';
+  var chunk = 8192;
+  for (var i = 0; i < bytes.length; i += chunk) {
+    binary += String.fromCharCode.apply(null, bytes.subarray(i, i + chunk));
+  }
+  return btoa(binary);
 }
 
-// ── GitHub API ────────────────────────────────────────────────────────────────
-async function gh(method, path, body) {
-  var opts = {
-    method: method,
-    headers: {
-      'Authorization': 'token ' + pat,
-      'Accept': 'application/vnd.github.v3+json',
-      'Content-Type': 'application/json',
-      'User-Agent': 'WMM-Maps-Admin'
-    }
+// ── Anthropic API ─────────────────────────────────────────────────────────────
+async function callClaude(messages, system, maxTokens) {
+  maxTokens = maxTokens || 8000;
+  var payload = {
+    model: 'claude-sonnet-4-20250514',
+    max_tokens: maxTokens,
+    system: system,
+    messages: messages
   };
-  if (body) opts.body = JSON.stringify(body);
-  var r = await fetch('https://api.github.com/repos/' + REPO + path, opts);
-  return { status: r.status, data: await r.json().catch(function() { return {}; }) };
+  var r = await fetch('https://api.topicalmaps.weissmediamarketing.com', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'claude', payload: payload })
+  });
+  var data = await r.json().catch(function() { return { error: { message: 'HTTP ' + r.status } }; });
+  if (!r.ok || data.error) {
+    throw new Error((data.error && data.error.message) || ('HTTP ' + r.status));
+  }
+  return data;
 }
 
-// ── Input handlers ────────────────────────────────────────────────────────────
-function onName() {
-  var name = document.getElementById('client-name').value;
-  document.getElementById('slug').value = toSlug(name);
-  updatePreview();
-  checkReady();
+function extractText(response) {
+  return (response.content || [])
+    .filter(function(b) { return b.type === 'text'; })
+    .map(function(b) { return b.text; })
+    .join('\n');
 }
-function onSlug() { updatePreview(); checkReady(); }
-window.onName = onName;
-window.onSlug = onSlug;
 
-function updatePreview() {
-  var slug = document.getElementById('slug').value.trim();
-  var prev = document.getElementById('url-prev');
-  var txt  = document.getElementById('url-prev-text');
+
+async function startGenerate() {
+  clearGlog();
+  document.getElementById('preview-area').style.display = 'none';
+  var btn = document.getElementById('gen-btn');
+  btn.disabled = true; btn.classList.add('loading'); btn.textContent = 'Generating\u2026';
+  generatedHTML = null; generatedMapData = null;
+
+  var name     = document.getElementById('biz-name').value.trim();
+  var url      = document.getElementById('biz-url').value.trim();
+  var desc     = document.getElementById('biz-desc').value.trim();
+  var location = document.getElementById('biz-location').value.trim();
+
+  var bizContext = [
+    'Business: ' + name,
+    url      ? 'Website: '     + url      : '',
+    desc     ? 'Description: ' + desc     : '',
+    location ? 'Location: '    + location : ''
+  ].filter(Boolean).join('\n');
+
+  try {
+    // ── Single combined call: research + JSON in one shot ──────────────────
+    setStep(1);
+    glog('Generating topical map\u2026 (this takes ~15 seconds)');
+
+    var combinedPrompt = 'You are an expert SEO content strategist.\n\nBusiness details:\n' + bizContext + '\n\nGenerate a complete topical authority map for this business as a JSON object.\n\nReturn ONLY valid JSON, no markdown fences, no explanation before or after.\n\nRequired JSON format:\n{\n  "businessName": "' + name + '",\n  "rootLabel": "Short\\nName",\n  "coreTopics": [\n    {\n      "id": "c1",\n      "label": "Topic\\nName",\n      "desc": "One sentence description",\n      "subtopics": [\n        {\n          "id": "c1s1",\n          "label": "Subtopic Name",\n          "contentIdeas": [\n            {\n              "id": "c1s1a",\n              "label": "Page Title",\n              "pri": "High",\n              "intent": "Informational",\n              "query": "exact search query",\n              "desc": "1-2 sentences on what this covers.",\n              "fmt": "Blog Post",\n              "link": "Core Topic Name"\n            }\n          ]\n        }\n      ]\n    }\n  ]\n}\n\nRequirements:\n- 5-6 core topics specific to this business\n- 3 subtopics per core topic\n- 3 content ideas per subtopic\n- pri: High / Medium / Low\n- intent: Informational / Commercial / Transactional / Navigational\n- fmt: Blog Post / Guide / FAQ Page / Service Page / Listicle / Comparison Page\n- link must exactly match one of your core topic labels\n- rootLabel: use \\n to split the name across 2 lines\n- Make every topic, query, and title specific to ' + name + '\n- Return ONLY the JSON object';
+
+    setStep(2);
+    var genRes = await callClaude(
+      [{ role: 'user', content: combinedPrompt }],
+      'You are an expert SEO content strategist. Return valid JSON only — no markdown, no preamble, just the raw JSON object.',
+      4000
+    );
+
+    var jsonText = extractText(genRes).trim()
+      .replace(/^```json\s*/,'').replace(/^```\s*/,'').replace(/\s*```$/,'').trim();
+
+    var mapData;
+    try {
+      mapData = JSON.parse(jsonText);
+    } catch(e) {
+      var match = jsonText.match(/\{[\s\S]*\}/);
+      if (match) { try { mapData = JSON.parse(match[0]); } catch(e2) { throw new Error('JSON parse failed: ' + e2.message); } }
+      else throw new Error('Could not find JSON in response. Raw: ' + jsonText.slice(0,200));
+    }
+
+    generatedMapData = mapData;
+    glog('\u2713 Map structure generated', 'ok');
+
+    var totalIdeas = mapData.coreTopics.reduce(function(s,ct) {
+      return s + ct.subtopics.reduce(function(ss,st) { return ss + st.contentIdeas.length; }, 0);
+    }, 0);
+    var totalSubs = mapData.coreTopics.reduce(function(s,ct) { return s + ct.subtopics.length; }, 0);
+    glog('\u2713 ' + mapData.coreTopics.length + ' core topics \u00b7 ' + totalSubs + ' subtopics \u00b7 ' + totalIdeas + ' content ideas', 'ok');
+
+    // ── Build HTML ──────────────────────────────────────────────────────────
+    setStep(3);
+    glog('Building interactive map\u2026');
+
+    var treeJS  = buildTreeJS(mapData);
+    var bizName = mapData.businessName;
+    var bizUrl  = url || '';
+    var bizSlug = bizUrl.replace('https://','').replace('http://','') || bizName.toLowerCase().replace(/\s+/g,'') + '.com';
+
+    var finalBefore = MAP_BEFORE
+      .replace('Partner in Aging \u2013 Topical Authority Map', bizName + ' \u2013 Topical Authority Map')
+      .replace(/Partner\\\\nin Aging/g, (mapData.rootLabel || bizName).replace(/\n/g,'\\n'))
+      .replace(/Partner in Aging \u2014 Topical Authority Map/g, bizName + ' \u2014 Topical Authority Map')
+      .replace('partnerinaging.com', bizSlug);
+
+    var finalAfter = MAP_AFTER
+      .replace(/Partner in Aging/g, bizName)
+      .replace(/partnerinaging\.com/g, bizSlug);
+
+    var finalHTML = finalBefore + '\n' + treeJS + '\n' + finalAfter;
+    generatedHTML = finalHTML;
+
+    document.getElementById('map-iframe').srcdoc = finalHTML;
+
+    var hi = mapData.coreTopics.reduce(function(s,ct) {
+      return s + ct.subtopics.reduce(function(ss,st) {
+        return ss + st.contentIdeas.filter(function(ci) { return ci.pri === 'High'; }).length;
+      }, 0);
+    }, 0);
+
+    document.getElementById('stats-row').innerHTML =
+      '<div class="stat-box"><div class="stat-num">' + mapData.coreTopics.length + '</div><div class="stat-lbl">Core Topics</div></div>' +
+      '<div class="stat-box"><div class="stat-num">' + totalSubs + '</div><div class="stat-lbl">Subtopics</div></div>' +
+      '<div class="stat-box"><div class="stat-num">' + totalIdeas + '</div><div class="stat-lbl">Content Ideas</div></div>' +
+      '<div class="stat-box"><div class="stat-num">' + hi + '</div><div class="stat-lbl">High Priority</div></div>';
+
+    document.getElementById('preview-title').textContent = bizName + ' \u2014 Topical Authority Map';
+    document.getElementById('preview-area').style.display = 'block';
+
+    document.getElementById('deploy-name').value = bizName;
+    document.getElementById('deploy-slug').value = toSlug(bizName);
+    updateUrlPreview();
+    deployContent = finalHTML;
+    checkDeployReady();
+
+    glog('');
+    glog('\uD83C\uDF89 Done! Download HTML or Excel, or deploy directly.', 'ok');
+    setStep(3)
+  } catch(e) {
+    glog('\u2717 Error: ' + e.message, 'err');
+    setStep(0);
+  }
+
+  btn.disabled = false; btn.classList.remove('loading'); btn.textContent = '\u26A1 Generate Topical Map';
+  checkGenReady();
+}
+window.startGenerate = startGenerate;
+
+// ── Download ──────────────────────────────────────────────────────────────────
+function downloadMap() {
+  if (!generatedHTML) return;
+  var name = document.getElementById('biz-name').value.trim() || 'topical-map';
+  var blob = new Blob([generatedHTML], { type: 'text/html' });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = toSlug(name) + '-topical-authority-map.html';
+  a.click();
+  toast('HTML downloaded');
+}
+window.downloadMap = downloadMap;
+
+function downloadExcel() {
+  if (!generatedMapData) return;
+  var btn = document.getElementById('xlsx-btn');
+  btn.textContent = 'Building…';
+  btn.disabled = true;
+
+  try {
+    var wb = XLSX.utils.book_new();
+    var mapRows = [['Level','Core Topic','Subtopic','Content Idea / Page Title','Search Intent','Sample Query','Brief Description','Content Format','Priority Tier','Internal Linking Target']];
+
+    var COLORS = { High: 'FF22c55e', Medium: 'FFf59e0b', Low: 'FF94a3b8' };
+    var bizName = generatedMapData.businessName;
+
+    generatedMapData.coreTopics.forEach(function(ct) {
+      mapRows.push(['Core Topic', ct.label.replace(/\n/g,' '), '', '', '', '', ct.desc || '', '', '', '']);
+      ct.subtopics.forEach(function(st) {
+        mapRows.push(['Subtopic', ct.label.replace(/\n/g,' '), st.label, '', '', '', '', '', '', '']);
+        st.contentIdeas.forEach(function(ci) {
+          mapRows.push(['Content Idea', ct.label.replace(/\n/g,' '), st.label, ci.label, ci.intent || '', ci.query || '', ci.desc || '', ci.fmt || '', ci.pri || '', ci.link || '']);
+        });
+      });
+    });
+
+    var ws = XLSX.utils.aoa_to_sheet(mapRows);
+
+    // Column widths
+    ws['!cols'] = [
+      {wch:14},{wch:24},{wch:26},{wch:44},{wch:16},{wch:44},{wch:60},{wch:20},{wch:14},{wch:28}
+    ];
+    ws['!freeze'] = { xSplit: 0, ySplit: 1 };
+
+    XLSX.utils.book_append_sheet(wb, ws, 'Topical Map');
+
+    // Summary sheet
+    var totalIdeas = generatedMapData.coreTopics.reduce(function(s,ct){
+      return s + ct.subtopics.reduce(function(ss,st){ return ss + st.contentIdeas.length; },0);
+    },0);
+    var totalSubs = generatedMapData.coreTopics.reduce(function(s,ct){ return s + ct.subtopics.length; },0);
+    var hi = 0, med = 0, lo = 0;
+    generatedMapData.coreTopics.forEach(function(ct){
+      ct.subtopics.forEach(function(st){
+        st.contentIdeas.forEach(function(ci){
+          if (ci.pri==='High') hi++;
+          else if (ci.pri==='Medium') med++;
+          else lo++;
+        });
+      });
+    });
+
+    var sumRows = [
+      ['WMM Topical Authority Map — Summary'],
+      [''],
+      ['Business', bizName],
+      ['Generated', new Date().toLocaleDateString()],
+      [''],
+      ['STRUCTURE'],
+      ['Core Topics', generatedMapData.coreTopics.length],
+      ['Subtopics', totalSubs],
+      ['Total Content Ideas', totalIdeas],
+      [''],
+      ['PRIORITY BREAKDOWN'],
+      ['High Priority', hi],
+      ['Medium Priority', med],
+      ['Low Priority', lo]
+    ];
+    var ws2 = XLSX.utils.aoa_to_sheet(sumRows);
+    ws2['!cols'] = [{wch:26},{wch:20}];
+    XLSX.utils.book_append_sheet(wb, ws2, 'Summary');
+
+    var slug = toSlug(bizName);
+    XLSX.writeFile(wb, slug + '-topical-authority-map.xlsx');
+    toast('✓ Excel downloaded');
+  } catch(e) {
+    toast('Excel error: ' + e.message);
+  }
+
+  btn.textContent = '↓ Download Excel';
+  btn.disabled = false;
+}
+window.downloadExcel = downloadExcel;
+
+function goToDeploy() {
+  switchTab('deploy');
+  document.getElementById('file-field').style.display = 'none';
+}
+window.goToDeploy = goToDeploy;
+
+// ── Deploy panel ──────────────────────────────────────────────────────────────
+function handleDeployName() {
+  document.getElementById('deploy-slug').value = toSlug(document.getElementById('deploy-name').value);
+  updateUrlPreview();
+  checkDeployReady();
+}
+window.handleDeployName = handleDeployName;
+
+function updateUrlPreview() {
+  var slug = document.getElementById('deploy-slug').value.trim();
+  var prev = document.getElementById('url-preview');
+  var txt  = document.getElementById('url-preview-text');
   if (slug) {
-    txt.textContent = BASE_URL.replace('https://','') + '/' + toSlug(slug);
+    txt.textContent = 'topicalmaps.weissmediamarketing.com/' + toSlug(slug);
     prev.classList.add('active');
   } else {
-    txt.textContent = 'Enter a slug to preview URL';
+    txt.textContent = 'Enter a slug to preview the URL';
     prev.classList.remove('active');
   }
+  checkDeployReady();
 }
+window.updateUrlPreview = updateUrlPreview;
 
-function onFile(file) {
+function handleFileUpload(file) {
   if (!file) return;
-  document.getElementById('dz-file').textContent = file.name;
+  document.getElementById('upload-fname').textContent = file.name;
   var reader = new FileReader();
-  reader.onload = function(e) { fileContent = e.target.result; checkReady(); };
+  reader.onload = function(e) { deployContent = e.target.result; checkDeployReady(); };
   reader.readAsText(file, 'UTF-8');
 }
-window.onFile = onFile;
+window.handleFileUpload = handleFileUpload;
 
-var dz = document.getElementById('dz');
-dz.addEventListener('dragover',  function(e) { e.preventDefault(); dz.classList.add('over'); });
-dz.addEventListener('dragleave', function()  { dz.classList.remove('over'); });
+var dz = document.getElementById('drop-zone');
+dz.addEventListener('dragover', function(e) { e.preventDefault(); dz.style.borderColor='var(--accent)'; });
+dz.addEventListener('dragleave', function() { dz.style.borderColor='var(--border2)'; });
 dz.addEventListener('drop', function(e) {
-  e.preventDefault(); dz.classList.remove('over');
+  e.preventDefault(); dz.style.borderColor='var(--border2)';
   var f = e.dataTransfer.files[0];
-  if (f && f.name.endsWith('.html')) onFile(f);
+  if (f && f.name.endsWith('.html')) handleFileUpload(f);
   else toast('Please drop an .html file');
 });
 
-function checkReady() {
-  var slug = document.getElementById('slug').value.trim();
-  document.getElementById('push-btn').disabled = !(slug && fileContent && pat);
-}
-
-// ── Deploy ────────────────────────────────────────────────────────────────────
-async function pushMap() {
-  var slug = toSlug(document.getElementById('slug').value.trim());
-  if (!slug || !fileContent || !pat) return;
-
-  document.getElementById('push-log').innerHTML = '';
-  document.getElementById('push-log').style.display = 'block';
-  document.getElementById('success-bar').style.display = 'none';
-  var btn = document.getElementById('push-btn');
-  btn.disabled = true; btn.textContent = 'Deploying\u2026';
-
-  plog('<span class="dim">\u25b8 public/' + slug + '/index.html</span>');
-
-  var path = '/contents/public/' + slug + '/index.html';
-  var existing = await gh('GET', path);
-  var sha = existing.status === 200 ? existing.data.sha : null;
-  plog(sha ? '<span class="dim">Updating existing file\u2026</span>' : '<span class="dim">Creating new file\u2026</span>');
-
-  var encoded = utf8ToBase64(fileContent);
-  var body = { message: 'Deploy topical map: ' + slug, content: encoded };
-  if (sha) body.sha = sha;
-
-  var result = await gh('PUT', path, body);
-  if (result.status === 200 || result.status === 201) {
-    plog('\u2713 Pushed to GitHub', 'ok');
-    plog('\u23f3 Netlify deploying\u2026 (~20 seconds)', 'info');
-    var url = BASE_URL + '/' + slug;
-    document.getElementById('live-url').href = url;
-    document.getElementById('live-url').textContent = url.replace('https://','');
-    document.getElementById('success-bar').style.display = 'flex';
-    toast('\u2713 Deployed!');
-    setTimeout(loadMaps, 3000);
-  } else {
-    plog('\u2717 ' + (result.data.message || 'Push failed'), 'err');
-    toast('Deploy failed');
+async function deployMap() {
+  var slug = toSlug(document.getElementById('deploy-slug').value.trim());
+  if (!slug || !deployContent) return;
+  var btn = document.getElementById('deploy-btn');
+  btn.disabled = true; btn.classList.add('loading'); btn.textContent = 'Deploying\u2026';
+  document.getElementById('deploy-log').innerHTML = '';
+  document.getElementById('deploy-log').style.display = 'block';
+  document.getElementById('success-banner').style.display = 'none';
+  dlog('<span class="dim">\u25b8 ' + slug + '</span>');
+  dlog('Encoding and pushing to GitHub\u2026');
+  try {
+    var encoded = utf8ToBase64(deployContent);
+    var r = await fetch('https://api.topicalmaps.weissmediamarketing.com', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'deploy', slug: slug, content: encoded })
+    });
+    var data = await r.json();
+    if (data.success) {
+      dlog('\u2713 Pushed to GitHub', 'ok');
+      dlog('\u23f3 Netlify deploying\u2026 (~20 seconds)', 'info');
+      var banner = document.getElementById('success-banner');
+      var urlEl  = document.getElementById('live-url');
+      urlEl.href = data.url;
+      urlEl.textContent = data.url.replace('https://','');
+      banner.style.display = 'flex';
+      toast('\u2713 Deployed!');
+      setTimeout(function() { loadMaps(); }, 3000);
+    } else {
+      dlog('\u2717 ' + (data.error || 'Unknown error'), 'err');
+      toast('Deploy failed');
+    }
+  } catch(e) {
+    dlog('\u2717 ' + e.message, 'err');
+    toast('Network error');
   }
-
-  btn.disabled = false; btn.textContent = '\u2191 \u00a0Deploy Map';
-  checkReady();
+  btn.disabled = false; btn.classList.remove('loading'); btn.textContent = '\u2191 Deploy Map';
+  checkDeployReady();
 }
-window.pushMap = pushMap;
+window.deployMap = deployMap;
 
-function copyLive() {
-  navigator.clipboard.writeText(document.getElementById('live-url').href)
-    .then(function() { toast('Link copied!'); });
+function copyLiveUrl() {
+  navigator.clipboard.writeText(document.getElementById('live-url').href).then(function() { toast('Link copied!'); });
 }
-window.copyLive = copyLive;
+window.copyLiveUrl = copyLiveUrl;
 
-// ── Load maps ─────────────────────────────────────────────────────────────────
+// ── Maps list ─────────────────────────────────────────────────────────────────
 async function loadMaps() {
   var grid = document.getElementById('maps-grid');
-  grid.innerHTML = '<div class="skel"></div><div class="skel"></div><div class="skel"></div>';
-
-  if (!pat) {
-    grid.innerHTML = '<div class="empty">\uD83D\uDD12 No PAT set \u2014 lock and unlock to enter one.</div>';
-    return;
+  grid.innerHTML = '<div style="height:100px" class="skeleton"></div><div style="height:100px" class="skeleton"></div><div style="height:100px" class="skeleton"></div>';
+  try {
+    var r = await fetch('https://api.topicalmaps.weissmediamarketing.com', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ action: 'list' })
+    });
+    var data = await r.json();
+    renderMaps(data.maps || []);
+  } catch(e) {
+    grid.innerHTML = '<div class="empty">\u26a0 Could not load maps.<br>Check that GITHUB_TOKEN is set in Netlify env vars.</div>';
   }
-
-  var res = await gh('GET', '/contents/public');
-  if (res.status === 404 || !Array.isArray(res.data)) {
-    grid.innerHTML = '<div class="empty">No maps deployed yet.<br>Use the form above to deploy your first one.</div>';
-    return;
-  }
-
-  var dirs = res.data.filter(function(i) { return i.type === 'dir'; });
-  if (!dirs.length) {
-    grid.innerHTML = '<div class="empty">\uD83D\uDDFA No maps deployed yet.<br>Use the form above to deploy your first one.</div>';
-    return;
-  }
-
-  grid.innerHTML = dirs.map(function(d) {
-    var url = BASE_URL + '/' + d.name;
-    return '<div class="map-card">' +
-      '<div class="map-slug">' + d.name + '</div>' +
-      '<div class="map-url">' + url.replace('https://','') + '</div>' +
-      '<div class="map-actions">' +
-        '<a class="map-btn" href="' + url + '" target="_blank">\u2197 View</a>' +
-        '<button class="map-btn" onclick="copyUrl(\'' + url + '\')">&#x2398; Copy</button>' +
-        '<button class="map-btn del" onclick="openDel(\'' + d.name + '\')">\u2715 Remove</button>' +
-      '</div></div>';
-  }).join('');
 }
 window.loadMaps = loadMaps;
 
-function copyUrl(url) {
-  navigator.clipboard.writeText(url).then(function() { toast('Link copied!'); });
+function renderMaps(maps) {
+  var grid = document.getElementById('maps-grid');
+  if (!maps.length) {
+    grid.innerHTML = '<div class="empty" style="grid-column:1/-1">\uD83D\uDDFA No maps deployed yet.<br>Generate and deploy your first one above.</div>';
+    return;
+  }
+  grid.innerHTML = maps.map(function(m) {
+    return '<div class="map-card"><div class="map-slug">' + m.slug + '</div><div class="map-url">' +
+      m.url.replace('https://','') + '</div><div class="map-actions">' +
+      '<a class="map-btn" href="' + m.url + '" target="_blank">\u2197 View</a>' +
+      '<button class="map-btn" onclick="copyUrl(\'' + m.url + '\')">\u2398 Copy</button>' +
+      '<button class="map-btn del" onclick="openDelModal(\'' + m.slug + '\')">\u2715</button>' +
+      '</div></div>';
+  }).join('');
 }
+
+function copyUrl(url) { navigator.clipboard.writeText(url).then(function() { toast('Link copied!'); }); }
 window.copyUrl = copyUrl;
 
 // ── Delete ────────────────────────────────────────────────────────────────────
-function openDel(slug) {
-  delTarget = slug;
-  document.getElementById('del-msg').textContent =
-    'Remove "' + slug + '"? The URL will stop working after Netlify redeploys (~20s).';
+function openDelModal(slug) {
+  deleteTarget = slug;
+  document.getElementById('del-slug-label').textContent = slug;
   document.getElementById('del-modal').classList.add('open');
 }
-function closeDel() {
+window.openDelModal = openDelModal;
+
+function closeDelModal() {
   document.getElementById('del-modal').classList.remove('open');
-  delTarget = null;
+  deleteTarget = null;
 }
-window.openDel  = openDel;
-window.closeDel = closeDel;
+window.closeDelModal = closeDelModal;
+
+async function confirmDelete() {
+  closeDelModal();
+  if (!deleteTarget) return;
+  toast('Deleting ' + deleteTarget + '\u2026');
+  try {
+    var r = await fetch('https://api.topicalmaps.weissmediamarketing.com', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ action: 'delete', slug: deleteTarget })
+    });
+    var data = await r.json();
+    if (data.success) { toast('\u2713 Deleted'); loadMaps(); }
+    else toast('\u2717 ' + data.error);
+  } catch(e) { toast('Delete failed'); }
+}
+window.confirmDelete = confirmDelete;
 
 document.getElementById('del-modal').addEventListener('click', function(e) {
-  if (e.target.id === 'del-modal') closeDel();
+  if (e.target.id === 'del-modal') closeDelModal();
 });
-
-async function confirmDel() {
-  if (!delTarget) return;
-  closeDel();
-  toast('Removing ' + delTarget + '\u2026');
-
-  var path = '/contents/public/' + delTarget + '/index.html';
-  var ex   = await gh('GET', path);
-  if (ex.status !== 200) { toast('\u2717 File not found'); return; }
-
-  var res = await gh('DELETE', path, {
-    message: 'Remove topical map: ' + delTarget,
-    sha: ex.data.sha
-  });
-
-  if (res.status === 200) { toast('\u2713 Removed'); loadMaps(); }
-  else toast('\u2717 Delete failed: ' + (res.data.message || ''));
-}
-window.confirmDel = confirmDel;
 
 })();
 </script>
