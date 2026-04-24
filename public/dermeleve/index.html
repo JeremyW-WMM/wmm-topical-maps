@@ -28,6 +28,42 @@ svg.dragging{cursor:grabbing}
 .tooltip strong{color:#4a9eff;display:block;margin-bottom:4px}
 .tooltip em{color:#8ab4e0;font-style:normal;font-size:11px}
 </style>
+
+<style>
+#panel{position:fixed;top:56px;right:0;width:320px;bottom:0;background:#151f2e;border-left:1px solid #2d4a6e;z-index:50;transform:translateX(100%);transition:transform .25s ease;display:flex;flex-direction:column;overflow:hidden}
+#panel.open{transform:translateX(0)}
+#panel-hdr{padding:16px 16px 12px;border-bottom:1px solid #1e3050;display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-shrink:0}
+#panel-title{font-size:14px;font-weight:700;color:#fff;line-height:1.4;flex:1}
+#panel-close{background:none;border:none;color:#8ab4e0;cursor:pointer;font-size:18px;line-height:1;padding:2px 4px;flex-shrink:0}
+#panel-close:hover{color:#fff}
+#panel-body{padding:14px 16px;overflow-y:auto;flex:1}
+.prow{margin-bottom:14px}
+.plabel{font-size:10px;font-weight:700;color:#4a9eff;text-transform:uppercase;letter-spacing:.9px;margin-bottom:4px}
+.pval{font-size:12px;color:#cde;line-height:1.5}
+.pquery{font-size:12px;color:#a0bcd8;font-style:italic;line-height:1.5}
+.pdesc{font-size:12px;color:#c8d8ea;line-height:1.6}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
+.chip{font-size:11px;padding:3px 10px;border-radius:12px;font-weight:600;border:1px solid}
+.chip-high{background:#1a3a2a;color:#6fcf97;border-color:#28a745}
+.chip-med{background:#3a3010;color:#f6c053;border-color:#d4a000}
+.chip-low{background:#2a2a2a;color:#aaa;border-color:#555}
+.chip-info{background:#1a2b40;color:#8ab4e0;border-color:#2d4a6e}
+.chip-comm{background:#2a1f3a;color:#b39ddb;border-color:#7c4dcc}
+.chip-trans{background:#2a1a1a;color:#ef9a9a;border-color:#c62828}
+.chip-nav{background:#1a2a2a;color:#80cbc4;border-color:#00796b}
+.chip-fmt{background:#1e2a1e;color:#a5d6a7;border-color:#388e3c}
+.plink{display:flex;align-items:center;gap:6px;font-size:12px;color:#4a9eff}
+.plink-arrow{color:#4a9eff;font-size:14px}
+.purl{font-size:11px;color:#4a9eff;word-break:break-all;text-decoration:underline;display:block;margin-top:3px}
+.pstatus{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;padding:3px 10px;border-radius:10px}
+.ps-exists{background:#1a3a2a;color:#6fcf97;border:1px solid #28a745}
+.ps-gap{background:#3a1a1a;color:#f28b82;border:1px solid #c62828}
+.ps-update{background:#3a3010;color:#f6c053;border:1px solid #d4a000}
+#panel-footer{padding:12px 16px;border-top:1px solid #1e3050;flex-shrink:0}
+#mark-btn{width:100%;padding:10px;background:#1a3a2a;color:#6fcf97;border:1.5px solid #28a745;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;transition:background .2s}
+#mark-btn:hover{background:#28a745;color:#fff}
+#mark-btn.done{background:#28a745;color:#fff}
+</style>
 </head>
 <body>
 <div id="header">
@@ -505,13 +541,14 @@ function renderTree(node) {
   if(lv===3){
     const overlay=el("rect",{x,y,width:nw,height:nh,rx:"6",
       fill:"transparent",cursor:"pointer"});
+    overlay.addEventListener("click",(e)=>{
+      e.stopPropagation();
+      openPanel(node.name.replace(/\n/g," "));
+    });
     overlay.addEventListener("mouseenter",(e)=>{
       const tip=document.getElementById("tooltip");
       tip.style.display="block";
-      tip.innerHTML=`<strong>${node.name.replace(/\n/g," ")}</strong>
-        <em>Intent: ${node.intent||""} · Format: ${node.fmt||""} · Priority: ${node.prio||""}</em>
-        <div style="margin-top:4px;color:#cde">Query: "${node.query||""}"</div>
-        <div style="margin-top:4px">Status: <span style="color:${node.status==="Exists"?"#28a745":node.status==="Gap"?"#dc3545":"#ffc107"}">${node.status||""}</span></div>`;
+      tip.innerHTML=`<strong>${node.name.replace(/\n/g," ")}</strong><em style="display:block;margin-top:2px;color:#8ab4e0">Click to see full details</em>`;
     });
     overlay.addEventListener("mousemove",(e)=>{
       const tip=document.getElementById("tooltip");
@@ -571,7 +608,209 @@ function downloadPNG() {
   a.click();
 }
 
+const DETAIL = {
+  "What Is Atopic Dermatitis? A Complete Guide": {"desc": "Explains atopic dermatitis, its immune basis, symptoms, and why it causes persistent itch. Anchors Dermeleve's eczema authority.", "lt": "Eczema (Atopic Dermatitis)", "intent": "Informational", "fmt": "Guide", "prio": "High", "status": "Gap", "query": "what is atopic dermatitis", "url": ""},
+  "Types of Eczema: Atopic, Contact, Seborrheic & Nummular": {"desc": "Breaks down the major eczema subtypes so readers can identify their condition and find the right treatment.", "lt": "Eczema (Atopic Dermatitis)", "intent": "Informational", "fmt": "Blog Post", "prio": "High", "status": "Gap", "query": "types of eczema", "url": ""},
+  "Common Eczema Triggers and How to Avoid Them": {"desc": "Lists environmental, dietary, and product-related triggers with actionable avoidance tips.", "lt": "Skin Care Routine & Lifestyle", "intent": "Informational", "fmt": "Blog Post", "prio": "High", "status": "Gap", "query": "eczema triggers to avoid", "url": ""},
+  "Eczema in Adults vs. Children: Key Differences": {"desc": "Compares presentation, severity, and treatment needs across age groups.", "lt": "Eczema (Atopic Dermatitis)", "intent": "Informational", "fmt": "Blog Post", "prio": "Medium", "status": "Gap", "query": "eczema in adults vs children", "url": ""},
+  "How to Stop Eczema Itch Fast (Proven Methods)": {"desc": "Reviews fastest-acting OTC methods including steroid-free creams, wet wraps, and cooling techniques.", "lt": "Product Education", "intent": "Commercial", "fmt": "Blog Post", "prio": "High", "status": "Gap", "query": "how to stop eczema itch fast", "url": ""},
+  "How to Stop Eczema Itch at Night": {"desc": "Targets the common problem of nighttime flares \u2014 covers routines, barrier creams, and cooling tactics.", "lt": "Skin Care Routine & Lifestyle", "intent": "Informational", "fmt": "Blog Post", "prio": "High", "status": "Gap", "query": "how to stop eczema itch at night", "url": ""},
+  "Steroid-Free Eczema Treatment: What Works": {"desc": "Positions Dermeleve alongside other steroid-free options; explains mechanism and expected results.", "lt": "Steroid-Free Treatment", "intent": "Commercial", "fmt": "Blog Post", "prio": "High", "status": "Exists", "query": "steroid free eczema treatment", "url": "https://dermeleve.com/blogs/news/steroid-free-itch-relief-anti-itch-creams-and-lotions-for-your-skin"},
+  "Repairing the Skin Barrier in Eczema": {"desc": "Explains barrier dysfunction in eczema and how topical agents help restore it alongside itch relief.", "lt": "Skin Care Routine & Lifestyle", "intent": "Informational", "fmt": "Blog Post", "prio": "Medium", "status": "Gap", "query": "eczema skin barrier repair", "url": ""},
+  "What Causes Psoriasis Flares and How to Manage": {"desc": "Covers immune triggers, stress, and environmental factors for psoriasis flares with management tips.", "lt": "Skin Conditions & Itch", "intent": "Informational", "fmt": "Blog Post", "prio": "High", "status": "Gap", "query": "what causes psoriasis flares", "url": ""},
+  "Types of Psoriasis: Plaque, Guttate & More": {"desc": "Covers each psoriasis type with photo descriptions, itch patterns, and treatment relevance.", "lt": "Skin Conditions & Itch", "intent": "Informational", "fmt": "Blog Post", "prio": "Medium", "status": "Gap", "query": "types of psoriasis", "url": ""},
+  "Psoriasis vs. Eczema: How to Tell the Difference": {"desc": "Side-by-side comparison of two commonly confused conditions; helps users self-identify their condition.", "lt": "Skin Conditions & Itch", "intent": "Informational", "fmt": "Comparison Page", "prio": "High", "status": "Gap", "query": "psoriasis vs eczema difference", "url": ""},
+  "Scalp Psoriasis: Symptoms, Diagnosis & Treatment": {"desc": "Deep dive on scalp psoriasis as a transition piece to Dermeleve's scalp product line.", "lt": "Scalp & Hair Itch", "intent": "Informational", "fmt": "Blog Post", "prio": "High", "status": "Gap", "query": "scalp psoriasis symptoms treatment", "url": ""},
+  "Best OTC Itch Relief for Psoriasis": {"desc": "Ranks and compares OTC options with Dermeleve featured; emphasizes steroid-free safety.", "lt": "Product Education", "intent": "Commercial", "fmt": "Listicle", "prio": "High", "status": "Gap", "query": "best otc itch relief for psoriasis", "url": ""},
+  "Psoriasis Itch Worse at Night: Relief Guide": {"desc": "Explains circadian itch patterns in psoriasis and practical overnight itch management.", "lt": "Skin Care Routine & Lifestyle", "intent": "Informational", "fmt": "Blog Post", "prio": "Medium", "status": "Gap", "query": "psoriasis itch worse at night", "url": ""},
+  "Steroid-Free Relief for Psoriasis Itch": {"desc": "Comprehensive guide to managing psoriasis itch without hydrocortisone.", "lt": "Steroid-Free Treatment", "intent": "Commercial", "fmt": "Guide", "prio": "High", "status": "Gap", "query": "steroid free psoriasis itch relief", "url": ""},
+  "Moisturizers for Psoriasis: What to Apply and When": {"desc": "Guides readers on timing and layering moisturizers with anti-itch treatments for psoriasis.", "lt": "Skin Care Routine & Lifestyle", "intent": "Commercial", "fmt": "Blog Post", "prio": "Medium", "status": "Gap", "query": "best moisturizer for psoriasis", "url": ""},
+  "Allergic vs. Irritant Contact Dermatitis": {"desc": "Clarifies the two types of contact dermatitis, their triggers, and treatment implications.", "lt": "Skin Conditions & Itch", "intent": "Informational", "fmt": "Blog Post", "prio": "High", "status": "Gap", "query": "allergic vs irritant contact dermatitis", "url": ""},
+  "25 Common Contact Allergens That Cause Rashes": {"desc": "Comprehensive allergen list helping readers identify and eliminate triggers.", "lt": "Skin Conditions & Itch", "intent": "Informational", "fmt": "Listicle", "prio": "Medium", "status": "Gap", "query": "common contact allergens skin rash", "url": ""},
+  "Nickel Allergy Rash: Symptoms, Causes & Treatment": {"desc": "Covers jewelry and belt-buckle nickel reactions with topical itch relief guidance.", "lt": "Skin Conditions & Itch", "intent": "Informational", "fmt": "Blog Post", "prio": "Medium", "status": "Gap", "query": "nickel allergy rash treatment", "url": ""},
+  "Detergent Rash: Why Laundry Is Making You Itch": {"desc": "Explains how laundry detergents trigger dermatitis and how to get fast itch relief.", "lt": "Skin Care Routine & Lifestyle", "intent": "Informational", "fmt": "Blog Post", "prio": "Medium", "status": "Gap", "query": "detergent rash itchy skin", "url": ""},
+  "How to Stop Contact Dermatitis Itch Fast": {"desc": "Step-by-step itch-relief protocol for contact dermatitis episodes.", "lt": "Product Education", "intent": "Commercial", "fmt": "Blog Post", "prio": "High", "status": "Gap", "query": "how to stop contact dermatitis itch", "url": ""},
+  "Poison Ivy Rash: How to Treat It Fast": {"desc": "Covers urushiol reaction, what to apply, and timeline for healing.", "lt": "Product Education", "intent": "Informational", "fmt": "Blog Post", "prio": "High", "status": "Gap", "query": "how to treat poison ivy rash fast", "url": ""},
+  "How Long Does Contact Dermatitis Last?": {"desc": "Sets expectations on healing timeline and explains when to see a doctor.", "lt": "Skin Conditions & Itch", "intent": "Informational", "fmt": "FAQ Page", "prio": "Medium", "status": "Gap", "query": "how long does contact dermatitis last", "url": ""},
+  "Best Creams for Contact Dermatitis 2025": {"desc": "Product comparison roundup with steroid-free options front and center.", "lt": "Product Education", "intent": "Commercial", "fmt": "Comparison Page", "prio": "High", "status": "Gap", "query": "best cream for contact dermatitis", "url": ""},
+  "What Is Neuropathic Itch? Causes, Symptoms & Treatments": {"desc": "Explains itch arising from nerve damage, its persistence, and why standard creams often fail.", "lt": "Skin Conditions & Itch", "intent": "Informational", "fmt": "Guide", "prio": "High", "status": "Gap", "query": "what is neuropathic itch", "url": ""},
+  "Chronic Itch Without a Rash: What It Could Mean": {"desc": "Covers systemic causes of itch with no visible rash \u2014 liver, kidney, nerve, diabetes.", "lt": "Condition-Specific Itch Guides", "intent": "Informational", "fmt": "Blog Post", "prio": "High", "status": "Gap", "query": "chronic itch without rash causes", "url": ""},
+  "Conditions That Cause Chronic Itch": {"desc": "A comprehensive overview of systemic and dermatological causes of chronic pruritus.", "lt": "Skin Conditions & Itch", "intent": "Informational", "fmt": "Blog Post", "prio": "Medium", "status": "Gap", "query": "conditions that cause chronic itch", "url": ""},
+  "The Itch-Scratch Cycle: Why Scratching Makes It Worse": {"desc": "Explains neurological loop that intensifies itch with scratching and how to interrupt it.", "lt": "Provider & Clinical Education", "intent": "Informational", "fmt": "Blog Post", "prio": "Medium", "status": "Gap", "query": "itch scratch cycle how to break", "url": ""},
+  "Best OTC Treatments for Neuropathic Itch": {"desc": "Reviews topical options for nerve-related itch, spotlighting aluminum acetate's unique mechanism.", "lt": "Product Education", "intent": "Commercial", "fmt": "Blog Post", "prio": "High", "status": "Gap", "query": "best otc treatment neuropathic itch", "url": ""},
+  "Diabetic Itch: Why It Happens & Relief": {"desc": "Covers the link between blood sugar, neuropathy, and skin itch with safe topical solutions.", "lt": "Condition-Specific Itch Guides", "intent": "Informational", "fmt": "Blog Post", "prio": "High", "status": "Gap", "query": "diabetic itch treatment relief", "url": ""},
+  "Managing Itch After Cancer Treatment": {"desc": "Addresses a vulnerable population seeking steroid-free, safe topical options during treatment.", "lt": "Condition-Specific Itch Guides", "intent": "Informational", "fmt": "Blog Post", "prio": "High", "status": "Gap", "query": "itch after chemotherapy relief", "url": ""},
+  "Aquagenic Pruritus: Itch Triggered by Water": {"desc": "Niche but high-intent article on a poorly-understood itch condition with few good OTC resources.", "lt": "Skin Conditions & Itch", "intent": "Informational", "fmt": "Blog Post", "prio": "Low", "status": "Gap", "query": "aquagenic pruritus treatment", "url": ""},
+  "The Real Risks of Long-Term Hydrocortisone": {"desc": "Educates readers on skin thinning, HPA suppression, and rebound effects from prolonged steroid use.", "lt": "Steroid-Free Treatment", "intent": "Informational", "fmt": "Blog Post", "prio": "High", "status": "Exists", "query": "risks of hydrocortisone cream long term", "url": "https://dermeleve.com/blogs/news/the-risks-of-topical-corticosteroid-therapy"},
+  "Skin Thinning from Steroid Creams: Permanent?": {"desc": "Addresses one of the most-searched steroid side effect concerns with evidence-based answers.", "lt": "Steroid-Free Treatment", "intent": "Informational", "fmt": "Blog Post", "prio": "High", "status": "Exists", "query": "skin thinning from steroid cream permanent", "url": "https://dermeleve.com/blogs/news/thinning-skin-from-steroid-use"},
+  "Topical Steroid Addiction: What Patients Need to Know": {"desc": "Explains the phenomenon of TSA and why patients seek steroid-free alternatives.", "lt": "Steroid-Free Treatment", "intent": "Informational", "fmt": "Blog Post", "prio": "High", "status": "Gap", "query": "topical steroid addiction symptoms", "url": ""},
+  "Rebound Effect After Stopping Steroid Cream": {"desc": "Describes the flare cycle that occurs when steroid creams are discontinued.", "lt": "Steroid-Free Treatment", "intent": "Informational", "fmt": "Blog Post", "prio": "High", "status": "Gap", "query": "rebound effect after stopping steroid cream", "url": ""},
+  "What Is Topical Steroid Withdrawal (TSW)?": {"desc": "Comprehensive guide to TSW: definition, symptoms, timeline, and why early steroid-free switching matters.", "lt": "Steroid-Free Treatment", "intent": "Informational", "fmt": "Guide", "prio": "High", "status": "Gap", "query": "topical steroid withdrawal symptoms", "url": ""},
+  "TSW Timeline: What to Expect Week by Week": {"desc": "Answers the #1 question TSW patients have with realistic expectations by stage.", "lt": "Steroid-Free Treatment", "intent": "Informational", "fmt": "Blog Post", "prio": "High", "status": "Gap", "query": "topical steroid withdrawal timeline", "url": ""},
+  "How to Manage TSW Flares at Home": {"desc": "Practical relief protocols during TSW flares \u2014 where steroid-free products like Dermeleve fit.", "lt": "Product Education", "intent": "Commercial", "fmt": "Blog Post", "prio": "High", "status": "Gap", "query": "how to manage topical steroid withdrawal flares", "url": ""},
+  "Can You Use OTC Creams During TSW?": {"desc": "Addresses anxiety about using any topical during TSW and clarifies steroid-free safety.", "lt": "Steroid-Free Treatment", "intent": "Informational", "fmt": "FAQ Page", "prio": "Medium", "status": "Gap", "query": "otc cream during topical steroid withdrawal", "url": ""},
+  "How Aluminum Acetate Stops Itch: The Science": {"desc": "Deep dive into the active ingredient in Dermeleve \u2014 positions the brand on a scientific basis.", "lt": "Product Education", "intent": "Informational", "fmt": "Blog Post", "prio": "High", "status": "Gap", "query": "how does aluminum acetate stop itching", "url": ""},
+  "Pramoxine vs. Aluminum Acetate: Which Works Better?": {"desc": "Head-to-head ingredient comparison; reinforces Dermeleve's superiority over pramoxine-based competitors.", "lt": "Product Education", "intent": "Commercial", "fmt": "Comparison Page", "prio": "High", "status": "Gap", "query": "pramoxine vs aluminum acetate itch", "url": ""},
+  "Colloidal Oatmeal for Itch: Does It Work?": {"desc": "Reviews evidence for oatmeal-based relief and its appropriate role vs stronger actives.", "lt": "Steroid-Free Treatment", "intent": "Informational", "fmt": "Blog Post", "prio": "Medium", "status": "Gap", "query": "colloidal oatmeal itch relief does it work", "url": ""},
+  "Menthol and Camphor Creams: Benefits & Limits": {"desc": "Balanced review of cooling agents used in competitors like Sarna Original.", "lt": "Steroid-Free Treatment", "intent": "Informational", "fmt": "Blog Post", "prio": "Medium", "status": "Gap", "query": "menthol camphor anti itch cream side effects", "url": ""},
+  "Does Aloe Vera Really Relieve Itchy Skin?": {"desc": "Evidence-based review of aloe's anti-itch properties alongside stronger topical options.", "lt": "Steroid-Free Treatment", "intent": "Informational", "fmt": "Blog Post", "prio": "Medium", "status": "Gap", "query": "aloe vera for itchy skin does it work", "url": ""},
+  "Coconut Oil for Eczema: What the Research Says": {"desc": "Reviews evidence for and against coconut oil, guiding toward more effective alternatives.", "lt": "Skin Care Routine & Lifestyle", "intent": "Informational", "fmt": "Blog Post", "prio": "Medium", "status": "Gap", "query": "coconut oil eczema research", "url": ""},
+  "Cold Compresses & Wet Wraps for Itch Relief": {"desc": "Covers non-pharmacological itch relief methods that can be used alongside topical creams.", "lt": "Skin Care Routine & Lifestyle", "intent": "Informational", "fmt": "Blog Post", "prio": "Low", "status": "Gap", "query": "wet wrap therapy itch relief", "url": ""},
+  "Anti-Inflammatory Diet for Eczema and Itchy Skin": {"desc": "Covers dietary approaches to reducing skin inflammation \u2014 attracts wellness-oriented searchers.", "lt": "Skin Care Routine & Lifestyle", "intent": "Informational", "fmt": "Blog Post", "prio": "Medium", "status": "Gap", "query": "anti inflammatory diet eczema skin", "url": ""},
+  "Is Hydrocortisone Safe for Children?": {"desc": "Addresses parental concern about steroid use in kids, positioning steroid-free as the safer choice.", "lt": "Steroid-Free Treatment", "intent": "Informational", "fmt": "Blog Post", "prio": "High", "status": "Gap", "query": "is hydrocortisone safe for children", "url": ""},
+  "Best Steroid-Free Creams for Kids with Eczema": {"desc": "Comparative roundup featuring Dermeleve as a safe, effective pediatric option.", "lt": "Product Education", "intent": "Commercial", "fmt": "Listicle", "prio": "High", "status": "Gap", "query": "best steroid free cream for kids eczema", "url": ""},
+  "Baby Eczema: Steroid-Free Treatment Guide for Parents": {"desc": "Guides parents through safe topical options for infants and toddlers with eczema.", "lt": "Skin Conditions & Itch", "intent": "Informational", "fmt": "Guide", "prio": "High", "status": "Gap", "query": "baby eczema steroid free treatment", "url": ""},
+  "Toddler Skin Rashes: Safe Treatment Without Steroids": {"desc": "Covers common toddler rashes and safe OTC treatment protocols.", "lt": "Skin Conditions & Itch", "intent": "Informational", "fmt": "Blog Post", "prio": "Medium", "status": "Gap", "query": "toddler skin rash treatment steroid free", "url": ""},
+  "Fragrance-Free Skincare for Sensitive Skin": {"desc": "Helps fragrance-sensitive readers select safe products \u2014 positions Dermeleve as fragrance-free.", "lt": "Skin Care Routine & Lifestyle", "intent": "Informational", "fmt": "Blog Post", "prio": "Medium", "status": "Gap", "query": "fragrance free skincare sensitive skin", "url": ""},
+  "Hypoallergenic Anti-Itch Creams: What the Label Means": {"desc": "Demystifies hypoallergenic claims and guides readers to truly safe formulations.", "lt": "Product Education", "intent": "Informational", "fmt": "Blog Post", "prio": "Medium", "status": "Gap", "query": "hypoallergenic anti itch cream", "url": ""},
+  "How to Do a Patch Test Before Using Skincare": {"desc": "Practical how-to that builds trust by demonstrating product transparency.", "lt": "Skin Care Routine & Lifestyle", "intent": "Informational", "fmt": "Blog Post", "prio": "Low", "status": "Gap", "query": "how to patch test skincare", "url": ""},
+  "Reactive Skin 101: Why Your Skin Overreacts": {"desc": "Explains skin hyperreactivity \u2014 barrier damage, immune sensitization \u2014 with treatment path.", "lt": "Skin Conditions & Itch", "intent": "Informational", "fmt": "Blog Post", "prio": "Medium", "status": "Gap", "query": "why is my skin so reactive and sensitive", "url": ""},
+  "Seborrheic Dermatitis vs. Dandruff": {"desc": "Clarifies a commonly confused pair \u2014 guides readers to the right treatment path.", "lt": "Scalp & Hair Itch", "intent": "Informational", "fmt": "Blog Post", "prio": "High", "status": "Gap", "query": "seborrheic dermatitis vs dandruff", "url": ""},
+  "Scalp Psoriasis: Symptoms & Treatment": {"desc": "Detailed scalp psoriasis overview linking to Dermeleve's scalp product line.", "lt": "Skin Conditions & Itch", "intent": "Informational", "fmt": "Blog Post", "prio": "High", "status": "Gap", "query": "scalp psoriasis symptoms treatment", "url": ""},
+  "Scalp Eczema: What It Looks Like & How to Treat": {"desc": "Differentiates scalp eczema from psoriasis and dandruff with treatment guidance.", "lt": "Skin Conditions & Itch", "intent": "Informational", "fmt": "Blog Post", "prio": "High", "status": "Gap", "query": "scalp eczema symptoms treatment", "url": ""},
+  "Hair Folliculitis: Itchy and Bumpy Scalp": {"desc": "Covers a common but under-addressed cause of scalp itch.", "lt": "Scalp & Hair Itch", "intent": "Informational", "fmt": "Blog Post", "prio": "Medium", "status": "Gap", "query": "scalp folliculitis symptoms treatment", "url": ""},
+  "Shampoo Ingredients That Cause Scalp Itch": {"desc": "Identifies sulfates, fragrances, and preservatives that commonly irritate the scalp.", "lt": "Skin Care Routine & Lifestyle", "intent": "Informational", "fmt": "Blog Post", "prio": "High", "status": "Gap", "query": "shampoo ingredients that cause scalp itch", "url": ""},
+  "Hair Dye Allergy: Recognize and Treat It": {"desc": "Covers PPD and other dye allergens \u2014 high-intent audience needing fast itch relief.", "lt": "Skin Conditions & Itch", "intent": "Informational", "fmt": "Blog Post", "prio": "Medium", "status": "Gap", "query": "hair dye allergy symptoms treatment", "url": ""},
+  "Hard Water and Scalp Irritation": {"desc": "Niche but high-value content addressing a prevalent undiagnosed scalp itch trigger.", "lt": "Scalp & Hair Itch", "intent": "Informational", "fmt": "Blog Post", "prio": "Medium", "status": "Gap", "query": "hard water scalp irritation itching", "url": ""},
+  "Exercise & Scalp Itch: Why You Itch When You Sweat": {"desc": "Explains sweat-triggered itch and how to manage it post-workout.", "lt": "Scalp & Hair Itch", "intent": "Informational", "fmt": "Blog Post", "prio": "Low", "status": "Gap", "query": "scalp itch when sweating exercise", "url": ""},
+  "Scalp Serum vs. Scalp Oil: Which Is Better for Itch?": {"desc": "Comparison that directly sells Dermeleve's scalp serum over older oil-based competitors.", "lt": "Product Education", "intent": "Commercial", "fmt": "Comparison Page", "prio": "High", "status": "Exists", "query": "scalp serum vs scalp oil itch", "url": "https://dermeleve.com/blogs/news/anti-itch-scalp-oil-is-old-news"},
+  "Steroid-Free Scalp Itch Treatment": {"desc": "Positions Dermeleve scalp products as the go-to steroid-free option for persistent scalp itch.", "lt": "Steroid-Free Treatment", "intent": "Commercial", "fmt": "Blog Post", "prio": "High", "status": "Gap", "query": "steroid free scalp itch treatment", "url": ""},
+  "How to Apply Scalp Serum Correctly": {"desc": "Step-by-step application guide that boosts product effectiveness and customer satisfaction.", "lt": "Product Education", "intent": "Informational", "fmt": "Blog Post", "prio": "Medium", "status": "Gap", "query": "how to apply scalp serum", "url": ""},
+  "Itchy Scalp Has a New Treatment: Oils Are Out": {"desc": "Trend piece positioning newer serum formulations over traditional scalp oils.", "lt": "Scalp & Hair Itch", "intent": "Commercial", "fmt": "Blog Post", "prio": "High", "status": "Exists", "query": "new treatment itchy scalp 2025", "url": "https://dermeleve.com/blogs/news/itchy-scalp-has-a-new-treatment"},
+  "Best Shampoos for Itchy Scalp 2025": {"desc": "Roundup with product recommendations; positions scalp serum as a follow-up step.", "lt": "Scalp & Hair Itch", "intent": "Commercial", "fmt": "Listicle", "prio": "High", "status": "Gap", "query": "best shampoo for itchy scalp", "url": ""},
+  "How to Build a Scalp Care Routine for Chronic Itch": {"desc": "Step-by-step scalp routine that naturally incorporates Dermeleve's scalp product.", "lt": "Skin Care Routine & Lifestyle", "intent": "Informational", "fmt": "Blog Post", "prio": "High", "status": "Gap", "query": "scalp care routine itchy scalp", "url": ""},
+  "Scalp Massage for Itch Relief: Does It Help?": {"desc": "Evidence-based review of scalp massage \u2014 engaging wellness content with a product CTA.", "lt": "Scalp & Hair Itch", "intent": "Informational", "fmt": "Blog Post", "prio": "Low", "status": "Gap", "query": "scalp massage itch relief", "url": ""},
+  "When to See a Dermatologist for Scalp Problems": {"desc": "Red-flag guide that builds trust by honestly referring patients out when needed.", "lt": "Provider & Clinical Education", "intent": "Informational", "fmt": "Blog Post", "prio": "Medium", "status": "Gap", "query": "when to see dermatologist for scalp itch", "url": ""},
+  "What Is in Dermeleve? Full Ingredient Breakdown": {"desc": "Transparent full-ingredient breakdown building trust and answering a top FAQ.", "lt": "Product Education", "intent": "Informational", "fmt": "FAQ Page", "prio": "High", "status": "Gap", "query": "dermeleve ingredients list", "url": ""},
+  "How Aluminum Acetate Relieves Itch: Science Deep Dive": {"desc": "Authoritative explanation of the active ingredient's astringent and anti-inflammatory action.", "lt": "Steroid-Free Treatment", "intent": "Informational", "fmt": "Blog Post", "prio": "High", "status": "Gap", "query": "aluminum acetate itch relief mechanism", "url": ""},
+  "Dermeleve vs. Hydrocortisone: Which Is More Effective?": {"desc": "Head-to-head comparison that wins searches from steroid-skeptical consumers.", "lt": "Steroid-Free Treatment", "intent": "Commercial", "fmt": "Comparison Page", "prio": "High", "status": "Gap", "query": "dermeleve vs hydrocortisone", "url": ""},
+  "How Fast Does Dermeleve Work?": {"desc": "Sets accurate expectations \u2014 within minutes of application, lasts 8+ hours.", "lt": "Product Education", "intent": "Informational", "fmt": "FAQ Page", "prio": "High", "status": "Gap", "query": "how fast does dermeleve work", "url": ""},
+  "How to Use Dermeleve for Best Results": {"desc": "Step-by-step application guide covering frequency, amount, and skin prep.", "lt": "Product Education", "intent": "Informational", "fmt": "Blog Post", "prio": "High", "status": "Gap", "query": "how to use dermeleve cream", "url": ""},
+  "Can You Use Dermeleve on Your Face?": {"desc": "Answers a frequently-asked usage question including safety notes for facial skin.", "lt": "Product Education", "intent": "Informational", "fmt": "FAQ Page", "prio": "High", "status": "Gap", "query": "can you use dermeleve on face", "url": ""},
+  "How Often Can You Apply Anti-Itch Cream?": {"desc": "Safe-use guidance for daily application, covering Dermeleve's non-steroidal advantage.", "lt": "Product Education", "intent": "Informational", "fmt": "FAQ Page", "prio": "High", "status": "Gap", "query": "how often can you apply anti itch cream", "url": ""},
+  "Where NOT to Apply Anti-Itch Cream": {"desc": "Safety article that builds trust while educating on proper use near eyes, mucous membranes.", "lt": "Product Education", "intent": "Informational", "fmt": "Blog Post", "prio": "Medium", "status": "Gap", "query": "where not to apply anti itch cream", "url": ""},
+  "Dermeleve vs. Sarna: Which Works Better?": {"desc": "Direct comparison for high-intent buyers choosing between the two most similar steroid-free options.", "lt": "Product Education", "intent": "Commercial", "fmt": "Comparison Page", "prio": "High", "status": "Gap", "query": "dermeleve vs sarna anti itch", "url": ""},
+  "Dermeleve vs. CeraVe Itch Relief Cream": {"desc": "Highlights Dermeleve's 8-hour duration and full-body use vs CeraVe's moisturizer-focus.", "lt": "Product Education", "intent": "Commercial", "fmt": "Comparison Page", "prio": "High", "status": "Gap", "query": "dermeleve vs cerave itch relief", "url": ""},
+  "Dermeleve vs. Gold Bond Itch Relief": {"desc": "Targets consumers choosing between drugstore standbys and newer clinical formulas.", "lt": "Product Education", "intent": "Commercial", "fmt": "Comparison Page", "prio": "Medium", "status": "Gap", "query": "dermeleve vs gold bond itch", "url": ""},
+  "Best Anti-Itch Cream Without Hydrocortisone 2025": {"desc": "High-traffic buyer's guide where Dermeleve should rank as the top steroid-free option.", "lt": "Product Education", "intent": "Commercial", "fmt": "Listicle", "prio": "High", "status": "Gap", "query": "best anti itch cream without hydrocortisone 2025", "url": ""},
+  "OTC vs. Prescription Itch Relief: When Do You Need Rx?": {"desc": "Helps readers self-triage and positions OTC as sufficient for most conditions.", "lt": "Provider & Clinical Education", "intent": "Informational", "fmt": "Blog Post", "prio": "Medium", "status": "Gap", "query": "otc vs prescription itch relief", "url": ""},
+  "What Doctors Prescribe for Chronic Itch": {"desc": "Builds professional credibility by discussing Rx options alongside comparable OTC solutions.", "lt": "Provider & Clinical Education", "intent": "Informational", "fmt": "Blog Post", "prio": "High", "status": "Gap", "query": "prescription treatment for chronic itch otc alternative", "url": ""},
+  "When Anti-Itch Cream Isn't Enough: Next Steps": {"desc": "Honest guide directing readers to dermatologists when appropriate \u2014 trust-builder.", "lt": "Provider & Clinical Education", "intent": "Informational", "fmt": "Blog Post", "prio": "Medium", "status": "Gap", "query": "when anti itch cream stops working", "url": ""},
+  "Tacrolimus vs. OTC Steroid-Free Creams": {"desc": "Compares prescription immunosuppressant with OTC options for chronic eczema.", "lt": "Provider & Clinical Education", "intent": "Informational", "fmt": "Comparison Page", "prio": "Medium", "status": "Gap", "query": "tacrolimus vs otc anti itch cream eczema", "url": ""},
+  "Where to Buy Dermeleve: Online, Retail & Providers": {"desc": "Covers all purchase channels including D2C, Amazon, and provider ordering.", "lt": "Product Education", "intent": "Navigational", "fmt": "FAQ Page", "prio": "High", "status": "Gap", "query": "where to buy dermeleve", "url": ""},
+  "Is Dermeleve Available on Amazon?": {"desc": "Captures Amazon-searchers and redirects to D2C for better pricing.", "lt": "Product Education", "intent": "Navigational", "fmt": "FAQ Page", "prio": "High", "status": "Gap", "query": "dermeleve amazon", "url": ""},
+  "HSA and FSA Eligibility for Anti-Itch Creams": {"desc": "High-value transactional content for health account holders \u2014 reduces purchase friction.", "lt": "Product Education", "intent": "Commercial", "fmt": "Blog Post", "prio": "High", "status": "Gap", "query": "is anti itch cream hsa fsa eligible", "url": ""},
+  "Dermeleve for Healthcare Providers: How to Order": {"desc": "Serves the B2B side of the business \u2014 converts dermatology practices to stockists.", "lt": "Provider & Clinical Education", "intent": "Commercial", "fmt": "Landing Page", "prio": "High", "status": "Gap", "query": "dermeleve provider ordering", "url": ""},
+  "2 oz vs. 4 oz Dermeleve: Which Size Is Right?": {"desc": "Buying guide that helps users choose the right size and upsells multi-packs.", "lt": "Product Education", "intent": "Commercial", "fmt": "FAQ Page", "prio": "Medium", "status": "Gap", "query": "dermeleve 2oz vs 4oz which to buy", "url": ""},
+  "How Much Anti-Itch Cream Do You Need Per Month?": {"desc": "Usage calculator content that supports subscription and multi-pack purchases.", "lt": "Product Education", "intent": "Informational", "fmt": "Blog Post", "prio": "Medium", "status": "Gap", "query": "how much anti itch cream to use per month", "url": ""},
+  "Best Value Anti-Itch Cream Multi-Packs": {"desc": "Encourages bulk purchasing by showing per-unit savings across Dermeleve's bundle options.", "lt": "Product Education", "intent": "Commercial", "fmt": "Blog Post", "prio": "Medium", "status": "Gap", "query": "best value anti itch cream multi pack", "url": ""},
+  "Dermeleve Promo Codes & Current Deals": {"desc": "Captures discount-seekers and converts them before they go to coupon sites.", "lt": "Product Education", "intent": "Transactional", "fmt": "Landing Page", "prio": "High", "status": "Exists", "query": "dermeleve promo code discount", "url": "https://dermeleve.com/pages/promo"},
+  "How to Build a Skincare Routine for Eczema-Prone Skin": {"desc": "Step-by-step morning and evening routine with product type recommendations.", "lt": "Skin Care Routine & Lifestyle", "intent": "Informational", "fmt": "Guide", "prio": "High", "status": "Exists", "query": "skincare routine for eczema prone skin", "url": "https://dermeleve.com/blogs/news/build-the-best-skin-care-routine-from-cleansing-to-itch-relief"},
+  "Best Moisturizers to Use Alongside Anti-Itch Cream": {"desc": "Product category guide reinforcing layering of moisturizer + Dermeleve.", "lt": "Product Education", "intent": "Commercial", "fmt": "Blog Post", "prio": "High", "status": "Gap", "query": "best moisturizer to use with anti itch cream", "url": ""},
+  "Morning vs. Night Routine for Itchy, Sensitive Skin": {"desc": "Differentiates AM/PM protocols with itch-relief product placement.", "lt": "Skin Care Routine & Lifestyle", "intent": "Informational", "fmt": "Blog Post", "prio": "Medium", "status": "Gap", "query": "morning night skincare routine itchy skin", "url": ""},
+  "How to Layer Skincare Products for Itchy Skin": {"desc": "Application order guide \u2014 thinnest to thickest \u2014 featuring anti-itch cream placement.", "lt": "Skin Care Routine & Lifestyle", "intent": "Informational", "fmt": "Blog Post", "prio": "Medium", "status": "Gap", "query": "how to layer skincare products itchy skin", "url": ""},
+  "Best Soaps for Eczema and Sensitive Skin": {"desc": "Product roundup for cleansers that won't strip the skin barrier.", "lt": "Skin Care Routine & Lifestyle", "intent": "Commercial", "fmt": "Listicle", "prio": "High", "status": "Gap", "query": "best soap for eczema sensitive skin", "url": ""},
+  "How Often Should You Bathe When You Have Eczema?": {"desc": "Evidence-based answer to a hotly-debated question; recommends soak and seal technique.", "lt": "Skin Care Routine & Lifestyle", "intent": "Informational", "fmt": "Blog Post", "prio": "Medium", "status": "Gap", "query": "how often to bathe with eczema", "url": ""},
+  "Bleach Baths for Eczema: Do They Work?": {"desc": "Reviews this dermatologist-recommended technique with safety instructions.", "lt": "Skin Conditions & Itch", "intent": "Informational", "fmt": "Blog Post", "prio": "Medium", "status": "Gap", "query": "bleach bath eczema benefits risks", "url": ""},
+  "Hot Showers & Itchy Skin: Why Heat Makes Itch Worse": {"desc": "Explains the heat-itch connection and advocates for lukewarm bathing.", "lt": "Skin Care Routine & Lifestyle", "intent": "Informational", "fmt": "Blog Post", "prio": "Low", "status": "Gap", "query": "hot shower makes skin more itchy", "url": ""},
+  "10 Household Triggers Making Your Skin Itch": {"desc": "Covers cleaning products, air quality, laundry habits, and pets \u2014 broad-audience piece.", "lt": "Skin Conditions & Itch", "intent": "Informational", "fmt": "Listicle", "prio": "High", "status": "Gap", "query": "household triggers itchy skin", "url": ""},
+  "Stress and Skin Itch: The Mind-Body Connection": {"desc": "Explains the neuroinflammatory pathway linking stress and itch \u2014 high engagement potential.", "lt": "Skin Conditions & Itch", "intent": "Informational", "fmt": "Blog Post", "prio": "High", "status": "Gap", "query": "stress causes skin itching", "url": ""},
+  "Exercise and Skin Itch: Why It Happens": {"desc": "Covers cholinergic urticaria and sweat-triggered itch with pre/post-workout skincare tips.", "lt": "Skin Care Routine & Lifestyle", "intent": "Informational", "fmt": "Blog Post", "prio": "Medium", "status": "Gap", "query": "exercise causes skin itching how to prevent", "url": ""},
+  "Best Fabrics for Sensitive, Itchy Skin": {"desc": "Practical guide to fabric choices that reduce friction and irritation.", "lt": "Skin Care Routine & Lifestyle", "intent": "Informational", "fmt": "Blog Post", "prio": "Medium", "status": "Gap", "query": "best fabric for itchy sensitive skin", "url": ""},
+  "Foods That Trigger Eczema and Itchy Skin": {"desc": "Evidence-based food trigger overview \u2014 high-traffic long-tail SEO content.", "lt": "Skin Conditions & Itch", "intent": "Informational", "fmt": "Blog Post", "prio": "High", "status": "Gap", "query": "foods that trigger eczema flares", "url": ""},
+  "Anti-Inflammatory Eating for Healthier Skin": {"desc": "Covers omega-3s, antioxidants, and gut health in relation to skin itch reduction.", "lt": "Skin Care Routine & Lifestyle", "intent": "Informational", "fmt": "Blog Post", "prio": "Medium", "status": "Gap", "query": "anti inflammatory diet for skin health", "url": ""},
+  "Gut Health and Itchy Skin: Is There a Connection?": {"desc": "Explores the gut-skin axis \u2014 rising search interest in microbiome and skin health.", "lt": "Skin Conditions & Itch", "intent": "Informational", "fmt": "Blog Post", "prio": "Medium", "status": "Gap", "query": "gut health skin itch connection", "url": ""},
+  "Supplements for Skin Health: What Actually Works": {"desc": "Covers omega-3, probiotics, vitamin D, zinc with evidence levels for each.", "lt": "Skin Care Routine & Lifestyle", "intent": "Informational", "fmt": "Blog Post", "prio": "Medium", "status": "Gap", "query": "supplements for itchy skin eczema", "url": ""},
+  "Shingles Rash: Symptoms, Timeline & Itch Relief": {"desc": "Comprehensive shingles overview with OTC itch management guidance.", "lt": "Condition-Specific Itch Guides", "intent": "Informational", "fmt": "Blog Post", "prio": "High", "status": "Gap", "query": "shingles rash symptoms itch relief", "url": ""},
+  "Best OTC Creams for Shingles Itch": {"desc": "Product roundup for shingles sufferers \u2014 Dermeleve as steroid-free, safe option.", "lt": "Product Education", "intent": "Commercial", "fmt": "Listicle", "prio": "High", "status": "Gap", "query": "best cream for shingles itch", "url": ""},
+  "Post-Herpetic Neuralgia: Long-Term Itch After Shingles": {"desc": "Addresses chronic nerve itch after shingles resolves \u2014 persistent, high-value audience.", "lt": "Skin Conditions & Itch", "intent": "Informational", "fmt": "Blog Post", "prio": "High", "status": "Gap", "query": "post herpetic neuralgia itch treatment", "url": ""},
+  "Shingles on Face, Scalp & Eye": {"desc": "Deep dive on cranial shingles \u2014 links to existing content on shingles in the eye.", "lt": "Condition-Specific Itch Guides", "intent": "Informational", "fmt": "Blog Post", "prio": "High", "status": "Exists", "query": "shingles on face scalp eye symptoms", "url": "https://dermeleve.com/blogs/news/shingles-in-the-eye"},
+  "Chickenpox Itch Relief for Adults and Children": {"desc": "High-volume search query; covers safe topical options for a frequently-itchy viral rash.", "lt": "Product Education", "intent": "Informational", "fmt": "Blog Post", "prio": "High", "status": "Gap", "query": "chickenpox itch relief treatment", "url": ""},
+  "Viral Rash vs. Allergic Rash: How to Tell": {"desc": "Diagnostic guide helping readers self-identify and choose the right treatment.", "lt": "Skin Conditions & Itch", "intent": "Informational", "fmt": "Blog Post", "prio": "Medium", "status": "Gap", "query": "viral rash vs allergic rash how to tell", "url": ""},
+  "Molluscum Contagiosum: Symptoms & Itch Relief": {"desc": "Covers a common but poorly-understood skin condition parents often search for.", "lt": "Skin Conditions & Itch", "intent": "Informational", "fmt": "Blog Post", "prio": "Low", "status": "Gap", "query": "molluscum contagiosum itch treatment", "url": ""},
+  "Hand, Foot & Mouth Disease: Itch & Skin Symptoms": {"desc": "Pediatric viral condition with significant itch \u2014 attracts concerned parents.", "lt": "Skin Conditions & Itch", "intent": "Informational", "fmt": "Blog Post", "prio": "Low", "status": "Gap", "query": "hand foot mouth disease itch treatment", "url": ""},
+  "Diabetic Itch: Why It Happens & How to Treat": {"desc": "Covers neuropathic and xerosis-based itch in diabetic patients with safe OTC solutions.", "lt": "Skin Conditions & Itch", "intent": "Informational", "fmt": "Blog Post", "prio": "High", "status": "Gap", "query": "diabetic itch causes treatment", "url": ""},
+  "Skin Care Tips for People with Type 2 Diabetes": {"desc": "Comprehensive skincare guide for diabetics \u2014 large, itch-prone audience.", "lt": "Skin Care Routine & Lifestyle", "intent": "Informational", "fmt": "Guide", "prio": "High", "status": "Gap", "query": "skin care tips for diabetics", "url": ""},
+  "Pruritus and Kidney Disease: Why It Itches": {"desc": "Covers uremic pruritus \u2014 a chronic, difficult itch in a large CKD patient population.", "lt": "Condition-Specific Itch Guides", "intent": "Informational", "fmt": "Blog Post", "prio": "High", "status": "Gap", "query": "kidney disease itch treatment pruritus", "url": ""},
+  "Liver Disease and Itchy Skin: Causes & Relief": {"desc": "Covers cholestatic pruritus \u2014 highly distressing and under-served with OTC content.", "lt": "Condition-Specific Itch Guides", "intent": "Informational", "fmt": "Blog Post", "prio": "Medium", "status": "Gap", "query": "liver disease itchy skin cholestatic pruritus", "url": ""},
+  "Itchy Skin During Pregnancy: What's Normal and What's Not": {"desc": "High-search topic for pregnant women \u2014 identifies safe vs concerning itch types.", "lt": "Condition-Specific Itch Guides", "intent": "Informational", "fmt": "Blog Post", "prio": "High", "status": "Gap", "query": "itchy skin during pregnancy causes", "url": ""},
+  "Safe Itch Relief Creams During Pregnancy": {"desc": "Product guidance for pregnant women who need steroid-free, safe topicals.", "lt": "Product Education", "intent": "Commercial", "fmt": "Blog Post", "prio": "High", "status": "Gap", "query": "safe anti itch cream during pregnancy", "url": ""},
+  "PUPPP Rash in Pregnancy: What It Is & How to Treat": {"desc": "Covers one of the most common and distressing pregnancy skin conditions.", "lt": "Condition-Specific Itch Guides", "intent": "Informational", "fmt": "Blog Post", "prio": "Medium", "status": "Gap", "query": "PUPPP rash pregnancy treatment itch", "url": ""},
+  "Postpartum Skin Changes: Why You're Still Itching": {"desc": "Addresses the under-served postpartum skin audience with hormonal context.", "lt": "Condition-Specific Itch Guides", "intent": "Informational", "fmt": "Blog Post", "prio": "Medium", "status": "Gap", "query": "postpartum itchy skin causes treatment", "url": ""},
+  "Why Skin Gets Itchier as You Age": {"desc": "Explains xerosis, barrier thinning, and nerve changes in aging skin.", "lt": "Skin Conditions & Itch", "intent": "Informational", "fmt": "Blog Post", "prio": "High", "status": "Gap", "query": "why does skin itch more as you age", "url": ""},
+  "Xerosis (Severely Dry Skin) in Older Adults": {"desc": "Targets caregivers and seniors searching for dry-skin itch solutions.", "lt": "Skin Conditions & Itch", "intent": "Informational", "fmt": "Blog Post", "prio": "High", "status": "Gap", "query": "xerosis dry skin elderly treatment", "url": ""},
+  "Best Anti-Itch Creams for Elderly Skin": {"desc": "Product roundup tailored to senior needs \u2014 steroid-free angle is critical for this demographic.", "lt": "Product Education", "intent": "Commercial", "fmt": "Listicle", "prio": "High", "status": "Gap", "query": "best anti itch cream for elderly skin", "url": ""},
+  "Why Steroids Are Risky for Thin, Aging Skin": {"desc": "Reinforces the steroid-free message for a population most at risk from topical steroid side effects.", "lt": "Steroid-Free Treatment", "intent": "Informational", "fmt": "Blog Post", "prio": "High", "status": "Gap", "query": "steroid cream risks for elderly thin skin", "url": ""},
+  "Clinical Evidence for Aluminum Acetate in Pruritus": {"desc": "Summarizes studies on aluminum acetate efficacy \u2014 credibility content for HCPs.", "lt": "Provider & Clinical Education", "intent": "Informational", "fmt": "Blog Post", "prio": "High", "status": "Gap", "query": "aluminum acetate clinical evidence pruritus", "url": ""},
+  "Safety Profile of Non-Steroidal Topical Agents": {"desc": "Reviews evidence for steroid-free topicals \u2014 positions Dermeleve in a clinical context.", "lt": "Provider & Clinical Education", "intent": "Informational", "fmt": "White Paper", "prio": "High", "status": "Gap", "query": "non steroidal topical agents chronic itch safety", "url": ""},
+  "Comparing First-Line OTC Options for Chronic Pruritus": {"desc": "Academic-style comparison of pramoxine, colloidal oatmeal, and aluminum acetate.", "lt": "Provider & Clinical Education", "intent": "Informational", "fmt": "Blog Post", "prio": "Medium", "status": "Gap", "query": "first line otc treatment chronic pruritus comparison", "url": ""},
+  "Step Therapy for Chronic Itch: A Provider Framework": {"desc": "Provides a clinical decision tree HCPs can use \u2014 positions Dermeleve in the OTC step.", "lt": "Provider & Clinical Education", "intent": "Informational", "fmt": "Guide", "prio": "Medium", "status": "Gap", "query": "step therapy chronic itch treatment protocol", "url": ""},
+  "How to Talk to Patients About Steroid Alternatives": {"desc": "Clinical communication guide for dermatologists and PCPs managing patient steroid concerns.", "lt": "Provider & Clinical Education", "intent": "Informational", "fmt": "Blog Post", "prio": "High", "status": "Gap", "query": "how to counsel patients about steroid alternatives", "url": ""},
+  "Patient Compliance with Topical Treatments": {"desc": "Addresses the #1 barrier to effective OTC treatment \u2014 non-compliance.", "lt": "Provider & Clinical Education", "intent": "Informational", "fmt": "Blog Post", "prio": "Medium", "status": "Gap", "query": "patient compliance topical skin treatment", "url": ""},
+  "Dermeleve for Pediatric Patients: A Provider's Guide": {"desc": "Supports provider confidence in recommending Dermeleve for children.", "lt": "Steroid-Free Treatment", "intent": "Informational", "fmt": "Guide", "prio": "High", "status": "Gap", "query": "dermeleve pediatric use provider guide", "url": ""},
+  "Managing Itch in Immunocompromised Patients": {"desc": "Addresses a vulnerable population where steroid avoidance is especially critical.", "lt": "Condition-Specific Itch Guides", "intent": "Informational", "fmt": "Blog Post", "prio": "Medium", "status": "Gap", "query": "itch management immunocompromised patients", "url": ""},
+  "Pruritus: Classification & Management Guide": {"desc": "Authoritative medical reference content attracting HCP and patient audiences.", "lt": "Provider & Clinical Education", "intent": "Informational", "fmt": "Guide", "prio": "High", "status": "Gap", "query": "pruritus classification causes management", "url": ""},
+  "Neurological Mechanisms of Itch": {"desc": "Science-forward content building topical authority in the itch field.", "lt": "Skin Conditions & Itch", "intent": "Informational", "fmt": "Blog Post", "prio": "Medium", "status": "Gap", "query": "neurological mechanism of itch", "url": ""},
+  "The Role of the Skin Barrier in Chronic Itch": {"desc": "Explains epidermal barrier failure as a root cause \u2014 bridges to product solution.", "lt": "Skin Conditions & Itch", "intent": "Informational", "fmt": "Blog Post", "prio": "Medium", "status": "Gap", "query": "skin barrier dysfunction chronic itch", "url": ""},
+  "Rosacea Types, Triggers & Skin Care: A Deep Dive": {"desc": "Covers all four rosacea subtypes with itch management where relevant.", "lt": "Skin Conditions & Itch", "intent": "Informational", "fmt": "Blog Post", "prio": "Medium", "status": "Gap", "query": "rosacea types triggers skin care treatment", "url": ""},
+  "Combination Approaches to Itch Management": {"desc": "Reviews multimodal itch management (topical + behavioral + systemic) for complex cases.", "lt": "Provider & Clinical Education", "intent": "Informational", "fmt": "Blog Post", "prio": "Medium", "status": "Gap", "query": "combination treatment approach chronic itch", "url": ""},
+  "When OTC Itch Treatments Are Enough (and When Not)": {"desc": "Helps patients and providers decide when to escalate \u2014 honest and trust-building.", "lt": "Product Education", "intent": "Informational", "fmt": "Blog Post", "prio": "Medium", "status": "Gap", "query": "when is otc itch treatment sufficient", "url": ""},
+  "Telehealth for Skin Conditions: Getting Diagnosed Remotely": {"desc": "Practical guide for readers who can't easily access a dermatologist.", "lt": "Provider & Clinical Education", "intent": "Informational", "fmt": "Blog Post", "prio": "Low", "status": "Gap", "query": "telehealth dermatology skin conditions", "url": ""},
+  "How to Read a Skincare Product Label": {"desc": "Consumer education content building brand authority in the ingredient literacy space.", "lt": "Product Education", "intent": "Informational", "fmt": "Blog Post", "prio": "Low", "status": "Gap", "query": "how to read skincare product label ingredients", "url": ""}
+};
+
 // ─── Init ────────────────────────────────────────────────────────────────────
+
+function openPanel(nodeTitle) {
+  const d = DETAIL[nodeTitle];
+  if (!d) return;
+  document.getElementById('panel-title').textContent = nodeTitle;
+  document.getElementById('p-query').textContent = '"' + d.query + '"';
+  document.getElementById('p-desc').textContent = d.desc;
+  document.getElementById('p-link').textContent = d.lt;
+  
+  // chips
+  const chips = document.getElementById('p-chips');
+  chips.innerHTML = '';
+  const pCls = d.prio==='High'?'chip-high':d.prio==='Medium'?'chip-med':'chip-low';
+  chips.innerHTML += `<span class="chip ${pCls}">${d.prio}</span>`;
+  const iCls = d.intent==='Commercial'?'chip-comm':d.intent==='Transactional'?'chip-trans':d.intent==='Navigational'?'chip-nav':'chip-info';
+  chips.innerHTML += `<span class="chip ${iCls}">${d.intent}</span>`;
+  chips.innerHTML += `<span class="chip chip-fmt">${d.fmt}</span>`;
+  
+  // status
+  const sEl = document.getElementById('p-status');
+  const sCls = d.status==='Exists'?'ps-exists':d.status==='Gap'?'ps-gap':'ps-update';
+  sEl.innerHTML = `<span class="pstatus ${sCls}">${d.status}</span>`;
+  
+  // url
+  const urlRow = document.getElementById('prow-url');
+  const urlEl = document.getElementById('p-url');
+  if (d.url) { urlRow.style.display='block'; urlEl.href=d.url; urlEl.textContent=d.url; }
+  else { urlRow.style.display='none'; }
+  
+  // reset mark btn
+  const btn = document.getElementById('mark-btn');
+  btn.textContent = '✓ Mark Complete';
+  btn.classList.remove('done');
+  
+  document.getElementById('panel').classList.add('open');
+  document.getElementById('canvas-wrap').style.right = '320px';
+}
+
+function closePanel() {
+  document.getElementById('panel').classList.remove('open');
+  document.getElementById('canvas-wrap').style.right = '0';
+}
+
+function toggleMark(btn) {
+  if (btn.classList.contains('done')) {
+    btn.classList.remove('done'); btn.textContent = '✓ Mark Complete';
+  } else {
+    btn.classList.add('done'); btn.textContent = '✓ Marked Complete';
+  }
+}
+
 window.addEventListener("load",()=>{
   assignParents(DATA);
   buildLegend();
@@ -609,5 +848,21 @@ window.addEventListener("load",()=>{
   window.addEventListener("resize",redraw);
 });
 </script>
+
+<div id="panel">
+  <div id="panel-hdr">
+    <div id="panel-title">—</div>
+    <button id="panel-close" onclick="closePanel()">✕</button>
+  </div>
+  <div id="panel-body">
+    <div class="prow" id="prow-query"><div class="plabel">Sample Query</div><div class="pquery" id="p-query">—</div></div>
+    <div class="prow" id="prow-desc"><div class="plabel">Description</div><div class="pdesc" id="p-desc">—</div></div>
+    <div class="prow"><div class="plabel">Details</div><div class="chips" id="p-chips"></div></div>
+    <div class="prow"><div class="plabel">Internal Linking Target</div><div class="plink"><span class="plink-arrow">→</span><span id="p-link">—</span></div></div>
+    <div class="prow"><div class="plabel">Status</div><div id="p-status">—</div></div>
+    <div class="prow" id="prow-url" style="display:none"><div class="plabel">Existing URL</div><a class="purl" id="p-url" target="_blank">—</a></div>
+  </div>
+  <div id="panel-footer"><button id="mark-btn" onclick="toggleMark(this)">✓ Mark Complete</button></div>
+</div>
 </body>
 </html>
