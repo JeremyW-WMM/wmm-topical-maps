@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dermeleve® — Topical Authority Map</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0f1720;font-family:'Segoe UI',Calibri,sans-serif;color:#e8eef5;overflow:hidden}
+#header{position:fixed;top:0;left:0;right:0;height:56px;background:linear-gradient(90deg,#1a2b40,#1e3a5f);display:flex;align-items:center;justify-content:space-between;padding:0 24px;z-index:100;border-bottom:1px solid #2d4a6e}
+#header h1{font-size:18px;font-weight:700;color:#fff;letter-spacing:.5px}
+#header h1 span{color:#4a9eff;font-weight:400;font-size:14px;margin-left:10px}
+#controls{display:flex;gap:10px;align-items:center}
+.btn{background:#2d4a6e;color:#cde;border:1px solid #3d5a7e;padding:6px 14px;border-radius:6px;cursor:pointer;font-size:12px;transition:background .2s}
+.btn:hover{background:#3d5a7e}
+#legend{position:fixed;bottom:16px;left:16px;background:#1a2b40;border:1px solid #2d4a6e;border-radius:10px;padding:12px 16px;font-size:12px;z-index:100}
+#legend h4{color:#8ab4e0;margin-bottom:8px;font-size:11px;text-transform:uppercase;letter-spacing:1px}
+.leg-item{display:flex;align-items:center;gap:8px;margin:4px 0;color:#cde}
+.leg-dot{width:14px;height:14px;border-radius:3px;flex-shrink:0}
+#status-legend{position:fixed;bottom:16px;right:16px;background:#1a2b40;border:1px solid #2d4a6e;border-radius:10px;padding:12px 16px;font-size:12px;z-index:100}
+#status-legend h4{color:#8ab4e0;margin-bottom:8px;font-size:11px;text-transform:uppercase;letter-spacing:1px}
+.sl-item{display:flex;align-items:center;gap:8px;margin:4px 0;color:#cde}
+.sl-box{width:16px;height:12px;border-radius:2px;flex-shrink:0;border:2px solid}
+#canvas-wrap{position:fixed;top:56px;left:0;right:0;bottom:0;overflow:hidden}
+svg{cursor:grab;user-select:none}
+svg.dragging{cursor:grabbing}
+.tooltip{position:fixed;background:#1a2b40;border:1px solid #2d4a6e;border-radius:8px;padding:10px 14px;font-size:12px;max-width:280px;pointer-events:none;z-index:200;box-shadow:0 4px 20px rgba(0,0,0,.5)}
+.tooltip strong{color:#4a9eff;display:block;margin-bottom:4px}
+.tooltip em{color:#8ab4e0;font-style:normal;font-size:11px}
+</style>
+</head>
+<body>
+<div id="header">
+  <h1>Dermeleve® <span>Topical Authority Map — 148 Content Ideas · 7 Core Topics · 4 Levels</span></h1>
+  <div id="controls">
+    <button class="btn" onclick="resetView()">Reset View</button>
+    <button class="btn" onclick="expandAll()">Expand All</button>
+    <button class="btn" onclick="collapseAll()">Collapse L3+</button>
+    <button class="btn" onclick="downloadPNG()">⬇ Download PNG</button>
+  </div>
+</div>
+
+<div id="canvas-wrap">
+  <svg id="svg"></svg>
+</div>
+
+<div id="legend">
+  <h4>Core Topics</h4>
+</div>
+
+<div id="status-legend">
+  <h4>Content Status</h4>
+  <div class="sl-item"><div class="sl-box" style="background:#1a3a2a;border-color:#28a745"></div> Exists</div>
+  <div class="sl-item"><div class="sl-box" style="background:#3a1a1a;border-color:#dc3545;border-style:dashed"></div> Gap</div>
+  <div class="sl-item"><div class="sl-box" style="background:#3a3010;border-color:#ffc107;border-style:dotted"></div> Needs Update</div>
+</div>
+
+<div class="tooltip" id="tooltip" style="display:none"></div>
+
+<script>
+const COLORS = ["#2563eb","#16a34a","#dc2626","#9333ea","#ea580c","#0891b2","#db2777"];
+
+const DATA = {
+  name:"Dermeleve®",
+  children:[
+    {name:"Skin Conditions\n& Itch",color:COLORS[0],children:[
+      {name:"Eczema\n(Atopic Dermatitis)",children:[
+        {name:"Understanding\nEczema",children:[
+          {name:"What Is Atopic Dermatitis?\nA Complete Guide",intent:"Informational",fmt:"Guide",prio:"High",status:"Gap",query:"what is atopic dermatitis"},
+          {name:"Types of Eczema:\nAtopic, Contact,\nSeborrheic & Nummular",intent:"Informational",fmt:"Blog Post",prio:"High",status:"Gap",query:"types of eczema"},
+          {name:"Common Eczema Triggers\nand How to Avoid Them",intent:"Informational",fmt:"Blog Post",prio:"High",status:"Gap",query:"eczema triggers to avoid"},
+          {name:"Eczema in Adults vs.\nChildren: Key Differences",intent:"Informational",fmt:"Blog Post",prio:"Medium",status:"Gap",query:"eczema in adults vs children"},
+        ]},
+        {name:"Eczema Itch Relief",children:[
+          {name:"How to Stop Eczema\nItch Fast (Proven Methods)",intent:"Commercial",fmt:"Blog Post",prio:"High",status:"Gap",query:"how to stop eczema itch fast"},
+          {name:"How to Stop Eczema\nItch at Night",intent:"Informational",fmt:"Blog Post",prio:"High",status:"Gap",query:"how to stop eczema itch at night"},
+          {name:"Steroid-Free Eczema\nTreatment: What Works",intent:"Commercial",fmt:"Blog Post",prio:"High",status:"Exists",query:"steroid free eczema treatment"},
+          {name:"Repairing the Skin Barrier\nin Eczema",intent:"Informational",fmt:"Blog Post",prio:"Medium",status:"Gap",query:"eczema skin barrier repair"},
+        ]},
+      ]},
+      {name:"Psoriasis",children:[
+        {name:"Psoriasis Basics",children:[
+          {name:"What Causes Psoriasis\nFlares and How to Manage",intent:"Informational",fmt:"Blog Post",prio:"High",status:"Gap",query:"what causes psoriasis flares"},
+          {name:"Types of Psoriasis:\nPlaque, Guttate & More",intent:"Informational",fmt:"Blog Post",prio:"Medium",status:"Gap",query:"types of psoriasis"},
+          {name:"Psoriasis vs. Eczema:\nHow to Tell the Difference",intent:"Informational",fmt:"Comparison Page",prio:"High",status:"Gap",query:"psoriasis vs eczema difference"},
+          {name:"Scalp Psoriasis: Symptoms,\nDiagnosis & Treatment",intent:"Informational",fmt:"Blog Post",prio:"High",status:"Gap",query:"scalp psoriasis symptoms treatment"},
+        ]},
+        {name:"Psoriasis Itch Management",children:[
+          {name:"Best OTC Itch Relief\nfor Psoriasis",intent:"Commercial",fmt:"Listicle",prio:"High",status:"Gap",query:"best otc itch relief for psoriasis"},
+          {name:"Psoriasis Itch Worse\nat Night: Relief Guide",intent:"Informational",fmt:"Blog Post",prio:"Medium",status:"Gap",query:"psoriasis itch worse at night"},
+          {name:"Steroid-Free Relief\nfor Psoriasis Itch",intent:"Commercial",fmt:"Guide",prio:"High",status:"Gap",query:"steroid free psoriasis itch relief"},
+          {name:"Moisturizers for Psoriasis:\nWhat to Apply and When",intent:"Commercial",fmt:"Blog Post",prio:"Medium",status:"Gap",query:"best moisturizer for psoriasis"},
+        ]},
+      ]},
+      {name:"Contact Dermatitis",children:[
+        {name:"Understanding Contact\nDermatitis",children:[
+          {name:"Allergic vs. Irritant\nContact Dermatitis",intent:"Informational",fmt:"Blog Post",prio:"High",status:"Gap",query:"allergic vs irritant contact dermatitis"},
+          {name:"25 Common Contact\nAllergens That Cause Rashes",intent:"Informational",fmt:"Listicle",prio:"Medium",status:"Gap",query:"common contact allergens skin rash"},
+          {name:"Nickel Allergy Rash:\nSymptoms, Causes & Treatment",intent:"Informational",fmt:"Blog Post",prio:"Medium",status:"Gap",query:"nickel allergy rash treatment"},
+          {name:"Detergent Rash: Why\nLaundry Is Making You Itch",intent:"Informational",fmt:"Blog Post",prio:"Medium",status:"Gap",query:"detergent rash itchy skin"},
+        ]},
+        {name:"Contact Dermatitis\nRelief",children:[
+          {name:"How to Stop Contact\nDermatitis Itch Fast",intent:"Commercial",fmt:"Blog Post",prio:"High",status:"Gap",query:"how to stop contact dermatitis itch"},
+          {name:"Poison Ivy Rash:\nHow to Treat It Fast",intent:"Informational",fmt:"Blog Post",prio:"High",status:"Gap",query:"how to treat poison ivy rash fast"},
+          {name:"How Long Does Contact\nDermatitis Last?",intent:"Informational",fmt:"FAQ Page",prio:"Medium",status:"Gap",query:"how long does contact dermatitis last"},
+          {name:"Best Creams for\nContact Dermatitis 2025",intent:"Commercial",fmt:"Comparison Page",prio:"High",status:"Gap",query:"best cream for contact dermatitis"},
+        ]},
+      ]},
+      {name:"Neuropathic &\nChronic Itch",children:[
+        {name:"Understanding\nNeuropathic Itch",children:[
+          {name:"What Is Neuropathic Itch?\nCauses, Symptoms & Treatments",intent:"Informational",fmt:"Guide",prio:"High",status:"Gap",query:"what is neuropathic itch"},
+          {name:"Chronic Itch Without\na Rash: What It Could Mean",intent:"Informational",fmt:"Blog Post",prio:"High",status:"Gap",query:"chronic itch without rash causes"},
+          {name:"Conditions That Cause\nChronic Itch",intent:"Informational",fmt:"Blog Post",prio:"Medium",status:"Gap",query:"conditions that cause chronic itch"},
+          {name:"The Itch-Scratch Cycle:\nWhy Scratching Makes It Worse",intent:"Informational",fmt:"Blog Post",prio:"Medium",status:"Gap",query:"itch scratch cycle how to break"},
+        ]},
+        {name:"Treating Chronic Itch",children:[
+          {name:"Best OTC Treatments\nfor Neuropathic Itch",intent:"Commercial",fmt:"Blog Post",prio:"High",status:"Gap",query:"best otc treatment neuropathic itch"},
+          {name:"Diabetic Itch: Why\nIt Happens & Relief",intent:"Informational",fmt:"Blog Post",prio:"High",status:"Gap",query:"diabetic itch treatment relief"},
+          {name:"Managing Itch After\nCancer Treatment",intent:"Informational",fmt:"Blog Post",prio:"High",status:"Gap",query:"itch after chemotherapy relief"},
+          {name:"Aquagenic Pruritus:\nItch Triggered by Water",intent:"Informational",fmt:"Blog Post",prio:"Low",status:"Gap",query:"aquagenic pruritus treatment"},
+        ]},
+      ]},
+    ]},
+    {name:"Steroid-Free\nTreatment",color:COLORS[1],children:[
+      {name:"Why Avoid Topical\nSteroids",children:[
+        {name:"Steroid Side Effects",children:[
+          {name:"The Real Risks of\nLong-Term Hydrocortisone",intent:"Informational",fmt:"Blog Post",prio:"High",status:"Exists",query:"risks of hydrocortisone cream long term"},
+          {name:"Skin Thinning from\nSteroid Creams: Permanent?",intent:"Informational",fmt:"Blog Post",prio:"High",status:"Exists",query:"skin thinning from steroid cream permanent"},
+          {name:"Topical Steroid Addiction:\nWhat Patients Need to Know",intent:"Informational",fmt:"Blog Post",prio:"High",status:"Gap",query:"topical steroid addiction symptoms"},
+          {name:"Rebound Effect After\nStopping Steroid Cream",intent:"Informational",fmt:"Blog Post",prio:"High",status:"Gap",query:"rebound effect after stopping steroid cream"},
+        ]},
+        {name:"Topical Steroid\nWithdrawal",children:[
+          {name:"What Is Topical\nSteroid Withdrawal (TSW)?",intent:"Informational",fmt:"Guide",prio:"High",status:"Gap",query:"topical steroid withdrawal symptoms"},
+          {name:"TSW Timeline: What\nto Expect Week by Week",intent:"Informational",fmt:"Blog Post",prio:"High",status:"Gap",query:"topical steroid withdrawal timeline"},
+          {name:"How to Manage TSW\nFlares at Home",intent:"Commercial",fmt:"Blog Post",prio:"High",status:"Gap",query:"how to manage topical steroid withdrawal flares"},
+          {name:"Can You Use OTC Creams\nDuring TSW?",intent:"Informational",fmt:"FAQ Page",prio:"Medium",status:"Gap",query:"otc cream during topical steroid withdrawal"},
+        ]},
+      ]},
+      {name:"Steroid Alternatives",children:[
+        {name:"OTC Steroid-Free\nOptions",children:[
+          {name:"How Aluminum Acetate\nStops Itch: The Science",intent:"Informational",fmt:"Blog Post",prio:"High",status:"Gap",query:"how does aluminum acetate stop itching"},
+          {name:"Pramoxine vs. Aluminum\nAcetate: Which Works Better?",intent:"Commercial",fmt:"Comparison Page",prio:"High",status:"Gap",query:"pramoxine vs aluminum acetate itch"},
+          {name:"Colloidal Oatmeal for\nItch: Does It Work?",intent:"Informational",fmt:"Blog Post",prio:"Medium",status:"Gap",query:"colloidal oatmeal itch relief does it work"},
+          {name:"Menthol and Camphor\nCreams: Benefits & Limits",intent:"Informational",fmt:"Blog Post",prio:"Medium",status:"Gap",query:"menthol camphor anti itch cream side effects"},
+        ]},
+        {name:"Natural & Holistic\nRelief",children:[
+          {name:"Does Aloe Vera Really\nRelieve Itchy Skin?",intent:"Informational",fmt:"Blog Post",prio:"Medium",status:"Gap",query:"aloe vera for itchy skin does it work"},
+          {name:"Coconut Oil for Eczema:\nWhat the Research Says",intent:"Informational",fmt:"Blog Post",prio:"Medium",status:"Gap",query:"coconut oil eczema research"},
+          {name:"Cold Compresses & Wet\nWraps for Itch Relief",intent:"Informational",fmt:"Blog Post",prio:"Low",status:"Gap",query:"wet wrap therapy itch relief"},
+          {name:"Anti-Inflammatory Diet\nfor Eczema and Itchy Skin",intent:"Informational",fmt:"Blog Post",prio:"Medium",status:"Gap",query:"anti inflammatory diet eczema skin"},
+        ]},
+      ]},
+      {name:"Safe Use for\nSensitive Populations",children:[
+        {name:"Steroid-Free\nPediatric Use",children:[
+          {name:"Is Hydrocortisone Safe\nfor Children?",intent:"Informational",fmt:"Blog Post",prio:"High",status:"Gap",query:"is hydrocortisone safe for children"},
+          {name:"Best Steroid-Free Creams\nfor Kids with Eczema",intent:"Commercial",fmt:"Listicle",prio:"High",status:"Gap",query:"best steroid free cream for kids eczema"},
+          {name:"Baby Eczema: Steroid-Free\nTreatment Guide for Parents",intent:"Informational",fmt:"Guide",prio:"High",status:"Gap",query:"baby eczema steroid free treatment"},
+          {name:"Toddler Skin Rashes:\nSafe Treatment Without Steroids",intent:"Informational",fmt:"Blog Post",prio:"Medium",status:"Gap",query:"toddler skin rash treatment steroid free"},
+        ]},
+        {name:"Sensitive & Reactive\nSkin",children:[
+          {name:"Fragrance-Free Skincare\nfor Sensitive Skin",intent:"Informational",fmt:"Blog Post",prio:"Medium",status:"Gap",query:"fragrance free skincare sensitive skin"},
+          {name:"Hypoallergenic Anti-Itch\nCreams: What the Label Means",intent:"Informational",fmt:"Blog Post",prio:"Medium",status:"Gap",query:"hypoallergenic anti itch cream"},
+          {name:"How to Do a Patch Test\nBefore Using Skincare",intent:"Informational",fmt:"Blog Post",prio:"Low",status:"Gap",query:"how to patch test skincare"},
+          {name:"Reactive Skin 101:\nWhy Your Skin Overreacts",intent:"Informational",fmt:"Blog Post",prio:"Medium",status:"Gap",query:"why is my skin so reactive and sensitive"},
+        ]},
+      ]},
+    ]},
+    {name:"Scalp &\nHair Itch",color:COLORS[2],children:[
+      {name:"Itchy Scalp Causes",children:[
+        {name:"Medical Causes of\nScalp Itch",children:[
+          {name:"Seborrheic Dermatitis\nvs. Dandruff",intent:"Informational",fmt:"Blog Post",prio:"High",status:"Gap",query:"seborrheic dermatitis vs dandruff"},
+          {name:"Scalp Psoriasis:\nSymptoms & Treatment",intent:"Informational",fmt:"Blog Post",prio:"High",status:"Gap",query:"scalp psoriasis symptoms treatment"},
+          {name:"Scalp Eczema:\nWhat It Looks Like & How to Treat",intent:"Informational",fmt:"Blog Post",prio:"High",status:"Gap",query:"scalp eczema symptoms treatment"},
+          {name:"Hair Folliculitis:\nItchy and Bumpy Scalp",intent:"Informational",fmt:"Blog Post",prio:"Medium",status:"Gap",query:"scalp folliculitis symptoms treatment"},
+        ]},
+        {name:"Product & Environmental\nCauses",children:[
+          {name:"Shampoo Ingredients\nThat Cause Scalp Itch",intent:"Informational",fmt:"Blog Post",prio:"High",status:"Gap",query:"shampoo ingredients that cause scalp itch"},
+          {name:"Hair Dye Allergy:\nRecognize and Treat It",intent:"Informational",fmt:"Blog Post",prio:"Medium",status:"Gap",query:"hair dye allergy symptoms treatment"},
+          {name:"Hard Water and\nScalp Irritation",intent:"Informational",fmt:"Blog Post",prio:"Medium",status:"Gap",query:"hard water scalp irritation itching"},
+          {name:"Exercise & Scalp Itch:\nWhy You Itch When You Sweat",intent:"Informational",fmt:"Blog Post",prio:"Low",status:"Gap",query:"scalp itch when sweating exercise"},
+        ]},
+      ]},
+      {name:"Scalp Itch Treatments",children:[
+        {name:"Topical Scalp\nTreatments",children:[
+          {name:"Scalp Serum vs. Scalp Oil:\nWhich Is Better for Itch?",intent:"Commercial",fmt:"Comparison Page",prio:"High",status:"Exists",query:"scalp serum vs scalp oil itch"},
+          {name:"Steroid-Free Scalp\nItch Treatment",intent:"Commercial",fmt:"Blog Post",prio:"High",status:"Gap",query:"steroid free scalp itch treatment"},
+          {name:"How to Apply Scalp\nSerum Correctly",intent:"Informational",fmt:"Blog Post",prio:"Medium",status:"Gap",query:"how to apply scalp serum"},
+          {name:"Itchy Scalp Has a\nNew Treatment: Oils Are Out",intent:"Commercial",fmt:"Blog Post",prio:"High",status:"Exists",query:"new treatment itchy scalp 2025"},
+        ]},
+        {name:"Medicated Shampoos\n& Routine",children:[
+          {name:"Best Shampoos for\nItchy Scalp 2025",intent:"Commercial",fmt:"Listicle",prio:"High",status:"Gap",query:"best shampoo for itchy scalp"},
+          {name:"How to Build a Scalp\nCare Routine for Chronic Itch",intent:"Informational",fmt:"Blog Post",prio:"High",status:"Gap",query:"scalp care routine itchy scalp"},
+          {name:"Scalp Massage for\nItch Relief: Does It Help?",intent:"Informational",fmt:"Blog Post",prio:"Low",status:"Gap",query:"scalp massage itch relief"},
+          {name:"When to See a Dermatologist\nfor Scalp Problems",intent:"Informational",fmt:"Blog Post",prio:"Medium",status:"Gap",query:"when to see dermatologist for scalp itch"},
+        ]},
+      ]},
+    ]},
+    {name:"Product\nEducation",color:COLORS[3],children:[
+      {name:"How Dermeleve Works",children:[
+        {name:"Science & Ingredients",children:[
+          {name:"What Is in Dermeleve?\nFull Ingredient Breakdown",intent:"Informational",fmt:"FAQ Page",prio:"High",status:"Gap",query:"dermeleve ingredients list"},
+          {name:"How Aluminum Acetate\nRelieves Itch: Science Deep Dive",intent:"Informational",fmt:"Blog Post",prio:"High",status:"Gap",query:"aluminum acetate itch relief mechanism"},
+          {name:"Dermeleve vs. Hydrocortisone:\nWhich Is More Effective?",intent:"Commercial",fmt:"Comparison Page",prio:"High",status:"Gap",query:"dermeleve vs hydrocortisone"},
+          {name:"How Fast Does\nDermeleve Work?",intent:"Informational",fmt:"FAQ Page",prio:"High",status:"Gap",query:"how fast does dermeleve work"},
+        ]},
+        {name:"Usage Guide",children:[
+          {name:"How to Use Dermeleve\nfor Best Results",intent:"Informational",fmt:"Blog Post",prio:"High",status:"Gap",query:"how to use dermeleve cream"},
+          {name:"Can You Use Dermeleve\non Your Face?",intent:"Informational",fmt:"FAQ Page",prio:"High",status:"Gap",query:"can you use dermeleve on face"},
+          {name:"How Often Can You\nApply Anti-Itch Cream?",intent:"Informational",fmt:"FAQ Page",prio:"High",status:"Gap",query:"how often can you apply anti itch cream"},
+          {name:"Where NOT to Apply\nAnti-Itch Cream",intent:"Informational",fmt:"Blog Post",prio:"Medium",status:"Gap",query:"where not to apply anti itch cream"},
+        ]},
+      ]},
+      {name:"Product Comparisons",children:[
+        {name:"vs. OTC Competitors",children:[
+          {name:"Dermeleve vs. Sarna:\nWhich Works Better?",intent:"Commercial",fmt:"Comparison Page",prio:"High",status:"Gap",query:"dermeleve vs sarna anti itch"},
+          {name:"Dermeleve vs. CeraVe\nItch Relief Cream",intent:"Commercial",fmt:"Comparison Page",prio:"High",status:"Gap",query:"dermeleve vs cerave itch relief"},
+          {name:"Dermeleve vs. Gold Bond\nItch Relief",intent:"Commercial",fmt:"Comparison Page",prio:"Medium",status:"Gap",query:"dermeleve vs gold bond itch"},
+          {name:"Best Anti-Itch Cream\nWithout Hydrocortisone 2025",intent:"Commercial",fmt:"Listicle",prio:"High",status:"Gap",query:"best anti itch cream without hydrocortisone 2025"},
+        ]},
+        {name:"vs. Prescription Options",children:[
+          {name:"OTC vs. Prescription Itch\nRelief: When Do You Need Rx?",intent:"Informational",fmt:"Blog Post",prio:"Medium",status:"Gap",query:"otc vs prescription itch relief"},
+          {name:"What Doctors Prescribe\nfor Chronic Itch",intent:"Informational",fmt:"Blog Post",prio:"High",status:"Gap",query:"prescription treatment for chronic itch otc alternative"},
+          {name:"When Anti-Itch Cream\nIsn't Enough: Next Steps",intent:"Informational",fmt:"Blog Post",prio:"Medium",status:"Gap",query:"when anti itch cream stops working"},
+          {name:"Tacrolimus vs. OTC\nSteroid-Free Creams",intent:"Informational",fmt:"Comparison Page",prio:"Medium",status:"Gap",query:"tacrolimus vs otc anti itch cream eczema"},
+        ]},
+      ]},
+      {name:"Where to Buy & Savings",children:[
+        {name:"Buying Options",children:[
+          {name:"Where to Buy Dermeleve:\nOnline, Retail & Providers",intent:"Navigational",fmt:"FAQ Page",prio:"High",status:"Gap",query:"where to buy dermeleve"},
+          {name:"Is Dermeleve Available\non Amazon?",intent:"Navigational",fmt:"FAQ Page",prio:"High",status:"Gap",query:"dermeleve amazon"},
+          {name:"HSA and FSA Eligibility\nfor Anti-Itch Creams",intent:"Commercial",fmt:"Blog Post",prio:"High",status:"Gap",query:"is anti itch cream hsa fsa eligible"},
+          {name:"Dermeleve for Healthcare\nProviders: How to Order",intent:"Commercial",fmt:"Landing Page",prio:"High",status:"Gap",query:"dermeleve provider ordering"},
+        ]},
+        {name:"Bundles & Value",children:[
+          {name:"2 oz vs. 4 oz Dermeleve:\nWhich Size Is Right?",intent:"Commercial",fmt:"FAQ Page",prio:"Medium",status:"Gap",query:"dermeleve 2oz vs 4oz which to buy"},
+          {name:"How Much Anti-Itch Cream\nDo You Need Per Month?",intent:"Informational",fmt:"Blog Post",prio:"Medium",status:"Gap",query:"how much anti itch cream to use per month"},
+          {name:"Best Value Anti-Itch\nCream Multi-Packs",intent:"Commercial",fmt:"Blog Post",prio:"Medium",status:"Gap",query:"best value anti itch cream multi pack"},
+          {name:"Dermeleve Promo\nCodes & Current Deals",intent:"Transactional",fmt:"Landing Page",prio:"High",status:"Exists",query:"dermeleve promo code discount"},
+        ]},
+      ]},
+    ]},
+    {name:"Skin Care Routine\n& Lifestyle",color:COLORS[4],children:[
+      {name:"Building an Itch-\nFriendly Routine",children:[
+        {name:"Daily Skincare for\nItch-Prone Skin",children:[
+          {name:"How to Build a Skincare\nRoutine for Eczema-Prone Skin",intent:"Informational",fmt:"Guide",prio:"High",status:"Exists",query:"skincare routine for eczema prone skin"},
+          {name:"Best Moisturizers to Use\nAlongside Anti-Itch Cream",intent:"Commercial",fmt:"Blog Post",prio:"High",status:"Gap",query:"best moisturizer to use with anti itch cream"},
+          {name:"Morning vs. Night Routine\nfor Itchy, Sensitive Skin",intent:"Informational",fmt:"Blog Post",prio:"Medium",status:"Gap",query:"morning night skincare routine itchy skin"},
+          {name:"How to Layer Skincare\nProducts for Itchy Skin",intent:"Informational",fmt:"Blog Post",prio:"Medium",status:"Gap",query:"how to layer skincare products itchy skin"},
+        ]},
+        {name:"Bathing & Cleansing",children:[
+          {name:"Best Soaps for Eczema\nand Sensitive Skin",intent:"Commercial",fmt:"Listicle",prio:"High",status:"Gap",query:"best soap for eczema sensitive skin"},
+          {name:"How Often Should You\nBathe When You Have Eczema?",intent:"Informational",fmt:"Blog Post",prio:"Medium",status:"Gap",query:"how often to bathe with eczema"},
+          {name:"Bleach Baths for\nEczema: Do They Work?",intent:"Informational",fmt:"Blog Post",prio:"Medium",status:"Gap",query:"bleach bath eczema benefits risks"},
+          {name:"Hot Showers & Itchy Skin:\nWhy Heat Makes Itch Worse",intent:"Informational",fmt:"Blog Post",prio:"Low",status:"Gap",query:"hot shower makes skin more itchy"},
+        ]},
+      ]},
+      {name:"Lifestyle & Triggers",children:[
+        {name:"Environmental &\nBehavioral Triggers",children:[
+          {name:"10 Household Triggers\nMaking Your Skin Itch",intent:"Informational",fmt:"Listicle",prio:"High",status:"Gap",query:"household triggers itchy skin"},
+          {name:"Stress and Skin Itch:\nThe Mind-Body Connection",intent:"Informational",fmt:"Blog Post",prio:"High",status:"Gap",query:"stress causes skin itching"},
+          {name:"Exercise and Skin Itch:\nWhy It Happens",intent:"Informational",fmt:"Blog Post",prio:"Medium",status:"Gap",query:"exercise causes skin itching how to prevent"},
+          {name:"Best Fabrics for\nSensitive, Itchy Skin",intent:"Informational",fmt:"Blog Post",prio:"Medium",status:"Gap",query:"best fabric for itchy sensitive skin"},
+        ]},
+        {name:"Diet & Internal\nTriggers",children:[
+          {name:"Foods That Trigger\nEczema and Itchy Skin",intent:"Informational",fmt:"Blog Post",prio:"High",status:"Gap",query:"foods that trigger eczema flares"},
+          {name:"Anti-Inflammatory Eating\nfor Healthier Skin",intent:"Informational",fmt:"Blog Post",prio:"Medium",status:"Gap",query:"anti inflammatory diet for skin health"},
+          {name:"Gut Health and Itchy\nSkin: Is There a Connection?",intent:"Informational",fmt:"Blog Post",prio:"Medium",status:"Gap",query:"gut health skin itch connection"},
+          {name:"Supplements for Skin\nHealth: What Actually Works",intent:"Informational",fmt:"Blog Post",prio:"Medium",status:"Gap",query:"supplements for itchy skin eczema"},
+        ]},
+      ]},
+    ]},
+    {name:"Condition-Specific\nItch Guides",color:COLORS[5],children:[
+      {name:"Shingles & Viral\nConditions",children:[
+        {name:"Shingles Itch",children:[
+          {name:"Shingles Rash: Symptoms,\nTimeline & Itch Relief",intent:"Informational",fmt:"Blog Post",prio:"High",status:"Gap",query:"shingles rash symptoms itch relief"},
+          {name:"Best OTC Creams\nfor Shingles Itch",intent:"Commercial",fmt:"Listicle",prio:"High",status:"Gap",query:"best cream for shingles itch"},
+          {name:"Post-Herpetic Neuralgia:\nLong-Term Itch After Shingles",intent:"Informational",fmt:"Blog Post",prio:"High",status:"Gap",query:"post herpetic neuralgia itch treatment"},
+          {name:"Shingles on Face,\nScalp & Eye",intent:"Informational",fmt:"Blog Post",prio:"High",status:"Exists",query:"shingles on face scalp eye symptoms"},
+        ]},
+        {name:"Other Viral Skin\nConditions",children:[
+          {name:"Chickenpox Itch Relief\nfor Adults and Children",intent:"Informational",fmt:"Blog Post",prio:"High",status:"Gap",query:"chickenpox itch relief treatment"},
+          {name:"Viral Rash vs. Allergic\nRash: How to Tell",intent:"Informational",fmt:"Blog Post",prio:"Medium",status:"Gap",query:"viral rash vs allergic rash how to tell"},
+          {name:"Molluscum Contagiosum:\nSymptoms & Itch Relief",intent:"Informational",fmt:"Blog Post",prio:"Low",status:"Gap",query:"molluscum contagiosum itch treatment"},
+          {name:"Hand, Foot & Mouth\nDisease: Itch & Skin Symptoms",intent:"Informational",fmt:"Blog Post",prio:"Low",status:"Gap",query:"hand foot mouth disease itch treatment"},
+        ]},
+      ]},
+      {name:"Diabetes & Internal\nConditions",children:[
+        {name:"Diabetic Skin Issues",children:[
+          {name:"Diabetic Itch: Why\nIt Happens & How to Treat",intent:"Informational",fmt:"Blog Post",prio:"High",status:"Gap",query:"diabetic itch causes treatment"},
+          {name:"Skin Care Tips for\nPeople with Type 2 Diabetes",intent:"Informational",fmt:"Guide",prio:"High",status:"Gap",query:"skin care tips for diabetics"},
+          {name:"Pruritus and Kidney\nDisease: Why It Itches",intent:"Informational",fmt:"Blog Post",prio:"High",status:"Gap",query:"kidney disease itch treatment pruritus"},
+          {name:"Liver Disease and\nItchy Skin: Causes & Relief",intent:"Informational",fmt:"Blog Post",prio:"Medium",status:"Gap",query:"liver disease itchy skin cholestatic pruritus"},
+        ]},
+        {name:"Itch During\nPregnancy",children:[
+          {name:"Itchy Skin During Pregnancy:\nWhat's Normal and What's Not",intent:"Informational",fmt:"Blog Post",prio:"High",status:"Gap",query:"itchy skin during pregnancy causes"},
+          {name:"Safe Itch Relief Creams\nDuring Pregnancy",intent:"Commercial",fmt:"Blog Post",prio:"High",status:"Gap",query:"safe anti itch cream during pregnancy"},
+          {name:"PUPPP Rash in Pregnancy:\nWhat It Is & How to Treat",intent:"Informational",fmt:"Blog Post",prio:"Medium",status:"Gap",query:"PUPPP rash pregnancy treatment itch"},
+          {name:"Postpartum Skin Changes:\nWhy You're Still Itching",intent:"Informational",fmt:"Blog Post",prio:"Medium",status:"Gap",query:"postpartum itchy skin causes treatment"},
+        ]},
+      ]},
+      {name:"Aging Skin & Seniors",children:[
+        {name:"Age-Related Skin Changes",children:[
+          {name:"Why Skin Gets Itchier\nas You Age",intent:"Informational",fmt:"Blog Post",prio:"High",status:"Gap",query:"why does skin itch more as you age"},
+          {name:"Xerosis (Severely Dry Skin)\nin Older Adults",intent:"Informational",fmt:"Blog Post",prio:"High",status:"Gap",query:"xerosis dry skin elderly treatment"},
+          {name:"Best Anti-Itch Creams\nfor Elderly Skin",intent:"Commercial",fmt:"Listicle",prio:"High",status:"Gap",query:"best anti itch cream for elderly skin"},
+          {name:"Why Steroids Are Risky\nfor Thin, Aging Skin",intent:"Informational",fmt:"Blog Post",prio:"High",status:"Gap",query:"steroid cream risks for elderly thin skin"},
+        ]},
+      ]},
+    ]},
+    {name:"Provider &\nClinical Education",color:COLORS[6],children:[
+      {name:"For Healthcare\nProviders",children:[
+        {name:"Clinical Evidence",children:[
+          {name:"Clinical Evidence for\nAluminum Acetate in Pruritus",intent:"Informational",fmt:"Blog Post",prio:"High",status:"Gap",query:"aluminum acetate clinical evidence pruritus"},
+          {name:"Safety Profile of\nNon-Steroidal Topical Agents",intent:"Informational",fmt:"White Paper",prio:"High",status:"Gap",query:"non steroidal topical agents chronic itch safety"},
+          {name:"Comparing First-Line OTC\nOptions for Chronic Pruritus",intent:"Informational",fmt:"Blog Post",prio:"Medium",status:"Gap",query:"first line otc treatment chronic pruritus comparison"},
+          {name:"Step Therapy for\nChronic Itch: A Provider Framework",intent:"Informational",fmt:"Guide",prio:"Medium",status:"Gap",query:"step therapy chronic itch treatment protocol"},
+        ]},
+        {name:"Recommending\nto Patients",children:[
+          {name:"How to Talk to Patients\nAbout Steroid Alternatives",intent:"Informational",fmt:"Blog Post",prio:"High",status:"Gap",query:"how to counsel patients about steroid alternatives"},
+          {name:"Patient Compliance with\nTopical Treatments",intent:"Informational",fmt:"Blog Post",prio:"Medium",status:"Gap",query:"patient compliance topical skin treatment"},
+          {name:"Dermeleve for Pediatric\nPatients: A Provider's Guide",intent:"Informational",fmt:"Guide",prio:"High",status:"Gap",query:"dermeleve pediatric use provider guide"},
+          {name:"Managing Itch in\nImmunocompromised Patients",intent:"Informational",fmt:"Blog Post",prio:"Medium",status:"Gap",query:"itch management immunocompromised patients"},
+        ]},
+      ]},
+      {name:"Dermatology\nEducation",children:[
+        {name:"Skin Condition\nDeep Dives",children:[
+          {name:"Pruritus: Classification\n& Management Guide",intent:"Informational",fmt:"Guide",prio:"High",status:"Gap",query:"pruritus classification causes management"},
+          {name:"Neurological Mechanisms\nof Itch",intent:"Informational",fmt:"Blog Post",prio:"Medium",status:"Gap",query:"neurological mechanism of itch"},
+          {name:"The Role of the Skin\nBarrier in Chronic Itch",intent:"Informational",fmt:"Blog Post",prio:"Medium",status:"Gap",query:"skin barrier dysfunction chronic itch"},
+          {name:"Rosacea Types, Triggers\n& Skin Care: A Deep Dive",intent:"Informational",fmt:"Blog Post",prio:"Medium",status:"Gap",query:"rosacea types triggers skin care treatment"},
+        ]},
+        {name:"Treatment Protocols",children:[
+          {name:"Combination Approaches\nto Itch Management",intent:"Informational",fmt:"Blog Post",prio:"Medium",status:"Gap",query:"combination treatment approach chronic itch"},
+          {name:"When OTC Itch Treatments\nAre Enough (and When Not)",intent:"Informational",fmt:"Blog Post",prio:"Medium",status:"Gap",query:"when is otc itch treatment sufficient"},
+          {name:"Telehealth for Skin\nConditions: Getting Diagnosed Remotely",intent:"Informational",fmt:"Blog Post",prio:"Low",status:"Gap",query:"telehealth dermatology skin conditions"},
+          {name:"How to Read a Skincare\nProduct Label",intent:"Informational",fmt:"Blog Post",prio:"Low",status:"Gap",query:"how to read skincare product label ingredients"},
+        ]},
+      ]},
+    ]},
+  ]
+};
+
+// ─── Layout Engine ───────────────────────────────────────────────────────────
+const NODE_W = 130, NODE_H = 44, H_GAP = 44, V_GAP = 10;
+const LEVEL_SIZES = [180, 148, 120, 112];
+const LEVEL_H = [52, 46, 40, 36];
+
+let svgEl, g, transform = {x:60, y:0, scale:1};
+let dragging=false, lastX=0, lastY=0;
+let collapsed = new Set();
+
+function getColor(node, level) {
+  if (level===0) return "#1a2b40";
+  let n=node;
+  while(n._parent) n=n._parent;
+  return n.color||COLORS[0];
+}
+
+function lighten(hex, level) {
+  const r=parseInt(hex.slice(1,3),16), g2=parseInt(hex.slice(3,5),16), b=parseInt(hex.slice(5,7),16);
+  const factors=[1,0.75,0.45,0.2];
+  const f=factors[Math.min(level,3)];
+  const mix=(c)=>Math.round(c*f+255*(1-f));
+  return `rgb(${mix(r)},${mix(g2)},${mix(b)})`;
+}
+
+function buildLegend() {
+  const leg=document.getElementById("legend");
+  DATA.children.forEach((ct,i)=>{
+    const d=document.createElement("div");
+    d.className="leg-item";
+    d.innerHTML=`<div class="leg-dot" style="background:${ct.color}"></div><span>${ct.name.replace("\n"," ")}</span>`;
+    leg.appendChild(d);
+  });
+}
+
+function assignParents(node, parent=null, level=0) {
+  node._parent=parent; node._level=level;
+  if(node.children) node.children.forEach(c=>assignParents(c,node,level+1));
+}
+
+function isCollapsed(node) { return collapsed.has(node); }
+
+function visibleChildren(node) {
+  if(!node.children||isCollapsed(node)) return [];
+  return node.children;
+}
+
+function subtreeHeight(node) {
+  const vc=visibleChildren(node);
+  if(vc.length===0) return LEVEL_H[Math.min(node._level,3)]+V_GAP;
+  const childH=vc.reduce((s,c)=>s+subtreeHeight(c),0);
+  return Math.max(childH, LEVEL_H[Math.min(node._level,3)]+V_GAP);
+}
+
+function layoutTree(node, x, y) {
+  node._x=x; node._y=y;
+  const vc=visibleChildren(node);
+  if(vc.length===0) return;
+  let curY=y;
+  const totalH=vc.reduce((s,c)=>s+subtreeHeight(c),0);
+  const startY=y+(subtreeHeight(node)-totalH)/2;
+  curY=startY;
+  const lv=node._level;
+  const nw=LEVEL_SIZES[Math.min(lv,3)];
+  vc.forEach(c=>{
+    const ch=subtreeHeight(c);
+    layoutTree(c, x+nw+H_GAP, curY+(ch-LEVEL_H[Math.min(c._level,3)])/2);
+    curY+=ch;
+  });
+}
+
+function svgNS(){return "http://www.w3.org/2000/svg";}
+function el(tag,attrs){const e=document.createElementNS(svgNS(),tag);Object.entries(attrs||{}).forEach(([k,v])=>e.setAttribute(k,v));return e;}
+
+function renderTree(node) {
+  const lv=node._level;
+  const nw=LEVEL_SIZES[Math.min(lv,3)];
+  const nh=LEVEL_H[Math.min(lv,3)];
+  const x=node._x, y=node._y;
+
+  // Draw edges to children
+  const vc=visibleChildren(node);
+  vc.forEach(c=>{
+    const cx=c._x, cy=c._y+LEVEL_H[Math.min(c._level,3)]/2;
+    const ex=x+nw, ey=y+nh/2;
+    const mx=(ex+cx)/2;
+    const path=el("path",{
+      d:`M${ex},${ey} C${mx},${ey} ${mx},${cy} ${cx},${cy}`,
+      fill:"none",stroke:getColor(node,lv)||"#3d5a7e",
+      "stroke-width": lv===0?2.5:lv===1?2:1.5,
+      "stroke-opacity":"0.7"
+    });
+    g.appendChild(path);
+  });
+
+  // Node box
+  const color=getColor(node,lv);
+  const bg= lv===0?"#1a2b40":lighten(color,lv);
+  const textColor= lv<=1?"#ffffff": lv===2?"#1a2332":"#2d3748";
+  
+  let strokeStyle="", strokeW="1.5", dashArr="";
+  if(lv===3) {
+    if(node.status==="Gap"){strokeStyle=color;dashArr="5,3";}
+    else if(node.status==="Needs Update"){strokeStyle="#ffc107";dashArr="2,2";}
+    else{strokeStyle=node.status==="Exists"?"#28a745":color;}
+    const nodeBg= node.status==="Exists"?"rgba(40,167,69,0.12)":
+                  node.status==="Needs Update"?"rgba(255,193,7,0.10)":
+                  node.status==="Gap"?"rgba(220,53,69,0.10)": bg;
+    const rect=el("rect",{x,y,width:nw,height:nh,rx:"6",
+      fill:nodeBg,stroke:strokeStyle,"stroke-width":strokeW,
+      "stroke-dasharray":dashArr});
+    g.appendChild(rect);
+  } else {
+    const rect=el("rect",{x,y,width:nw,height:nh,rx: lv===0?"10":"6",
+      fill:bg,stroke:lv===0?"#2d4a6e":color,
+      "stroke-width": lv===0?"2":"1",
+      "stroke-opacity":"0.5"});
+    g.appendChild(rect);
+  }
+
+  // Text
+  const lines=node.name.split("\n");
+  const fontSize=lv===0?13:lv===1?11:lv===2?10:9;
+  if(lines.length===1){
+    const t=el("text",{x:x+nw/2,y:y+nh/2+fontSize*0.35,
+      "text-anchor":"middle","font-size":fontSize,"fill":textColor,
+      "font-family":"Segoe UI,Calibri,sans-serif",
+      "font-weight": lv<=1?"bold":"normal",
+      "pointer-events":"none"});
+    t.textContent=lines[0];
+    g.appendChild(t);
+  } else {
+    const lineH=fontSize*1.3;
+    const totalH2=lineH*(lines.length-1);
+    lines.forEach((line,i)=>{
+      const t=el("text",{x:x+nw/2,y:y+nh/2-totalH2/2+i*lineH+fontSize*0.35,
+        "text-anchor":"middle","font-size":fontSize,"fill":textColor,
+        "font-family":"Segoe UI,Calibri,sans-serif",
+        "font-weight": lv<=1?"bold":"normal",
+        "pointer-events":"none"});
+      t.textContent=line;
+      g.appendChild(t);
+    });
+  }
+
+  // Collapse toggle (levels 0-2)
+  if(node.children && lv<=2){
+    const tx=x+nw-10, ty=y+nh/2;
+    const circ=el("circle",{cx:tx,cy:ty,r:"6",
+      fill:lv===0?"#2d4a6e":color,"fill-opacity":"0.8",cursor:"pointer"});
+    const sign=el("text",{x:tx,y:ty+3.5,"text-anchor":"middle",
+      "font-size":"10","fill":"white","pointer-events":"none"});
+    sign.textContent=isCollapsed(node)?"+":"−";
+    circ.addEventListener("click",(e)=>{
+      e.stopPropagation();
+      if(isCollapsed(node)) collapsed.delete(node); else collapsed.add(node);
+      redraw();
+    });
+    g.appendChild(circ);
+    g.appendChild(sign);
+  }
+
+  // Tooltip on content idea nodes
+  if(lv===3){
+    const overlay=el("rect",{x,y,width:nw,height:nh,rx:"6",
+      fill:"transparent",cursor:"pointer"});
+    overlay.addEventListener("mouseenter",(e)=>{
+      const tip=document.getElementById("tooltip");
+      tip.style.display="block";
+      tip.innerHTML=`<strong>${node.name.replace(/\n/g," ")}</strong>
+        <em>Intent: ${node.intent||""} · Format: ${node.fmt||""} · Priority: ${node.prio||""}</em>
+        <div style="margin-top:4px;color:#cde">Query: "${node.query||""}"</div>
+        <div style="margin-top:4px">Status: <span style="color:${node.status==="Exists"?"#28a745":node.status==="Gap"?"#dc3545":"#ffc107"}">${node.status||""}</span></div>`;
+    });
+    overlay.addEventListener("mousemove",(e)=>{
+      const tip=document.getElementById("tooltip");
+      tip.style.left=(e.clientX+14)+"px";
+      tip.style.top=(e.clientY-10)+"px";
+    });
+    overlay.addEventListener("mouseleave",()=>{
+      document.getElementById("tooltip").style.display="none";
+    });
+    g.appendChild(overlay);
+  }
+
+  vc.forEach(c=>renderTree(c));
+}
+
+function redraw() {
+  while(g.firstChild) g.removeChild(g.firstChild);
+  layoutTree(DATA, 20, 0);
+
+  // calc bounding box to center vertically
+  let minY=Infinity,maxY=-Infinity;
+  function bb(n){
+    minY=Math.min(minY,n._y);
+    maxY=Math.max(maxY,n._y+LEVEL_H[Math.min(n._level,3)]);
+    visibleChildren(n).forEach(bb);
+  }
+  bb(DATA);
+  const totalH=maxY-minY;
+  const viewH=window.innerHeight-56;
+  transform.y=Math.max(20, (viewH-totalH*transform.scale)/2);
+  applyTransform();
+  renderTree(DATA);
+}
+
+function applyTransform() {
+  g.setAttribute("transform",`translate(${transform.x},${transform.y}) scale(${transform.scale})`);
+}
+
+function resetView() {
+  transform={x:60,y:0,scale:1};
+  redraw();
+}
+function expandAll() { collapsed.clear(); redraw(); }
+function collapseAll() {
+  function col(n){if(n._level>=2&&n.children)collapsed.add(n);if(n.children)n.children.forEach(col);}
+  DATA.children.forEach(col);
+  redraw();
+}
+
+function downloadPNG() {
+  const s=document.getElementById("svg");
+  const xml=new XMLSerializer().serializeToString(s);
+  const blob=new Blob([xml],{type:"image/svg+xml"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download="dermeleve-topical-authority-map.svg";
+  a.click();
+}
+
+// ─── Init ────────────────────────────────────────────────────────────────────
+window.addEventListener("load",()=>{
+  assignParents(DATA);
+  buildLegend();
+
+  svgEl=document.getElementById("svg");
+  svgEl.setAttribute("width","100%");
+  svgEl.setAttribute("height","100%");
+  g=document.createElementNS("http://www.w3.org/2000/svg","g");
+  svgEl.appendChild(g);
+
+  // Default: collapse level 3 sub-subtopics initially for overview
+  function colL3(n){if(n._level===2&&n.children)collapsed.add(n);if(n.children)n.children.forEach(colL3);}
+  DATA.children.forEach(colL3);
+
+  redraw();
+
+  // Zoom
+  svgEl.addEventListener("wheel",(e)=>{
+    e.preventDefault();
+    const factor=e.deltaY<0?1.1:0.91;
+    transform.scale=Math.max(0.15,Math.min(3,transform.scale*factor));
+    applyTransform();
+  });
+
+  // Pan
+  svgEl.addEventListener("mousedown",(e)=>{dragging=true;lastX=e.clientX;lastY=e.clientY;svgEl.classList.add("dragging");});
+  window.addEventListener("mousemove",(e)=>{
+    if(!dragging)return;
+    transform.x+=e.clientX-lastX;
+    transform.y+=e.clientY-lastY;
+    lastX=e.clientX;lastY=e.clientY;
+    applyTransform();
+  });
+  window.addEventListener("mouseup",()=>{dragging=false;svgEl.classList.remove("dragging");});
+  window.addEventListener("resize",redraw);
+});
+</script>
+</body>
+</html>
