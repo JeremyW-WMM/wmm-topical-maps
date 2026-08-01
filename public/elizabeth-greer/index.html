@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Elizabeth Greer – Topical Authority Map</title>
+<link rel="icon" type="image/jpeg" href="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQoHBwYIDAoMDAsKCwsNDhIQDQ4RDgsLEBYQERMUFRUVDA8XGBYUGBIUFRT/2wBDAQMEBAUEBQkFBQkUDQsNFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBT/wAARCAAgACADASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD8/wCvWvgj+zV4r+NXi3wfpkMLaDpHie7uLSy12/hY28hgiaWbywOZCqoRx8u7gsOcdb+wB4O0Tx3+1f4M0jxDpVrrOlsl3cNZ3sYkieSK3d4yynhsMoODkcdK+zvgCoWy/ZHUABV1zxcAAMADbe8D0FBTZ+cHiH4bCLUtVh8M6gfEcWnTzRT2vk+VqEIjdkZ2twW3p8ud8RcD+IJXEAhgCCCD0IORX2/8L/h1onxL074a6HrMMog1L4v+JLSW6s5TBdRoLMyL5cy/MhDqrDB6ivlL4gXD6nYeGNUutkupXtpcm7uhGqPctHeTRLJJtADPsVQWxlsZOTzQB6p+wJ400L4f/tWeDtZ8Sara6JpKJeQPe3sgjhR5Ld0jDMeFBZgMnA55NfoB4K+FutfDHX/2XtD1FYr5tN1rxLJNfaaWmtdlxBdTQN5m0ABkdcZxzkDOK/HqvfP2dP21fiP+zhPBZ6VqH9ueFVYGTw7qrs9uBnnyW+9C3+78ueqmgGj6I/Zv/wCQt8H/AG+NPiU/+U9q+LPiFbNpdl4a0m4aIalYWtyt3bxyrI1u73k0io5UkB9jKSucjIBwcit3xX8eda1PQLjw1oHmeHfC8up3mqm3WUS3cs9yf3zSXAVSAVCrsjCrgYO7JNeYABQAAAB0AGAKAP/Z">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0d1520;font-family:'Segoe UI',Calibri,sans-serif;overflow:hidden;height:100vh;display:flex;flex-direction:column}
+#header{position:fixed;top:0;left:0;right:0;z-index:100;background:linear-gradient(90deg,#1a2d45,#0f1923);border-bottom:1px solid #2d4a6e;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;height:56px}
+#header a.logo-link{display:flex;align-items:center;flex-shrink:0;margin-right:12px;opacity:.9;transition:opacity .2s;text-decoration:none}
+#header a.logo-link:hover{opacity:1}
+#header a.logo-link img{height:56px;width:auto;display:block;margin:-8px 0}
+#header .title-area{flex:1;min-width:0}
+#header h1{font-size:16px;font-weight:700;color:#e2e8f0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#header .subtitle{font-size:11px;color:#4a6280;margin-top:2px}
+#controls{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.ctrl-btn{padding:5px 10px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid #2d4a6e;background:#1a2d45;color:#7aa0c4;transition:all .15s;white-space:nowrap}
+.ctrl-btn:hover{background:#2d4a6e;color:#e2e8f0}
+#canvas-wrap{position:fixed;top:56px;left:0;right:0;bottom:0;overflow:hidden;transition:right .25s ease}
+#svg-canvas{width:100%;height:100%;cursor:grab}
+#svg-canvas.dragging{cursor:grabbing}
+#panel{position:fixed;top:56px;right:0;width:320px;bottom:0;background:#151f2e;border-left:1px solid #2d4a6e;z-index:50;transform:translateX(100%);transition:transform .25s ease;display:flex;flex-direction:column}
+#panel.open{transform:translateX(0)}
+#panel-head{padding:14px 16px;border-bottom:1px solid #2d4a6e;display:flex;align-items:center;justify-content:space-between}
+#panel-title{font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.4;flex:1;margin-right:8px}
+#panel-close{width:24px;height:24px;border:none;background:none;color:#4a6280;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;border-radius:4px}
+#panel-close:hover{color:#e2e8f0;background:#2d4a6e}
+#panel-body{flex:1;overflow-y:auto;padding:14px 16px}
+.panel-section{margin-bottom:14px}
+.panel-label{font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:#4a6280;margin-bottom:4px;font-weight:600}
+.panel-query{font-style:italic;color:#7aa0c4;font-size:12px;line-height:1.5}
+.panel-desc{color:#a0b4c8;font-size:12px;line-height:1.6}
+.panel-chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px}
+.chip{padding:3px 9px;border-radius:12px;font-size:10px;font-weight:600}
+.chip-hi{background:#d4edda22;color:#3fb950;border:1px solid #3fb95040}
+.chip-med{background:#fff3cd22;color:#fbbf24;border:1px solid #fbbf2440}
+.chip-lo{background:#e2e3e522;color:#6b7280;border:1px solid #6b728040}
+.chip-intent{background:#1a3a6e22;color:#7aa0c4;border:1px solid #7aa0c440}
+.chip-fmt{background:#2d1a4522;color:#a78bfa;border:1px solid #a78bfa40}
+.panel-link{color:#7aa0c4;font-size:12px}
+.status-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:4px 10px;border-radius:6px}
+.sb-exists{background:#d4edda22;color:#3fb950;border:1px solid #3fb95040}
+.sb-gap{background:#f8d7da22;color:#f85149;border:1px dashed #f8514950}
+.sb-needs{background:#fff3cd22;color:#fbbf24;border:1px dashed #fbbf2450}
+.panel-url{font-size:11px;word-break:break-all}
+.panel-url a{color:#58a6ff;text-decoration:none}
+.panel-url a:hover{text-decoration:underline}
+#done-btn{margin:14px 16px;padding:8px;border-radius:7px;background:#1a2d45;border:1px solid #2d4a6e;color:#7aa0c4;font-size:12px;cursor:pointer;transition:all .15s;text-align:center}
+#done-btn:hover{background:#2d4a6e;color:#e2e8f0}
+#legend{position:fixed;bottom:16px;left:16px;z-index:100;background:#1a2d45cc;border:1px solid #2d4a6e;border-radius:10px;padding:12px 14px;font-size:10px;color:#4a6280}
+#legend .leg-title{font-weight:700;color:#7aa0c4;margin-bottom:8px;font-size:10px;text-transform:uppercase;letter-spacing:.6px}
+.leg-item{display:flex;align-items:center;gap:6px;margin-bottom:5px;font-size:10px;color:#6b8cae}
+.leg-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.leg-section{margin-top:10px}
+#stats{position:fixed;bottom:16px;right:16px;z-index:100;background:#1a2d45cc;border:1px solid #2d4a6e;border-radius:10px;padding:10px 14px;font-size:10px;color:#4a6280;text-align:right}
+.stat-num{font-size:18px;font-weight:700;color:#7aa0c4;line-height:1}
+.stat-lbl{font-size:9px;color:#4a6280;margin-top:1px}
+.stat-row{display:flex;gap:14px;justify-content:flex-end}
+</style>
+</head>
+<body>
+<div id="header">
+  <a class="logo-link" href="https://www.weissmediamarketing.com" target="_blank" rel="noopener">
+    <img src="data:image/png;base64,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" alt="Weiss Media Marketing">
+  </a>
+  <div class="title-area">
+    <h1>Elizabeth Greer &mdash; Topical Authority Map</h1>
+    <div class="subtitle">elizabethgreer.com &nbsp;|&nbsp; 6 Core Topics &nbsp;|&nbsp; 60 Content Ideas</div>
+  </div>
+  <div id="controls">
+    <button class="ctrl-btn" onclick="resetView()">&#8635; Reset View</button>
+    <button class="ctrl-btn" onclick="expandAll()">+ Expand All</button>
+    <button class="ctrl-btn" onclick="collapseAll()">&#8722; Collapse</button>
+  </div>
+</div>
+<div id="canvas-wrap">
+  <svg id="svg-canvas" xmlns="http://www.w3.org/2000/svg"></svg>
+</div>
+<div id="panel">
+  <div id="panel-head">
+    <div id="panel-title">Select a content idea</div>
+    <button id="panel-close" onclick="closePanel()">&#x2715;</button>
+  </div>
+  <div id="panel-body">
+    <div class="panel-section"><div class="panel-label">Sample Query</div><div class="panel-query" id="p-query"></div></div>
+    <div class="panel-section"><div class="panel-label">Description</div><div class="panel-desc" id="p-desc"></div></div>
+    <div class="panel-section"><div class="panel-label">Details</div><div class="panel-chips" id="p-chips"></div></div>
+    <div class="panel-section"><div class="panel-label">Internal Link Target</div><div class="panel-link" id="p-link"></div></div>
+    <div class="panel-section"><div class="panel-label">Status</div><div id="p-status"></div></div>
+    <div class="panel-section" id="p-url-sec" style="display:none"><div class="panel-label">Existing URL</div><div class="panel-url" id="p-url"></div></div>
+  </div>
+  <button id="done-btn" onclick="closePanel()">Close Panel</button>
+</div>
+<div id="legend">
+  <div class="leg-title">Core Topics</div>
+  <div class="leg-item"><div class="leg-dot" style="background:#2563eb"></div>BFA / MFA Audition Coaching</div><div class="leg-item"><div class="leg-dot" style="background:#16a34a"></div>Film & TV Audition Coaching</div><div class="leg-item"><div class="leg-dot" style="background:#dc2626"></div>Parent & Family Guidance</div><div class="leg-item"><div class="leg-dot" style="background:#9333ea"></div>Acting Technique & Craft</div><div class="leg-item"><div class="leg-dot" style="background:#ea580c"></div>Working With Elizabeth</div><div class="leg-item"><div class="leg-dot" style="background:#0891b2"></div>Musical Theatre & Performing Arts</div>
+  <div class="leg-section" style="border-top:1px solid #2d4a6e;padding-top:8px;margin-top:4px">
+    <div class="leg-title">Status</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#3fb950"></div>Exists</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#f85149;outline:1px dashed #f85149;outline-offset:1px"></div>Gap</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#fbbf24;outline:1px dashed #fbbf24;outline-offset:1px"></div>Needs Update</div>
+  </div>
+</div>
+<div id="stats">
+  <div class="stat-row">
+    <div><div class="stat-num">6</div><div class="stat-lbl">Core Topics</div></div>
+    <div><div class="stat-num">15</div><div class="stat-lbl">Subtopics</div></div>
+    <div><div class="stat-num">60</div><div class="stat-lbl">Ideas</div></div>
+    <div><div class="stat-num">46</div><div class="stat-lbl">High Pri</div></div>
+  </div>
+</div>
+<script>
+const DATA = {"id": "root", "label": "Elizabeth Greer\nActing Coach", "level": 0, "children": [{"id": "c1", "label": "BFA / MFA\nAudition Coaching", "level": 1, "color": "#2563eb", "desc": "Helping high school and college students get accepted to top BFA and MFA acting programs", "children": [{"id": "c1s1", "label": "Choosing the Right Program", "level": 2, "color": "#2563eb", "children": [{"id": "c1s1a", "label": "Top BFA Acting Programs in the US & Abroad", "level": 3, "color": "#2563eb", "query": "best BFA acting programs in the US", "desc": "A comprehensive guide to the top BFA acting programs including Juilliard, NYU Tisch, Carnegie Mellon, Yale, and more — covering what makes each program unique and what they look for in auditions.", "fmt": "Guide", "pri": "High", "intent": "Informational", "link": "BFA / MFA Audition Coaching", "status": "Gap", "url": "", "children": []}, {"id": "c1s1b", "label": "BFA vs MFA Acting: Which Degree Is Right for You?", "level": 3, "color": "#2563eb", "query": "BFA vs MFA acting degree difference", "desc": "Breaks down the key differences between a BFA and MFA acting program — timing, curriculum, career paths — to help students and parents decide which path makes the most sense.", "fmt": "Blog Post", "pri": "High", "intent": "Informational", "link": "BFA / MFA Audition Coaching", "status": "Gap", "url": "", "children": []}, {"id": "c1s1c", "label": "How to Build Your BFA Audition School List", "level": 3, "color": "#2563eb", "query": "how to make a college audition list for BFA acting", "desc": "Step-by-step guidance on creating a balanced audition list — reach, match, and safety programs — with criteria for evaluating faculty, curriculum, and location.", "fmt": "Guide", "pri": "High", "intent": "Informational", "link": "BFA / MFA Audition Coaching", "status": "Gap", "url": "", "children": []}, {"id": "c1s1d", "label": "What Admissions Panels Actually Look For in BFA Auditions", "level": 3, "color": "#2563eb", "query": "what do BFA audition panels look for", "desc": "An insider perspective on what acting faculty prioritize when watching college auditions — presence, specificity, monologue choice, and authenticity.", "fmt": "Blog Post", "pri": "High", "intent": "Informational", "link": "BFA / MFA Audition Coaching", "status": "Gap", "url": "", "children": []}]}, {"id": "c1s2", "label": "Monologue Prep & Selection", "level": 2, "color": "#2563eb", "children": [{"id": "c1s2a", "label": "How to Choose the Perfect Audition Monologue for BFA Programs", "level": 3, "color": "#2563eb", "query": "how to choose monologue for BFA audition", "desc": "Elizabeth's signature approach to monologue selection — finding pieces that showcase the actor's unique strengths while meeting the technical requirements of top programs.", "fmt": "Guide", "pri": "High", "intent": "Informational", "link": "BFA / MFA Audition Coaching", "status": "Gap", "url": "", "children": []}, {"id": "c1s2b", "label": "Contemporary vs. Classical Monologues: What BFA Programs Want", "level": 3, "color": "#2563eb", "query": "contemporary vs classical monologue BFA audition", "desc": "Explains the typical requirements for contemporary and classical monologues across top BFA programs and how to approach each type with authenticity.", "fmt": "Blog Post", "pri": "High", "intent": "Informational", "link": "BFA / MFA Audition Coaching", "status": "Gap", "url": "", "children": []}, {"id": "c1s2c", "label": "Monologue Red Flags: What to Avoid in Your BFA Audition", "level": 3, "color": "#2563eb", "query": "what monologues to avoid BFA college audition", "desc": "Common monologue mistakes that get actors cut early — overdone pieces, wrong age range, mismatched material — and how to sidestep them.", "fmt": "Listicle", "pri": "Medium", "intent": "Informational", "link": "BFA / MFA Audition Coaching", "status": "Gap", "url": "", "children": []}, {"id": "c1s2d", "label": "How Long Should Your Audition Monologue Be?", "level": 3, "color": "#2563eb", "query": "how long should BFA audition monologue be", "desc": "A program-by-program breakdown of monologue time limits and how to cut pieces effectively without losing narrative arc or emotional depth.", "fmt": "FAQ Page", "pri": "Medium", "intent": "Informational", "link": "BFA / MFA Audition Coaching", "status": "Gap", "url": "", "children": []}]}, {"id": "c1s3", "label": "Pre-Screen & Interview Prep", "level": 2, "color": "#2563eb", "children": [{"id": "c1s3a", "label": "How to Nail Your BFA Pre-Screen Video Audition", "level": 3, "color": "#2563eb", "query": "BFA pre-screen video audition tips", "desc": "A complete guide to pre-screen video submissions — lighting, framing, background, wardrobe, audio, and how to make the camera work in your favor.", "fmt": "Guide", "pri": "High", "intent": "Informational", "link": "BFA / MFA Audition Coaching", "status": "Gap", "url": "", "children": []}, {"id": "c1s3b", "label": "BFA Audition Interview Questions and How to Answer Them", "level": 3, "color": "#2563eb", "query": "BFA audition interview questions what to expect", "desc": "The most common interview questions BFA programs ask and how to respond with authenticity and specificity rather than rehearsed answers.", "fmt": "FAQ Page", "pri": "High", "intent": "Informational", "link": "BFA / MFA Audition Coaching", "status": "Gap", "url": "", "children": []}, {"id": "c1s3c", "label": "Zoom Auditions for BFA Programs: The Complete Prep Guide", "level": 3, "color": "#2563eb", "query": "how to prepare for zoom BFA audition", "desc": "Technical and performance tips for Zoom auditions — camera angles, eye line, tech setup, and how to create presence through a screen.", "fmt": "Guide", "pri": "High", "intent": "Informational", "link": "BFA / MFA Audition Coaching", "status": "Gap", "url": "", "children": []}, {"id": "c1s3d", "label": "What to Wear to a BFA Acting Audition", "level": 3, "color": "#2563eb", "query": "what to wear to BFA acting audition", "desc": "Wardrobe guidance for in-person and video auditions — what communicates professionalism without distracting from the performance.", "fmt": "Blog Post", "pri": "Low", "intent": "Informational", "link": "BFA / MFA Audition Coaching", "status": "Gap", "url": "", "children": []}]}, {"id": "c1s4", "label": "Program-Specific Guides", "level": 2, "color": "#2563eb", "children": [{"id": "c1s4a", "label": "How to Audition for NYU Tisch BFA Acting Program", "level": 3, "color": "#2563eb", "query": "how to audition for NYU Tisch BFA", "desc": "A detailed breakdown of NYU Tisch's specific audition requirements, what their faculty values, and how Elizabeth has helped multiple students gain admission.", "fmt": "Service Page", "pri": "High", "intent": "Commercial", "link": "BFA / MFA Audition Coaching", "status": "Gap", "url": "", "children": []}, {"id": "c1s4b", "label": "How to Audition for Juilliard's BFA Acting Program", "level": 3, "color": "#2563eb", "query": "Juilliard BFA acting audition tips", "desc": "Inside look at Juilliard's audition process, what they look for beyond technique, and how to stand out in one of the most competitive programs in the world.", "fmt": "Service Page", "pri": "High", "intent": "Commercial", "link": "BFA / MFA Audition Coaching", "status": "Gap", "url": "", "children": []}, {"id": "c1s4c", "label": "Getting Into Carnegie Mellon BFA Drama: What You Need to Know", "level": 3, "color": "#2563eb", "query": "Carnegie Mellon BFA drama audition requirements", "desc": "Carnegie Mellon's unique audition format, faculty priorities, and what past successful applicants have had in common.", "fmt": "Service Page", "pri": "High", "intent": "Commercial", "link": "BFA / MFA Audition Coaching", "status": "Gap", "url": "", "children": []}, {"id": "c1s4d", "label": "Yale School of Drama MFA Auditions: A Coach's Inside Guide", "level": 3, "color": "#2563eb", "query": "Yale School of Drama MFA audition tips", "desc": "What it takes to earn a spot at Yale Drama — the most selective MFA program in the country — from a coach with an MFA from Yale herself.", "fmt": "Service Page", "pri": "High", "intent": "Commercial", "link": "BFA / MFA Audition Coaching", "status": "Gap", "url": "", "children": []}]}]}, {"id": "c2", "label": "Film & TV\nAudition Coaching", "level": 1, "color": "#16a34a", "desc": "Teaching young actors how to master on-camera auditions and book film and television roles", "children": [{"id": "c2s1", "label": "Self-Tape Mastery", "level": 2, "color": "#16a34a", "children": [{"id": "c2s1a", "label": "How to Film a Perfect Self-Tape Audition", "level": 3, "color": "#16a34a", "query": "how to film a self tape audition at home", "desc": "Step-by-step guide to self-tape setup — lighting, background, framing, audio, and reader tips — so the performance shines rather than the technical limitations distract.", "fmt": "Guide", "pri": "High", "intent": "Informational", "link": "Film & TV Audition Coaching", "status": "Gap", "url": "", "children": []}, {"id": "c2s1b", "label": "Self-Tape Acting Tips: How to Connect With the Camera", "level": 3, "color": "#16a34a", "query": "self tape acting tips look natural on camera", "desc": "On-camera acting technique specifically for self-tapes — eye line, size of performance, how to stay present without a live scene partner.", "fmt": "Blog Post", "pri": "High", "intent": "Informational", "link": "Film & TV Audition Coaching", "status": "Gap", "url": "", "children": []}, {"id": "c2s1c", "label": "The Best Self-Tape Setup for Kids and Teen Actors", "level": 3, "color": "#16a34a", "query": "self tape setup for kids actors at home", "desc": "A parent-friendly guide to creating a clean, professional self-tape setup at home — including affordable gear recommendations and common mistakes to fix.", "fmt": "Guide", "pri": "High", "intent": "Informational", "link": "Film & TV Audition Coaching", "status": "Gap", "url": "", "children": []}, {"id": "c2s1d", "label": "How to Slate Your Self-Tape Like a Pro", "level": 3, "color": "#16a34a", "query": "how to slate for a self tape audition", "desc": "What to say, how to say it, and what energy to bring to your slate — the 10 seconds that set the tone for your entire self-tape.", "fmt": "Blog Post", "pri": "Medium", "intent": "Informational", "link": "Film & TV Audition Coaching", "status": "Gap", "url": "", "children": []}]}, {"id": "c2s2", "label": "On-Camera Technique", "level": 2, "color": "#16a34a", "children": [{"id": "c2s2a", "label": "Film Acting vs. Stage Acting: What Every Young Actor Must Know", "level": 3, "color": "#16a34a", "query": "difference between film acting and stage acting", "desc": "A clear breakdown of how film and TV acting differs from theater — less is more, specificity, listening — and why these adjustments are critical to booking jobs.", "fmt": "Blog Post", "pri": "High", "intent": "Informational", "link": "Film & TV Audition Coaching", "status": "Gap", "url": "", "children": []}, {"id": "c2s2b", "label": "The Three Stages of Auditioning (and How to Master Each One)", "level": 3, "color": "#16a34a", "query": "stages of film TV audition process", "desc": "Elizabeth's signature three-stage framework for auditioning — before the room, in the room, and after the room — and what most actors get wrong at each stage.", "fmt": "Guide", "pri": "High", "intent": "Informational", "link": "Film & TV Audition Coaching", "status": "Exists", "url": "https://elizabethgreer.com/film-tv-audition-coaching/", "children": []}, {"id": "c2s2c", "label": "How to Break Down a TV Script Before Your Audition", "level": 3, "color": "#16a34a", "query": "how to break down a script for TV audition", "desc": "A practical script analysis process for young actors auditioning for TV — identifying the genre, tone, relationships, and what the casting director actually needs.", "fmt": "Guide", "pri": "High", "intent": "Informational", "link": "Film & TV Audition Coaching", "status": "Gap", "url": "", "children": []}, {"id": "c2s2d", "label": "How to Handle Callbacks for Film and TV", "level": 3, "color": "#16a34a", "query": "how to handle a callback audition film TV", "desc": "What callbacks are, what changes from the initial audition, and how to stay grounded and specific when the stakes feel higher.", "fmt": "Blog Post", "pri": "Medium", "intent": "Informational", "link": "Film & TV Audition Coaching", "status": "Gap", "url": "", "children": []}]}, {"id": "c2s3", "label": "Youth Acting Career Guidance", "level": 2, "color": "#16a34a", "children": [{"id": "c2s3a", "label": "How to Start a Child Acting Career in Los Angeles", "level": 3, "color": "#16a34a", "query": "how to start child acting career Los Angeles", "desc": "A parent's roadmap for launching a child acting career — training, headshots, finding an agent, and understanding what the industry actually looks like from the inside.", "fmt": "Guide", "pri": "High", "intent": "Informational", "link": "Film & TV Audition Coaching", "status": "Gap", "url": "", "children": []}, {"id": "c2s3b", "label": "When Should My Child Start Acting Classes?", "level": 3, "color": "#16a34a", "query": "what age should a child start acting classes", "desc": "Addresses the most common question parents ask — ideal starting age for training, how to assess readiness, and what early training should look like.", "fmt": "FAQ Page", "pri": "High", "intent": "Informational", "link": "Film & TV Audition Coaching", "status": "Gap", "url": "", "children": []}, {"id": "c2s3c", "label": "Social Media for Young Actors: What You Need to Know", "level": 3, "color": "#16a34a", "query": "social media tips for young actors", "desc": "How casting directors and agents use social media to vet young talent, what platforms matter, and how to build a presence that helps rather than hurts a career.", "fmt": "Blog Post", "pri": "Medium", "intent": "Informational", "link": "Film & TV Audition Coaching", "status": "Gap", "url": "", "children": []}, {"id": "c2s3d", "label": "How to Find a Talent Agent for a Young Actor", "level": 3, "color": "#16a34a", "query": "how to get a talent agent for a child actor", "desc": "The process of securing representation — what agents look for, the difference between agents and managers, and how to approach submissions professionally.", "fmt": "Guide", "pri": "High", "intent": "Commercial", "link": "Film & TV Audition Coaching", "status": "Gap", "url": "", "children": []}]}]}, {"id": "c3", "label": "Parent &\nFamily Guidance", "level": 1, "color": "#dc2626", "desc": "Supporting parents in navigating the college audition process and youth acting industry alongside their children", "children": [{"id": "c3s1", "label": "Navigating the BFA Audition Season", "level": 2, "color": "#dc2626", "children": [{"id": "c3s1a", "label": "A Parent's Complete Guide to the BFA Audition Season", "level": 3, "color": "#dc2626", "query": "parent guide to BFA college audition season", "desc": "A comprehensive timeline for parents — when to start, how to manage school lists, audition travel logistics, and how to support your teen emotionally through the process.", "fmt": "Guide", "pri": "High", "intent": "Informational", "link": "Parent & Family Guidance", "status": "Gap", "url": "", "children": []}, {"id": "c3s1b", "label": "How Much Does BFA Audition Coaching Cost? (And Is It Worth It?)", "level": 3, "color": "#dc2626", "query": "how much does BFA audition coaching cost", "desc": "Transparent breakdown of what BFA audition coaching typically costs, what to look for in a coach, and why results-based coaching pays for itself in the long run.", "fmt": "Blog Post", "pri": "High", "intent": "Commercial", "link": "Parent & Family Guidance", "status": "Needs Update", "url": "https://elizabethgreer.com/pricing2/", "children": []}, {"id": "c3s1c", "label": "What to Expect at a College Theater Audition: A Parent's View", "level": 3, "color": "#dc2626", "query": "what happens at a college theater audition for parents", "desc": "Demystifies the audition day experience from a parent's perspective — what you can and can't attend, how to support without adding pressure, and what happens after.", "fmt": "Blog Post", "pri": "High", "intent": "Informational", "link": "Parent & Family Guidance", "status": "Gap", "url": "", "children": []}, {"id": "c3s1d", "label": "How to Help Your Teen Recover From a Rejection Letter", "level": 3, "color": "#dc2626", "query": "teen actor rejected from BFA program what to do", "desc": "Emotional guidance for parents when their child doesn't get into their first-choice program — reframing rejection, exploring alternatives, and maintaining the long game.", "fmt": "Blog Post", "pri": "Medium", "intent": "Informational", "link": "Parent & Family Guidance", "status": "Gap", "url": "", "children": []}]}, {"id": "c3s2", "label": "Supporting Young Performers", "level": 2, "color": "#dc2626", "children": [{"id": "c3s2a", "label": "How to Raise a Confident Young Actor Without Burning Them Out", "level": 3, "color": "#dc2626", "query": "how to support young actor child parent tips", "desc": "Parenting advice specifically for families of aspiring actors — how to nurture passion without creating pressure, and what the most successful young actors' families have in common.", "fmt": "Blog Post", "pri": "High", "intent": "Informational", "link": "Parent & Family Guidance", "status": "Gap", "url": "", "children": []}, {"id": "c3s2b", "label": "Should My Child Go to a Performing Arts High School?", "level": 3, "color": "#dc2626", "query": "should my child go to performing arts high school", "desc": "Pros, cons, and criteria for choosing a performing arts high school vs. a traditional school with strong theater programs — what Elizabeth has seen work best over two decades.", "fmt": "Blog Post", "pri": "High", "intent": "Informational", "link": "Parent & Family Guidance", "status": "Gap", "url": "", "children": []}, {"id": "c3s2c", "label": "The Difference Between an Acting Coach and an Acting Teacher", "level": 3, "color": "#dc2626", "query": "acting coach vs acting teacher what is the difference", "desc": "Clarifies the distinction between ongoing acting instruction and private coaching for specific goals — helping parents understand exactly what Elizabeth provides.", "fmt": "FAQ Page", "pri": "Medium", "intent": "Informational", "link": "Parent & Family Guidance", "status": "Gap", "url": "", "children": []}, {"id": "c3s2d", "label": "YoungArts and Acting Competitions: Are They Worth It?", "level": 3, "color": "#dc2626", "query": "is YoungArts competition worth it for actors", "desc": "An honest assessment of acting competitions and awards programs like YoungArts — what they signal to college programs, how to prepare, and whether the investment is worthwhile.", "fmt": "Blog Post", "pri": "Medium", "intent": "Informational", "link": "Parent & Family Guidance", "status": "Gap", "url": "", "children": []}]}]}, {"id": "c4", "label": "Acting Technique\n& Craft", "level": 1, "color": "#9333ea", "desc": "Foundational and advanced acting skills that support both auditions and long-term career development", "children": [{"id": "c4s1", "label": "Audition Psychology & Mindset", "level": 2, "color": "#9333ea", "children": [{"id": "c4s1a", "label": "How to Manage Audition Anxiety and Nerves", "level": 3, "color": "#9333ea", "query": "how to deal with audition anxiety nerves", "desc": "Practical techniques for managing performance anxiety before and during an audition — breathing, mindset shifts, and preparation strategies that replace fear with confidence.", "fmt": "Blog Post", "pri": "High", "intent": "Informational", "link": "Acting Technique & Craft", "status": "Gap", "url": "", "children": []}, {"id": "c4s1b", "label": "Why Preparation is the Actor's Secret Weapon", "level": 3, "color": "#9333ea", "query": "importance of preparation for acting auditions", "desc": "Elizabeth's philosophy on preparation — how thorough prep frees actors to be present and responsive rather than mechanical in the room.", "fmt": "Blog Post", "pri": "High", "intent": "Informational", "link": "Acting Technique & Craft", "status": "Gap", "url": "", "children": []}, {"id": "c4s1c", "label": "How to Stay Present in the Audition Room", "level": 3, "color": "#9333ea", "query": "how to stay present and focused during an audition", "desc": "Techniques for staying in the moment during high-stakes auditions — listening, responding truthfully, and letting go of self-monitoring.", "fmt": "Blog Post", "pri": "High", "intent": "Informational", "link": "Acting Technique & Craft", "status": "Gap", "url": "", "children": []}, {"id": "c4s1d", "label": "What to Do After a Bad Audition", "level": 3, "color": "#9333ea", "query": "what to do after a bad audition", "desc": "A recovery framework for actors who feel they underperformed — how to process, learn, and move forward without carrying the audition into the next opportunity.", "fmt": "Blog Post", "pri": "Medium", "intent": "Informational", "link": "Acting Technique & Craft", "status": "Gap", "url": "", "children": []}]}, {"id": "c4s2", "label": "Monologue & Scene Work", "level": 2, "color": "#9333ea", "children": [{"id": "c4s2a", "label": "How to Develop a Monologue From First Read to Performance", "level": 3, "color": "#9333ea", "query": "how to work on a monologue from start to finish", "desc": "Elizabeth's step-by-step approach to developing a monologue — from first reading to fully embodied performance — including text analysis, character work, and physical choices.", "fmt": "Guide", "pri": "High", "intent": "Informational", "link": "Acting Technique & Craft", "status": "Gap", "url": "", "children": []}, {"id": "c4s2b", "label": "Stella Adler Method: What It Is and Why It Matters for Auditions", "level": 3, "color": "#9333ea", "query": "Stella Adler acting method explained", "desc": "An accessible explanation of the Stella Adler technique — imagination, action, and the given circumstances — and how Elizabeth applies it in coaching.", "fmt": "Blog Post", "pri": "Medium", "intent": "Informational", "link": "Acting Technique & Craft", "status": "Gap", "url": "", "children": []}, {"id": "c4s2c", "label": "How to Find Your Character's Objective in a Scene", "level": 3, "color": "#9333ea", "query": "how to find character objective in acting scene", "desc": "A practical guide to identifying and playing objectives — what the character wants, what's in their way, and how that drives every moment of the performance.", "fmt": "Guide", "pri": "High", "intent": "Informational", "link": "Acting Technique & Craft", "status": "Gap", "url": "", "children": []}, {"id": "c4s2d", "label": "Cold Reading Tips for Actors: How to Nail Sides You Just Received", "level": 3, "color": "#9333ea", "query": "how to cold read at an audition acting tips", "desc": "Strategies for approaching cold reading — how to quickly identify the genre, relationship, and stakes when you only have minutes with new material.", "fmt": "Blog Post", "pri": "High", "intent": "Informational", "link": "Acting Technique & Craft", "status": "Gap", "url": "", "children": []}]}]}, {"id": "c5", "label": "Working With\nElizabeth", "level": 1, "color": "#ea580c", "desc": "Everything prospective clients need to know about Elizabeth's coaching approach, credentials, and how to get started", "children": [{"id": "c5s1", "label": "About Elizabeth & Her Approach", "level": 2, "color": "#ea580c", "children": [{"id": "c5s1a", "label": "Why Work With an Actor Who Is Also a Coach?", "level": 3, "color": "#ea580c", "query": "why hire an acting coach who is also a working actor", "desc": "The advantage of training with a coach who is actively working in the industry — Elizabeth's credits on Succession, The Morning Show, and Ray Donovan inform her coaching in real time.", "fmt": "Service Page", "pri": "High", "intent": "Commercial", "link": "Working With Elizabeth", "status": "Gap", "url": "", "children": []}, {"id": "c5s1b", "label": "Elizabeth's Coaching Philosophy: Preparation Meets Presence", "level": 3, "color": "#ea580c", "query": "Elizabeth Greer acting coach philosophy approach", "desc": "A deeper look at Elizabeth's coaching methodology — how she tailors plans to each actor, why she emphasizes preparation, and what transformation looks like in her students.", "fmt": "Blog Post", "pri": "High", "intent": "Informational", "link": "Working With Elizabeth", "status": "Needs Update", "url": "https://elizabethgreer.com/", "children": []}, {"id": "c5s1c", "label": "What Elizabeth's Clients Say: Real Results from Real Students", "level": 3, "color": "#ea580c", "query": "Elizabeth Greer acting coach reviews results", "desc": "A curated deep-dive into student outcomes — acceptances to top programs, roles booked, competitions won — with context around what the coaching process actually looked like.", "fmt": "Case Study", "pri": "High", "intent": "Commercial", "link": "Working With Elizabeth", "status": "Needs Update", "url": "https://elizabethgreer.com/testimonials/", "children": []}, {"id": "c5s1d", "label": "How Are Elizabeth's Coaching Sessions Structured?", "level": 3, "color": "#ea580c", "query": "how does acting coaching with Elizabeth Greer work", "desc": "A transparent walk-through of what sessions look like — frequency, what's covered in early sessions vs. later sessions, and how the arc of coaching builds toward audition day.", "fmt": "FAQ Page", "pri": "High", "intent": "Commercial", "link": "Working With Elizabeth", "status": "Gap", "url": "", "children": []}]}, {"id": "c5s2", "label": "Getting Started", "level": 2, "color": "#ea580c", "children": [{"id": "c5s2a", "label": "How to Book a Coaching Session With Elizabeth Greer", "level": 3, "color": "#ea580c", "query": "book acting coach Elizabeth Greer session", "desc": "Clear, direct information about how to get started — the intake process, what to bring to a first session, and how to prepare for the initial consultation.", "fmt": "Service Page", "pri": "High", "intent": "Transactional", "link": "Working With Elizabeth", "status": "Needs Update", "url": "https://elizabethgreer.com/contact/", "children": []}, {"id": "c5s2b", "label": "Do I Need Experience Before Working With an Acting Coach?", "level": 3, "color": "#ea580c", "query": "do I need acting experience before getting a coach", "desc": "Addresses the most common hesitation from new clients — Elizabeth works with all levels, from first-time auditioners to experienced actors looking to refine their craft.", "fmt": "FAQ Page", "pri": "High", "intent": "Informational", "link": "Working With Elizabeth", "status": "Gap", "url": "", "children": []}, {"id": "c5s2c", "label": "Online vs. In-Person Acting Coaching: What to Expect", "level": 3, "color": "#ea580c", "query": "online acting coaching zoom vs in person", "desc": "How Elizabeth's Zoom coaching works, what makes it effective despite the remote format, and what clients can do to get the most from a virtual session.", "fmt": "Blog Post", "pri": "High", "intent": "Informational", "link": "Working With Elizabeth", "status": "Gap", "url": "", "children": []}, {"id": "c5s2d", "label": "Acting Coaching for Adults: Is It Ever Too Late?", "level": 3, "color": "#ea580c", "query": "acting coaching for adults late start", "desc": "Speaks to adult actors who wonder if they've missed their window — why Elizabeth's coaching is just as relevant for adults pursuing acting later in life.", "fmt": "Blog Post", "pri": "Medium", "intent": "Informational", "link": "Working With Elizabeth", "status": "Gap", "url": "", "children": []}]}]}, {"id": "c6", "label": "Musical Theatre\n& Performing Arts", "level": 1, "color": "#0891b2", "desc": "Guidance for students pursuing musical theatre BFA programs and the broader performing arts education landscape", "children": [{"id": "c6s1", "label": "Musical Theatre College Auditions", "level": 2, "color": "#0891b2", "children": [{"id": "c6s1a", "label": "How to Audition for a Musical Theatre BFA Program", "level": 3, "color": "#0891b2", "query": "how to audition for musical theatre BFA college", "desc": "An overview of what musical theatre BFA auditions require — the acting, singing, and dance components — and how to prepare each element cohesively.", "fmt": "Guide", "pri": "High", "intent": "Informational", "link": "Musical Theatre & Performing Arts", "status": "Gap", "url": "", "children": []}, {"id": "c6s1b", "label": "Song Selection for Musical Theatre College Auditions", "level": 3, "color": "#0891b2", "query": "song selection musical theatre college audition", "desc": "How to choose songs that showcase vocal range AND acting ability — the difference between a beautiful voice and an unforgettable audition in the MT world.", "fmt": "Guide", "pri": "High", "intent": "Informational", "link": "Musical Theatre & Performing Arts", "status": "Gap", "url": "", "children": []}, {"id": "c6s1c", "label": "Top Musical Theatre BFA Programs: A Ranking and Guide", "level": 3, "color": "#0891b2", "query": "best musical theatre BFA programs", "desc": "An overview of the top musical theatre programs in the country — Carnegie Mellon, Northwestern, Michigan, Elon, and more — with what distinguishes each school's approach.", "fmt": "Guide", "pri": "High", "intent": "Informational", "link": "Musical Theatre & Performing Arts", "status": "Gap", "url": "", "children": []}, {"id": "c6s1d", "label": "How to Prepare for the Unifier Musical Theatre Auditions", "level": 3, "color": "#0891b2", "query": "Unifier musical theatre auditions how to prepare", "desc": "A guide to the Unifier audition circuit — what it is, which schools participate, and how to approach the unique format of auditioning for multiple programs in one event.", "fmt": "Guide", "pri": "Medium", "intent": "Informational", "link": "Musical Theatre & Performing Arts", "status": "Gap", "url": "", "children": []}]}, {"id": "c6s2", "label": "Performing Arts High Schools", "level": 2, "color": "#0891b2", "children": [{"id": "c6s2a", "label": "How to Audition for a Performing Arts High School", "level": 3, "color": "#0891b2", "query": "how to audition for performing arts high school", "desc": "What performing arts high school auditions look like, what faculty want to see, and how coaching can give students a meaningful edge in competitive programs.", "fmt": "Guide", "pri": "High", "intent": "Informational", "link": "Musical Theatre & Performing Arts", "status": "Gap", "url": "", "children": []}, {"id": "c6s2b", "label": "Best Performing Arts High Schools in Los Angeles", "level": 3, "color": "#0891b2", "query": "best performing arts high schools Los Angeles", "desc": "An overview of top performing arts high schools in LA — LACHSA, The Archer School, Hamilton, and others — with notes on their audition processes and what they look for.", "fmt": "Guide", "pri": "High", "intent": "Informational", "link": "Musical Theatre & Performing Arts", "status": "Gap", "url": "", "children": []}, {"id": "c6s2c", "label": "YoungArts: How to Apply and What Winning Means for Your Career", "level": 3, "color": "#0891b2", "query": "YoungArts competition theater how to apply", "desc": "A complete guide to the YoungArts program — eligibility, application, what the adjudication process looks like, and how a win or recognition can strengthen a student's college application.", "fmt": "Guide", "pri": "High", "intent": "Informational", "link": "Musical Theatre & Performing Arts", "status": "Gap", "url": "", "children": []}, {"id": "c6s2d", "label": "Performing Arts Middle School Programs: Starting Early the Right Way", "level": 3, "color": "#0891b2", "query": "performing arts middle school program acting", "desc": "How younger students (ages 10-14) can get meaningful performance training without burning out — the right balance of training, experience, and play.", "fmt": "Blog Post", "pri": "Medium", "intent": "Informational", "link": "Musical Theatre & Performing Arts", "status": "Gap", "url": "", "children": []}]}]}]};
+const COLORS = ["#2563eb", "#16a34a", "#dc2626", "#9333ea", "#ea580c", "#0891b2"];
+const collapsed = new Set();
+let transform = {x:80,y:0,scale:1};
+const svg = document.getElementById('svg-canvas');
+const wrap = document.getElementById('canvas-wrap');
+
+function h(tag,attrs={},...children){
+  const el = document.createElementNS('http://www.w3.org/2000/svg',tag);
+  for(const[k,v] of Object.entries(attrs)) el.setAttribute(k,v);
+  for(const c of children) if(c) el.appendChild(typeof c==='string'?document.createTextNode(c):c);
+  return el;
+}
+
+function lighten(hex,pct){
+  const n=parseInt(hex.slice(1),16),r=(n>>16)&255,g=(n>>8)&255,b=n&255;
+  const mix=(c)=>Math.round(c+(255-c)*pct/100);
+  return `#${[mix(r),mix(g),mix(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}`;
+}
+
+function getNodeFill(node){
+  if(node.level===0) return '#1a2b40';
+  if(node.level===1) return node.color;
+  if(node.level===2) return lighten(node.color,45);
+  const s=node.status;
+  if(s==='Exists') return 'rgba(40,167,69,0.12)';
+  if(s==='Needs Update') return 'rgba(255,193,7,0.10)';
+  return 'rgba(220,53,69,0.10)';
+}
+
+function getNodeStroke(node){
+  if(node.level<3) return node.level===0?'#2d4a6e':node.color;
+  const s=node.status;
+  if(s==='Exists') return '#28a745';
+  if(s==='Needs Update') return '#ffc107';
+  return node.color;
+}
+
+function getStrokeDash(node){
+  if(node.level<3) return '';
+  if(node.status==='Gap') return '5,3';
+  if(node.status==='Needs Update') return '2,2';
+  return '';
+}
+
+function isCollapsed(node){ return collapsed.has(node.id); }
+
+// Layout
+const NW={0:120,1:120,2:110,3:160};
+const NH={0:44,1:40,2:32,3:28};
+const HGAP=60,VGAP=10;
+let nodes=[],edges=[];
+
+function measure(node,level=0){
+  node._level=level;
+  const kids=node.children||[];
+  const vis=isCollapsed(node)?[]:kids;
+  if(!vis.length){node._h=NH[Math.min(level,3)];return node._h;}
+  let total=0;
+  vis.forEach((c,i)=>{total+=measure(c,level+1);if(i<vis.length-1)total+=VGAP;});
+  node._h=Math.max(NH[Math.min(level,3)],total);
+  return node._h;
+}
+
+function layout(node,x,y){
+  const nw=NW[Math.min(node._level,3)],nh=NH[Math.min(node._level,3)];
+  const ny=y+node._h/2-nh/2;
+  node._x=x;node._y=ny;node._w=nw;node._nh=nh;
+  nodes.push(node);
+  const vis=isCollapsed(node)?[]:(node.children||[]);
+  if(!vis.length) return;
+  const cx=x+nw+HGAP;
+  let cy=y;
+  vis.forEach(c=>{
+    const ch=measure(c,node._level+1);
+    layout(c,cx,cy);
+    edges.push({from:node,to:c,color:c.color||node.color});
+    cy+=ch+VGAP;
+  });
+}
+
+function applyTransform(){
+  svg.querySelector('#root-g').setAttribute('transform',`translate(${transform.x},${transform.y}) scale(${transform.scale})`);
+}
+
+function redraw(){
+  svg.innerHTML='';
+  nodes=[];edges=[];
+  measure(DATA);
+  const totalH=DATA._h;
+  const svgH=wrap.clientHeight;
+  layout(DATA,20,(svgH/transform.scale-totalH)/2);
+  const g=h('g',{id:'root-g'});
+  // Draw edges first
+  for(const e of edges){
+    const x1=e.from._x+e.from._w,y1=e.from._y+e.from._nh/2;
+    const x2=e.to._x,y2=e.to._y+e.to._nh/2;
+    const mx=(x1+x2)/2;
+    const path=h('path',{d:`M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}`,'fill':'none','stroke':e.color,'stroke-width':'1.5','stroke-opacity':'0.5'});
+    g.appendChild(path);
+  }
+  // Draw nodes
+  for(const node of nodes){
+    const{_x:x,_y:y,_w:nw,_nh:nh,_level:lv}=node;
+    const fill=getNodeFill(node);
+    const stroke=getNodeStroke(node);
+    const dash=getStrokeDash(node);
+    const ng=h('g',{'class':'node'});
+    const rx=h('rect',{x,y,width:nw,height:nh,rx:'6',ry:'6',fill,stroke,'stroke-width':'1.5',...(dash?{'stroke-dasharray':dash}:{})});
+    ng.appendChild(rx);
+    // Label
+    const lblColor=lv<=1?'#fff':lv===2?'#1a2332':'#c8d8e8';
+    const lblSize=lv===0?13:lv===1?11:lv===2?10:9;
+    const lblWeight=lv<=1?'bold':'normal';
+    const lines=(node.label||'').split('\n');
+    const lineH=lblSize*1.3;
+    const totalTextH=lines.length*lineH;
+    lines.forEach((line,i)=>{
+      const t=h('text',{x:x+nw/2,y:y+nh/2-totalTextH/2+lineH/2+i*lineH+2,'text-anchor':'middle','dominant-baseline':'middle','fill':lblColor,'font-size':lblSize,'font-weight':lblWeight,'font-family':"'Segoe UI',Calibri,sans-serif",'pointer-events':'none'});
+      t.textContent=line;
+      ng.appendChild(t);
+    });
+    // Click area
+    if(node.children&&node.children.length>0){
+      const btn=h('rect',{x,y,width:nw,height:nh,rx:'6',ry:'6',fill:'transparent',cursor:'pointer'});
+      btn.addEventListener('click',()=>{
+        if(dragging) return;
+        if(isCollapsed(node)){ collapsed.delete(node.id); }
+        else{
+          if(lv<2) node.children.forEach(c=>{if(c.children&&c.children.length>0) collapsed.add(c.id);});
+          else collapsed.add(node.id);
+        }
+        redraw(); applyTransform();
+      });
+      ng.appendChild(btn);
+      const cr=h('circle',{cx:x+nw-8,cy:y+nh/2,r:'5',fill:lv===0?'#2d4a6e':stroke,'fill-opacity':'0.8','pointer-events':'none'});
+      const cs=h('text',{x:x+nw-8,y:y+nh/2+3.5,'text-anchor':'middle','font-size':'9','fill':'white','pointer-events':'none','font-weight':'bold'});
+      cs.textContent=isCollapsed(node)?'+':'−';
+      ng.appendChild(cr);ng.appendChild(cs);
+    } else if(lv===3){
+      const btn=h('rect',{x,y,width:nw,height:nh,rx:'6',ry:'6',fill:'transparent',cursor:'pointer'});
+      btn.addEventListener('click',()=>{if(!dragging) openPanel(node);});
+      ng.appendChild(btn);
+    }
+    g.appendChild(ng);
+  }
+  svg.appendChild(g);
+  applyTransform();
+}
+
+function openPanel(node){
+  document.getElementById('panel-title').textContent=node.label;
+  document.getElementById('p-query').textContent='"'+node.query+'"';
+  document.getElementById('p-desc').textContent=node.desc;
+  const chips=document.getElementById('p-chips');
+  chips.innerHTML='';
+  const priC={High:'chip-hi',Medium:'chip-med',Low:'chip-lo'};
+  [
+    {txt:node.pri+' Priority',cls:priC[node.pri]||'chip-lo'},
+    {txt:node.intent,cls:'chip-intent'},
+    {txt:node.fmt,cls:'chip-fmt'}
+  ].forEach(c=>{const el=document.createElement('span');el.className='chip '+c.cls;el.textContent=c.txt;chips.appendChild(el);});
+  document.getElementById('p-link').textContent='→ '+node.link;
+  const sb=document.getElementById('p-status');
+  const scls={Exists:'sb-exists',Gap:'sb-gap','Needs Update':'sb-needs'};
+  sb.innerHTML=`<span class="status-badge ${scls[node.status]||''}">${node.status}</span>`;
+  const usec=document.getElementById('p-url-sec');
+  if(node.url){
+    usec.style.display='';
+    document.getElementById('p-url').innerHTML=`<a href="${node.url}" target="_blank">${node.url}</a>`;
+  } else usec.style.display='none';
+  document.getElementById('panel').classList.add('open');
+  document.getElementById('canvas-wrap').style.right='320px';
+}
+
+function closePanel(){
+  document.getElementById('panel').classList.remove('open');
+  document.getElementById('canvas-wrap').style.right='0';
+}
+
+function resetView(){
+  collapsed.clear();
+  DATA.children.forEach(c=>{if(c.children) c.children.forEach(s=>{if(s.children&&s.children.length>0) collapsed.add(s.id);});});
+  transform={x:80,y:0,scale:1};
+  closePanel(); redraw(); applyTransform();
+}
+function expandAll(){ collapsed.clear(); redraw(); applyTransform(); }
+function collapseAll(){
+  collapsed.clear();
+  DATA.children.forEach(c=>{if(c.children) collapsed.add(c.id);});
+  redraw(); applyTransform();
+}
+
+// Pan
+let dragging=false,panReady=false,panSX=0,panSY=0,lastX=0,lastY=0;
+svg.addEventListener('mousedown',e=>{panReady=true;panSX=e.clientX;panSY=e.clientY;lastX=e.clientX;lastY=e.clientY;});
+window.addEventListener('mousemove',e=>{
+  if(!panReady) return;
+  const dx=e.clientX-panSX,dy=e.clientY-panSY;
+  if(!dragging&&Math.sqrt(dx*dx+dy*dy)<5) return;
+  dragging=true;svg.classList.add('dragging');
+  transform.x+=e.clientX-lastX;transform.y+=e.clientY-lastY;
+  lastX=e.clientX;lastY=e.clientY;applyTransform();
+});
+window.addEventListener('mouseup',()=>{panReady=false;setTimeout(()=>{dragging=false;},10);svg.classList.remove('dragging');});
+svg.addEventListener('wheel',e=>{
+  e.preventDefault();
+  const delta=e.deltaY>0?0.9:1.1;
+  const rect=svg.getBoundingClientRect();
+  const mx=e.clientX-rect.left,my=e.clientY-rect.top;
+  transform.x=mx-(mx-transform.x)*delta;
+  transform.y=my-(my-transform.y)*delta;
+  transform.scale=Math.min(3,Math.max(0.2,transform.scale*delta));
+  applyTransform();
+},{passive:false});
+
+// Init
+resetView();
+</script>
+</body>
+</html>
