@@ -1,0 +1,1594 @@
+{
+  "slug": "danielle-esposito",
+  "client": "Wellness for Life with Danielle Esposito",
+  "title": "Wellness for Life with Danielle Esposito | Topical Authority Map | Weiss Media Marketing",
+  "pngFilename": "wellness-for-life-danielle-esposito-topical-authority-map.png",
+  "pillars": [
+    {
+      "name": "Perimenopause & Menopause Nutrition",
+      "color": "#2563eb",
+      "children": [
+        {
+          "name": "Understanding the Transition",
+          "children": [
+            {
+              "name": "Perimenopause Basics",
+              "children": [
+                {
+                  "name": "Perimenopause vs. Menopause: What's Actually Happening to Your Body",
+                  "query": "difference between perimenopause and menopause",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "High",
+                  "status": "Gap",
+                  "desc": "Plain-language explainer separating perimenopause, menopause and post-menopause. This is the definitional entry point for the entire cluster and the page most likely to earn a featured snippet."
+                },
+                {
+                  "name": "The 34 Symptoms of Perimenopause and Which Ones Nutrition Can Help",
+                  "query": "perimenopause symptoms list",
+                  "intent": "Informational",
+                  "fmt": "Guide",
+                  "prio": "High",
+                  "status": "Gap",
+                  "desc": "Comprehensive symptom reference that honestly marks which symptoms respond to nutrition and lifestyle versus which need a physician. Builds trust by not overclaiming."
+                },
+                {
+                  "name": "Am I in Perimenopause? 9 Early Signs Women in Their 40s Miss",
+                  "query": "am i in perimenopause quiz",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "High",
+                  "status": "Gap",
+                  "desc": "Self-recognition piece for women who have not yet named what is happening to them. Highest-empathy top-of-funnel entry and a natural place to offer the free consult."
+                }
+              ]
+            },
+            {
+              "name": "Hormones and Metabolism",
+              "children": [
+                {
+                  "name": "Why Estrogen Decline Changes How Your Body Uses Food",
+                  "query": "estrogen and metabolism menopause",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "Explains the estrogen-to-fat-storage mechanism so clients understand why the same diet stopped working. Establishes scientific credibility for the coaching offer."
+                },
+                {
+                  "name": "Cortisol, Insulin and Estrogen: The Three Hormones Driving Midlife Weight Gain",
+                  "query": "hormones causing weight gain over 40",
+                  "intent": "Informational",
+                  "fmt": "Guide",
+                  "prio": "High",
+                  "status": "Gap",
+                  "desc": "Ties the three hormonal levers into one model that the coaching program then addresses. Core supporting asset for the weight loss cluster."
+                },
+                {
+                  "name": "Does Menopause Really Slow Your Metabolism? What the Research Says",
+                  "query": "does menopause slow metabolism",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "Myth-correction piece citing current metabolic research. Captures a high-volume question and positions Danielle as evidence-led rather than fad-driven."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Eating for Menopause Symptoms",
+          "children": [
+            {
+              "name": "Hot Flashes & Night Sweats",
+              "children": [
+                {
+                  "name": "Foods That Trigger Hot Flashes (and What to Eat Instead)",
+                  "query": "foods that trigger hot flashes",
+                  "intent": "Informational",
+                  "fmt": "Listicle",
+                  "prio": "High",
+                  "status": "Gap",
+                  "desc": "Actionable swap list for the single most searched menopause symptom. Easy to skim, easy to share, strong internal link magnet."
+                },
+                {
+                  "name": "Can Diet Reduce Night Sweats? A Practical Food Plan",
+                  "query": "diet for night sweats menopause",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "Bridges the hot flash topic into the sleep pillar. Gives a concrete evening eating protocol readers can test in a week."
+                },
+                {
+                  "name": "Phytoestrogens Explained: Soy, Flax and Whether They Help",
+                  "query": "phytoestrogens menopause do they work",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "Cuts through soy misinformation with a balanced read of the evidence. Captures a persistent, confused search intent competitors handle badly."
+                }
+              ]
+            },
+            {
+              "name": "Mood, Brain Fog & Anxiety",
+              "children": [
+                {
+                  "name": "Menopause Brain Fog: The Nutrient Gaps Behind It",
+                  "query": "menopause brain fog what helps",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "High",
+                  "status": "Gap",
+                  "desc": "Connects cognitive symptoms to specific nutrient and blood sugar patterns. High emotional resonance and strong consult-conversion intent."
+                },
+                {
+                  "name": "Blood Sugar Swings and Midlife Mood: The Connection Nobody Explains",
+                  "query": "blood sugar mood swings menopause",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "Reframes irritability and anxiety as partly a fueling problem. Sets up the FUEL pillar and the food-order technique."
+                },
+                {
+                  "name": "Omega-3s, B Vitamins and Magnesium for Midlife Mood",
+                  "query": "supplements for menopause mood",
+                  "intent": "Informational",
+                  "fmt": "Guide",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "Evidence-graded supplement guidance with dosing ranges and food-first alternatives. Supports the supplement cluster without selling."
+                }
+              ]
+            },
+            {
+              "name": "Bone & Heart Health",
+              "children": [
+                {
+                  "name": "Calcium, Vitamin D and K2: Protecting Bone Density After 40",
+                  "query": "calcium vitamin d menopause bone density",
+                  "intent": "Informational",
+                  "fmt": "Guide",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "Long-horizon health topic that signals Danielle coaches for longevity, not just weight. Important E-E-A-T asset for a YMYL niche."
+                },
+                {
+                  "name": "Why Heart Disease Risk Jumps After Menopause and How to Eat for It",
+                  "query": "heart health diet after menopause",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "Covers the leading cause of death in this demographic. Demonstrates clinical seriousness and earns authoritative external links."
+                },
+                {
+                  "name": "Your Post-40 Bloodwork: The Markers Worth Tracking",
+                  "query": "bloodwork to ask doctor menopause",
+                  "intent": "Informational",
+                  "fmt": "Guide",
+                  "prio": "Low",
+                  "status": "Gap",
+                  "desc": "Empowerment piece giving readers a list to bring to their physician. Positions Danielle as a partner to medical care, not a replacement."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Menopause Nutrition Plans",
+          "children": [
+            {
+              "name": "Meal Frameworks",
+              "children": [
+                {
+                  "name": "A 7-Day Perimenopause Meal Plan You Can Actually Follow",
+                  "query": "perimenopause meal plan 7 day",
+                  "intent": "Informational",
+                  "fmt": "Guide",
+                  "prio": "High",
+                  "status": "Gap",
+                  "desc": "Downloadable week of meals built on the 5 Pillars. Prime lead magnet and the strongest email-capture asset in the map."
+                },
+                {
+                  "name": "The Mediterranean Diet for Menopause: Why It Keeps Winning",
+                  "query": "mediterranean diet menopause",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "Anchors Danielle's approach to the most research-backed eating pattern for this life stage. Captures a large existing search demand."
+                },
+                {
+                  "name": "How Much Protein Women Over 40 Actually Need (and When to Eat It)",
+                  "query": "how much protein women over 40",
+                  "intent": "Informational",
+                  "fmt": "Guide",
+                  "prio": "High",
+                  "status": "Gap",
+                  "desc": "Definitive protein reference with per-meal targets. One of the highest-intent nutrition queries in the niche and a repeat internal link target."
+                }
+              ]
+            },
+            {
+              "name": "What to Limit",
+              "children": [
+                {
+                  "name": "Alcohol and Menopause: The Honest Conversation",
+                  "query": "alcohol menopause symptoms",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "High",
+                  "status": "Gap",
+                  "desc": "Non-judgmental piece on how alcohol affects sleep, hot flashes and fat storage in midlife. High engagement, high share rate."
+                },
+                {
+                  "name": "Ultra-Processed Foods and Midlife Inflammation",
+                  "query": "processed food inflammation menopause",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "Explains the inflammation link without fear-mongering, then gives realistic substitutions. Supports the label-reading cluster."
+                },
+                {
+                  "name": "Caffeine After 40: Helpful or Harmful?",
+                  "query": "caffeine menopause hot flashes sleep",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "Low",
+                  "status": "Gap",
+                  "desc": "Balanced take that avoids the usual all-or-nothing advice. Links to both the sleep and energy clusters."
+                }
+              ]
+            },
+            {
+              "name": "Supplements",
+              "children": [
+                {
+                  "name": "The 5 Supplements Worth Taking in Perimenopause (and 5 to Skip)",
+                  "query": "best supplements perimenopause",
+                  "intent": "Informational",
+                  "fmt": "Listicle",
+                  "prio": "High",
+                  "status": "Gap",
+                  "desc": "Opinionated, evidence-graded shortlist. Strong commercial-adjacent traffic and an obvious place to mention the greens powder included in packages."
+                },
+                {
+                  "name": "Greens Powders: Do They Actually Do Anything?",
+                  "query": "are greens powders worth it",
+                  "intent": "Commercial",
+                  "fmt": "Blog Post",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "Honest assessment of a product category Danielle already includes in her Transform package. Transparency here builds more trust than a plug would."
+                },
+                {
+                  "name": "How to Read a Supplement Label Without Getting Scammed",
+                  "query": "how to read supplement label",
+                  "intent": "Informational",
+                  "fmt": "Guide",
+                  "prio": "Low",
+                  "status": "Gap",
+                  "desc": "Teaches proprietary blends, third-party testing and elemental dosing. Evergreen utility content that earns links."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Weight Loss & Body Composition After 40",
+      "color": "#16a34a",
+      "children": [
+        {
+          "name": "Midlife Weight Gain",
+          "children": [
+            {
+              "name": "Why It Happens",
+              "children": [
+                {
+                  "name": "Why the Weight Won't Come Off Like It Used To",
+                  "query": "why cant i lose weight after 40",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "High",
+                  "status": "Gap",
+                  "desc": "The single most common frustration in this demographic. Highest-traffic entry point in the cluster and the best free-consult conversion page."
+                },
+                {
+                  "name": "Menopause Belly: What Visceral Fat Actually Is",
+                  "query": "menopause belly fat causes",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "High",
+                  "status": "Gap",
+                  "desc": "Explains the shift from subcutaneous to visceral fat storage and why it matters beyond appearance. Very high search demand."
+                },
+                {
+                  "name": "Muscle Loss After 40: The Real Reason Your Metabolism Dropped",
+                  "query": "sarcopenia women over 40 metabolism",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "Reframes metabolism as a muscle problem, which sets up the strength training cluster and the SWEAT pillar."
+                }
+              ]
+            },
+            {
+              "name": "What Doesn't Work",
+              "children": [
+                {
+                  "name": "Why Eating Less and Moving More Backfires After 40",
+                  "query": "eat less move more doesnt work over 40",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "High",
+                  "status": "Gap",
+                  "desc": "Contrarian angle that validates readers who have been blamed for their own plateau. Strong differentiation from generic weight loss content."
+                },
+                {
+                  "name": "The Problem With Crash Diets in Midlife",
+                  "query": "crash diet menopause weight gain",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "Covers metabolic adaptation and muscle loss from aggressive restriction. Positions coaching as the sustainable alternative."
+                },
+                {
+                  "name": "Diet Culture at 45: Unlearning 20 Years of Bad Advice",
+                  "query": "diet culture midlife women",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "Low",
+                  "status": "Gap",
+                  "desc": "Voice-forward essay that carries Danielle's personality. Best-performing social and newsletter piece in the cluster."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "A Sustainable Approach",
+          "children": [
+            {
+              "name": "Building the Plan",
+              "children": [
+                {
+                  "name": "How to Lose Menopause Belly Fat Without Starving Yourself",
+                  "query": "how to lose menopause belly fat",
+                  "intent": "Informational",
+                  "fmt": "Guide",
+                  "prio": "High",
+                  "status": "Gap",
+                  "desc": "Flagship how-to that ties nutrition, sleep, stress and strength into one plan. The pillar page for this entire core topic."
+                },
+                {
+                  "name": "Calorie Deficit vs. Food Quality: Which Matters More After 40?",
+                  "query": "calorie deficit or food quality menopause",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "Resolves a debate readers encounter constantly. Nuanced answer that demonstrates coaching judgment over rule-following."
+                },
+                {
+                  "name": "Setting a Realistic Weight Loss Pace in Your 40s and 50s",
+                  "query": "realistic weight loss rate over 40",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "Expectation-setting content that reduces client churn and pre-qualifies people for a 4 to 6 week program."
+                }
+              ]
+            },
+            {
+              "name": "Tracking Progress",
+              "children": [
+                {
+                  "name": "Stop Weighing Yourself Daily: Better Ways to Measure Progress",
+                  "query": "better than scale progress tracking",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "Offers non-scale victory metrics clients can use inside the program. Reduces the emotional volatility that derails clients in week two."
+                },
+                {
+                  "name": "Body Composition vs. Body Weight: What to Actually Track",
+                  "query": "body composition vs weight women",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "Explains why the scale can stay flat while the body changes. Supports retention and reinforces the strength training message."
+                },
+                {
+                  "name": "The Plateau Playbook: What to Do When Progress Stalls",
+                  "query": "weight loss plateau over 40 what to do",
+                  "intent": "Informational",
+                  "fmt": "Guide",
+                  "prio": "High",
+                  "status": "Gap",
+                  "desc": "Troubleshooting guide with a decision tree. Attracts people already mid-effort who are the easiest to convert to paid coaching."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Habits That Hold",
+          "children": [
+            {
+              "name": "Behavior Change",
+              "children": [
+                {
+                  "name": "Why Willpower Fails and Systems Win",
+                  "query": "how to build healthy habits that stick",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "Frames the coaching relationship as system design rather than motivation. Core philosophical piece for the brand."
+                },
+                {
+                  "name": "The 1% Rule: Small Changes That Compound Over a Year",
+                  "query": "small habit changes weight loss",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "Low-pressure entry point matching the testimonial language about progress at your own pace."
+                },
+                {
+                  "name": "How to Get Back on Track After a Bad Week",
+                  "query": "how to get back on track healthy eating",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "High",
+                  "status": "Gap",
+                  "desc": "High-search, high-emotion recovery content. Ranks well and converts because readers are seeking help at their lowest point."
+                }
+              ]
+            },
+            {
+              "name": "Emotional Eating",
+              "children": [
+                {
+                  "name": "Stress Eating at Night: Breaking the 9pm Pattern",
+                  "query": "how to stop night eating stress",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "High",
+                  "status": "Gap",
+                  "desc": "Specific, recognizable behavior with a concrete protocol. Bridges the weight loss and stress clusters."
+                },
+                {
+                  "name": "Hunger vs. Craving: How to Tell the Difference",
+                  "query": "difference between hunger and craving",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "Teachable framework clients can apply immediately. Reusable inside the coaching program as a worksheet."
+                },
+                {
+                  "name": "Eating Through Perimenopause Mood Swings",
+                  "query": "emotional eating perimenopause",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "Connects hormonal mood shifts to eating patterns without pathologizing them. Distinctly midlife-specific angle."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Weight Loss Support Services",
+          "children": [
+            {
+              "name": "Programs",
+              "children": [
+                {
+                  "name": "Transform Your Body: 4-Week Nutrition Reset for Women Over 40",
+                  "query": "4 week nutrition program women over 40",
+                  "intent": "Transactional",
+                  "fmt": "Service Page",
+                  "prio": "High",
+                  "status": "Needs Update",
+                  "desc": "Dedicated service page for the $500 flagship package. Currently only a section on the homepage with no page of its own to rank.",
+                  "lt": "Transform Your Body: 4-Week Program ($500)",
+                  "url": "https://daniellewellnessforlife.com/"
+                },
+                {
+                  "name": "Weight Loss Coaching for Women Over 40",
+                  "query": "weight loss coach for women over 40",
+                  "intent": "Commercial",
+                  "fmt": "Service Page",
+                  "prio": "High",
+                  "status": "Gap",
+                  "desc": "Category-level commercial page targeting the primary money keyword. Should sit above the individual package pages in the architecture."
+                },
+                {
+                  "name": "GLP-1 Medications and Nutrition: What Coaching Adds",
+                  "query": "nutrition coaching while on ozempic",
+                  "intent": "Commercial",
+                  "fmt": "Blog Post",
+                  "prio": "High",
+                  "status": "Gap",
+                  "desc": "Fast-growing, under-served query. Positions coaching as the muscle-preservation and habit layer alongside medication rather than in competition with it."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "The 5 Pillars Method",
+      "color": "#dc2626",
+      "children": [
+        {
+          "name": "The Method Overview",
+          "children": [
+            {
+              "name": "Pillar Framework",
+              "children": [
+                {
+                  "name": "The 5 Pillars of Wellness: My Complete Framework",
+                  "query": "5 pillars of wellness method",
+                  "intent": "Informational",
+                  "fmt": "Guide",
+                  "prio": "High",
+                  "status": "Needs Update",
+                  "desc": "The brand's signature methodology page. Currently five unlabeled icons on the homepage with no explanatory content, which wastes the strongest differentiator on the site.",
+                  "url": "https://daniellewellnessforlife.com/"
+                },
+                {
+                  "name": "How the 5 Pillars Work Together (and Why One Alone Fails)",
+                  "query": "holistic wellness framework women",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "Explains the interdependence of the pillars and why single-lever fixes stall. Reinforces the case for coaching over a DIY plan."
+                },
+                {
+                  "name": "Self-Assessment: Which Pillar Is Your Weakest Link?",
+                  "query": "wellness self assessment quiz women",
+                  "intent": "Informational",
+                  "fmt": "Landing Page",
+                  "prio": "High",
+                  "status": "Gap",
+                  "desc": "Interactive quiz that segments visitors by weakest pillar and routes them into the matching content and the free consult. Highest-value lead capture on the site."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Pillar 1: Hydrate",
+          "children": [
+            {
+              "name": "Hydration Fundamentals",
+              "children": [
+                {
+                  "name": "How Much Water Do You Really Need After 40?",
+                  "query": "how much water should a woman over 40 drink",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "High",
+                  "status": "Gap",
+                  "desc": "Answers the entry question for the HYDRATE pillar with body-weight-based targets rather than the generic eight glasses."
+                },
+                {
+                  "name": "Electrolytes, Not Just Water: What Midlife Hydration Requires",
+                  "query": "electrolytes menopause hydration",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "Explains why plain water can fall short during hot flashes and night sweats. Ties hydration to symptom relief."
+                },
+                {
+                  "name": "7 Signs You're Chronically Dehydrated (and Calling It Fatigue)",
+                  "query": "signs of dehydration fatigue women",
+                  "intent": "Informational",
+                  "fmt": "Listicle",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "Symptom-recognition listicle that redirects fatigue searches into the hydration pillar. Easy quick win for readers."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Pillar 2: Fuel",
+          "children": [
+            {
+              "name": "Building a Plate",
+              "children": [
+                {
+                  "name": "The Wellness for Life Plate: Protein, Fiber, Fat, Color",
+                  "query": "how to build a balanced plate",
+                  "intent": "Informational",
+                  "fmt": "Guide",
+                  "prio": "High",
+                  "status": "Gap",
+                  "desc": "Danielle's proprietary plate model, presented visually. The reference asset every FUEL article links back to."
+                },
+                {
+                  "name": "Fiber Is the Most Underrated Nutrient After 40",
+                  "query": "fiber for women over 40",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "High",
+                  "status": "Gap",
+                  "desc": "Covers satiety, blood sugar, gut health and estrogen clearance in one piece. Connects four clusters at once."
+                },
+                {
+                  "name": "Reading Labels: The 4 Things Danielle Checks First",
+                  "query": "how to read nutrition labels",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "Signature teaching moment from the supermarket session, published free. Demonstrates the value of the paid shopping experience."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Pillar 3: Sweat",
+          "children": [
+            {
+              "name": "Movement That Fits Real Life",
+              "children": [
+                {
+                  "name": "You Don't Need the Gym: Sweat Options for Busy Women",
+                  "query": "at home workouts women over 40",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "Removes the most common objection for a mother of four demographic. Practical, equipment-light options."
+                },
+                {
+                  "name": "Why 20 Minutes of Zone 2 Beats an Hour of Nothing",
+                  "query": "zone 2 cardio women over 40",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "Introduces Zone 2 in accessible terms with heart rate ranges by age. Rising search trend with weak local competition."
+                },
+                {
+                  "name": "How to Fuel Before and After a Workout in Midlife",
+                  "query": "what to eat before workout women over 40",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "Bridges SWEAT and FUEL with specific pre and post timing. Prevents the under-eating pattern that stalls midlife progress."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Pillar 4: Burn Fat",
+          "children": [
+            {
+              "name": "Metabolic Levers",
+              "children": [
+                {
+                  "name": "Protein Timing and the Fat-Burning Window That Matters",
+                  "query": "protein timing fat loss women",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "Practical distribution guidance that most readers get wrong by back-loading protein to dinner."
+                },
+                {
+                  "name": "Is Intermittent Fasting Safe for Women in Perimenopause?",
+                  "query": "intermittent fasting perimenopause safe",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "High",
+                  "status": "Gap",
+                  "desc": "High-volume, high-confusion query. A careful, caveated answer here earns disproportionate authority in the niche."
+                },
+                {
+                  "name": "Blood Sugar First: The Order You Eat Your Food Changes Everything",
+                  "query": "food order blood sugar glucose",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "High",
+                  "status": "Gap",
+                  "desc": "Teaches food sequencing, a highly shareable technique requiring no restriction. Excellent social and newsletter performer."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Pillar 5: Sleep",
+          "children": [
+            {
+              "name": "Sleep and Nutrition",
+              "children": [
+                {
+                  "name": "The Menopause Sleep Problem: Why 3am Keeps Happening",
+                  "query": "waking up at 3am menopause",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "High",
+                  "status": "Gap",
+                  "desc": "Names an extremely specific, extremely common experience. Strong long-tail capture and high emotional resonance."
+                },
+                {
+                  "name": "What to Eat (and Stop Eating) for Deeper Sleep",
+                  "query": "foods that help you sleep menopause",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "High",
+                  "status": "Gap",
+                  "desc": "Direct nutrition-to-sleep intervention list with evening timing guidance. Core SLEEP pillar asset."
+                },
+                {
+                  "name": "Magnesium for Sleep: Which Form Actually Works",
+                  "query": "magnesium glycinate for sleep menopause",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "Form-by-form comparison that most competitor content skips. Specific enough to rank without heavy domain authority."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Everyday Eating & Meal Strategy",
+      "color": "#9333ea",
+      "children": [
+        {
+          "name": "Grocery Shopping",
+          "children": [
+            {
+              "name": "Supermarket Navigation",
+              "children": [
+                {
+                  "name": "A Dietitian-Style Supermarket Tour You Can Do Alone",
+                  "query": "how to grocery shop healthy",
+                  "intent": "Informational",
+                  "fmt": "Guide",
+                  "prio": "High",
+                  "status": "Gap",
+                  "desc": "Free version of the paid shopping experience, aisle by aisle. Proves the method and drives demand for the guided session."
+                },
+                {
+                  "name": "The Wellness for Life Grocery List for Women Over 40",
+                  "query": "healthy grocery list women over 40",
+                  "intent": "Informational",
+                  "fmt": "Guide",
+                  "prio": "High",
+                  "status": "Gap",
+                  "desc": "Printable staples list organized by the 5 Pillars. Strong lead magnet and repeat-visit page."
+                },
+                {
+                  "name": "Supermarket Shopping Session: Shop With Danielle",
+                  "query": "personal grocery shopping nutritionist",
+                  "intent": "Transactional",
+                  "fmt": "Service Page",
+                  "prio": "Medium",
+                  "status": "Needs Update",
+                  "desc": "Dedicated page for the in-person shopping add-on inside the Elevate package. Currently a bullet point with no page or booking path of its own.",
+                  "lt": "Elevate Your Wellness: 6-Week Program ($700)",
+                  "url": "https://daniellewellnessforlife.com/"
+                }
+              ]
+            },
+            {
+              "name": "Decoding Packaging",
+              "children": [
+                {
+                  "name": "Health Halo Foods: 12 'Healthy' Products That Aren't",
+                  "query": "healthy foods that arent healthy",
+                  "intent": "Informational",
+                  "fmt": "Listicle",
+                  "prio": "High",
+                  "status": "Gap",
+                  "desc": "Highly shareable myth-busting listicle with named product categories. Reliable traffic and backlink generator."
+                },
+                {
+                  "name": "Added Sugar Aliases: 56 Names on Your Ingredient List",
+                  "query": "hidden names for sugar ingredients",
+                  "intent": "Informational",
+                  "fmt": "Guide",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "Reference-style asset that earns links and repeat visits. Pairs naturally with the label-reading piece."
+                },
+                {
+                  "name": "Organic, Grass-Fed, Wild-Caught: What's Worth the Money",
+                  "query": "is organic worth the money",
+                  "intent": "Commercial",
+                  "fmt": "Blog Post",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "Budget-conscious guidance that respects the reader's wallet. Differentiates from wellness content that assumes unlimited spend."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Meal Planning & Prep",
+          "children": [
+            {
+              "name": "Systems",
+              "children": [
+                {
+                  "name": "Sunday Reset: A 90-Minute Meal Prep System",
+                  "query": "sunday meal prep for the week",
+                  "intent": "Informational",
+                  "fmt": "Guide",
+                  "prio": "High",
+                  "status": "Gap",
+                  "desc": "Repeatable weekly system with a timed sequence. The operational backbone clients need to make any plan survive a real week."
+                },
+                {
+                  "name": "Meal Planning for a Family When You're the Only One Eating Different",
+                  "query": "meal planning family different diets",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "High",
+                  "status": "Gap",
+                  "desc": "Speaks directly to Danielle's own experience as a mother of four. Strong authenticity signal and an underserved query."
+                },
+                {
+                  "name": "Batch Cooking 5 Proteins for the Week",
+                  "query": "batch cook protein meal prep",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "Solves the protein-target problem operationally rather than theoretically. Links back to the protein reference guide."
+                }
+              ]
+            },
+            {
+              "name": "Recipes",
+              "children": [
+                {
+                  "name": "10 High-Protein Breakfasts Under 10 Minutes",
+                  "query": "high protein breakfast ideas quick",
+                  "intent": "Informational",
+                  "fmt": "Listicle",
+                  "prio": "High",
+                  "status": "Gap",
+                  "desc": "Breakfast is the meal most women over 40 under-protein. High-volume recipe query with clear commercial adjacency."
+                },
+                {
+                  "name": "Lunches That Don't Crash You at 3pm",
+                  "query": "lunch ideas no afternoon crash",
+                  "intent": "Informational",
+                  "fmt": "Listicle",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "Ties midday meal composition to the afternoon energy dip. Practical and immediately testable."
+                },
+                {
+                  "name": "Dinner in 20: 8 Weeknight Meals for Busy Women",
+                  "query": "quick healthy weeknight dinners",
+                  "intent": "Informational",
+                  "fmt": "Listicle",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "Time-constrained recipe roundup matching the target client's actual evening. Evergreen and repeatable as a series."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Eating Out & Real Life",
+          "children": [
+            {
+              "name": "Social Situations",
+              "children": [
+                {
+                  "name": "How to Order at Any Restaurant Without Blowing Your Plan",
+                  "query": "how to eat healthy at restaurants",
+                  "intent": "Informational",
+                  "fmt": "Guide",
+                  "prio": "High",
+                  "status": "Gap",
+                  "desc": "Cuisine-by-cuisine ordering framework. Removes a top reason clients abandon a plan in week three."
+                },
+                {
+                  "name": "Travel, Airports and Hotel Rooms: Eating Well on the Road",
+                  "query": "healthy eating while traveling",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "Practical travel protocol including what to pack. Seasonal traffic spikes and strong newsletter performance."
+                },
+                {
+                  "name": "Holidays, Parties and Wine: A Plan That Doesn't Involve Saying No",
+                  "query": "how to eat healthy at parties holidays",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "Permission-based approach that matches the brand's non-restrictive tone. Predictable Q4 traffic surge."
+                }
+              ]
+            },
+            {
+              "name": "Snacks",
+              "children": [
+                {
+                  "name": "The 15 Snacks I Keep in My Kitchen",
+                  "query": "healthy snacks for women over 40",
+                  "intent": "Informational",
+                  "fmt": "Listicle",
+                  "prio": "High",
+                  "status": "Gap",
+                  "desc": "Personal, specific and easy to skim. First-person framing makes it feel like access to the coach rather than generic advice."
+                },
+                {
+                  "name": "Protein Bars: How to Pick One That Isn't a Candy Bar",
+                  "query": "best protein bars for women",
+                  "intent": "Commercial",
+                  "fmt": "Comparison Page",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "Comparison content with clear commercial intent and affiliate potential. Teaches a repeatable evaluation method."
+                },
+                {
+                  "name": "The Afternoon Slump Snack Formula",
+                  "query": "healthy afternoon snack energy",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "Low",
+                  "status": "Gap",
+                  "desc": "Short formula piece linking the FUEL and energy clusters. Low competition, quick to produce."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Sleep, Stress & Energy",
+      "color": "#ea580c",
+      "children": [
+        {
+          "name": "Sleep Quality",
+          "children": [
+            {
+              "name": "Fixing Sleep",
+              "children": [
+                {
+                  "name": "The Midlife Sleep Routine That Actually Sticks",
+                  "query": "sleep routine for menopause insomnia",
+                  "intent": "Informational",
+                  "fmt": "Guide",
+                  "prio": "High",
+                  "status": "Gap",
+                  "desc": "Full evening protocol combining timing, food, light and temperature. Pillar asset for the sleep cluster."
+                },
+                {
+                  "name": "Alcohol and Sleep: Why the Nightcap Wrecks Your 3am",
+                  "query": "alcohol and sleep menopause",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "High",
+                  "status": "Gap",
+                  "desc": "Explains the sedation-then-rebound mechanism. One of the highest-impact single changes a client can make."
+                },
+                {
+                  "name": "Screens, Light and Temperature: The Bedroom Audit",
+                  "query": "how to sleep better menopause bedroom",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "Checklist-style environmental audit. Actionable in one evening and easy to convert into a downloadable."
+                },
+                {
+                  "name": "Napping After 40: Helpful or Harmful?",
+                  "query": "is napping good for you over 40",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "Low",
+                  "status": "Gap",
+                  "desc": "Nuanced answer on nap duration and timing. Low-competition long-tail with steady evergreen demand."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Stress & Cortisol",
+          "children": [
+            {
+              "name": "Managing the Load",
+              "children": [
+                {
+                  "name": "Cortisol and Belly Fat: The Stress-Weight Loop",
+                  "query": "cortisol belly fat women",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "High",
+                  "status": "Gap",
+                  "desc": "Explains the stress-to-visceral-fat pathway. Critical bridge between the stress cluster and the weight loss cluster."
+                },
+                {
+                  "name": "5 Two-Minute Stress Resets for the Middle of a Workday",
+                  "query": "quick stress relief techniques",
+                  "intent": "Informational",
+                  "fmt": "Listicle",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "Micro-interventions that fit a real schedule. Highly practical and shareable on social."
+                },
+                {
+                  "name": "Overtraining and Under-Eating: The Stress You're Adding",
+                  "query": "overtraining women over 40 cortisol",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "Counterintuitive piece for the highly motivated client who is doing too much. Prevents a common coaching failure mode."
+                },
+                {
+                  "name": "Saying No: The Nutrition Habit Nobody Calls a Nutrition Habit",
+                  "query": "stress management midlife women boundaries",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "Low",
+                  "status": "Gap",
+                  "desc": "Voice-forward essay on capacity and boundaries as health inputs. Strong brand and newsletter piece."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Energy & Fatigue",
+          "children": [
+            {
+              "name": "Root Causes",
+              "children": [
+                {
+                  "name": "Tired All the Time at 45? Start Here",
+                  "query": "why am i so tired at 45 woman",
+                  "intent": "Informational",
+                  "fmt": "Guide",
+                  "prio": "High",
+                  "status": "Gap",
+                  "desc": "Diagnostic hub routing readers to sleep, iron, blood sugar or thyroid. High-volume entry point with excellent internal link distribution."
+                },
+                {
+                  "name": "Iron, Ferritin and B12: The Fatigue Trio Worth Testing",
+                  "query": "low iron fatigue women over 40",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "Specific labs to request and what the ranges mean. Reinforces the partner-to-medical-care positioning."
+                },
+                {
+                  "name": "The 3pm Crash: What It Says About Your Breakfast",
+                  "query": "afternoon energy crash cause",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "Traces the afternoon dip back to the morning meal. Simple cause-and-effect story readers immediately recognize."
+                },
+                {
+                  "name": "Caffeine Dependence: How to Reset Without a Week of Headaches",
+                  "query": "how to cut back on caffeine",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "Low",
+                  "status": "Gap",
+                  "desc": "Tapering protocol rather than cold turkey. Practical, low-competition and links to the sleep cluster."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Gut Health",
+          "children": [
+            {
+              "name": "Digestion in Midlife",
+              "children": [
+                {
+                  "name": "Why Your Digestion Changed After 40",
+                  "query": "digestion problems after 40 women",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "Explains stomach acid, motility and microbiome shifts with age. Under-covered angle in the menopause space."
+                },
+                {
+                  "name": "Bloating: 8 Causes That Aren't Gluten",
+                  "query": "causes of bloating women over 40",
+                  "intent": "Informational",
+                  "fmt": "Listicle",
+                  "prio": "High",
+                  "status": "Gap",
+                  "desc": "Corrects the reflexive gluten assumption with a broader differential. High search volume and high frustration."
+                },
+                {
+                  "name": "Probiotics, Prebiotics and Fermented Foods: A Practical Order of Operations",
+                  "query": "probiotics for women over 40",
+                  "intent": "Informational",
+                  "fmt": "Guide",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "Sequenced, food-first approach instead of a supplement pitch. Builds trust in a category full of hype."
+                },
+                {
+                  "name": "Fiber and Regularity: The Unglamorous Fix",
+                  "query": "fiber for constipation women over 40",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "Direct, practical piece on a symptom clients rarely raise unprompted. Reinforces the fiber message across clusters."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Movement, Strength & Metabolism",
+      "color": "#0891b2",
+      "children": [
+        {
+          "name": "Strength Training",
+          "children": [
+            {
+              "name": "Getting Started",
+              "children": [
+                {
+                  "name": "Strength Training After 40: A Beginner's First 4 Weeks",
+                  "query": "strength training for women over 40 beginner",
+                  "intent": "Informational",
+                  "fmt": "Guide",
+                  "prio": "High",
+                  "status": "Gap",
+                  "desc": "Complete four-week on-ramp with progression. Pairs directly with the 4-week Transform package timeline."
+                },
+                {
+                  "name": "Why Muscle Is the Best Investment You Can Make at 45",
+                  "query": "why women over 40 need muscle",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "High",
+                  "status": "Gap",
+                  "desc": "Makes the longevity and metabolic case for lifting. Converts cardio-only readers into the strength cluster."
+                },
+                {
+                  "name": "Heavy vs. Light Weights: What Midlife Women Should Lift",
+                  "query": "how heavy should women lift over 40",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "Addresses the persistent fear of bulking with load and rep guidance. Removes a major behavioral barrier."
+                },
+                {
+                  "name": "How to Fuel a Lifting Program Without Gaining Fat",
+                  "query": "nutrition for strength training women over 40",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "Where the SWEAT and FUEL pillars intersect. Uniquely Danielle's territory as a nutrition coach rather than a trainer."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Cardio & Daily Movement",
+          "children": [
+            {
+              "name": "The Right Dose",
+              "children": [
+                {
+                  "name": "Zone 2, HIIT and Steps: How to Split Your Cardio Week",
+                  "query": "cardio for women over 40 how much",
+                  "intent": "Informational",
+                  "fmt": "Guide",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "Weekly template balancing intensity and recovery. Answers the how-much question most articles leave vague."
+                },
+                {
+                  "name": "NEAT: The 400 Calories You're Not Counting",
+                  "query": "neat non exercise activity thermogenesis",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "Introduces non-exercise activity as a lever that does not require more gym time. Appealing to time-poor clients."
+                },
+                {
+                  "name": "Walking After Meals: The Simplest Blood Sugar Tool",
+                  "query": "walking after meals blood sugar",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "High",
+                  "status": "Gap",
+                  "desc": "Single-habit intervention with strong evidence and near-zero barrier. Excellent social and shareable content."
+                },
+                {
+                  "name": "Do You Really Need 10,000 Steps?",
+                  "query": "how many steps per day women over 40",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "Low",
+                  "status": "Gap",
+                  "desc": "Myth correction with age-appropriate targets. Steady evergreen search demand."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Recovery & Injury",
+          "children": [
+            {
+              "name": "Staying in the Game",
+              "children": [
+                {
+                  "name": "Recovery After 40: Why You Need More of It",
+                  "query": "recovery for women over 40 exercise",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "Explains changing recovery requirements and how to program rest. Prevents the burnout that ends programs early."
+                },
+                {
+                  "name": "Joint Pain and Inflammation: The Food Angle",
+                  "query": "anti inflammatory diet joint pain women",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "Nutrition's role in joint symptoms, which are a top reason midlife women stop exercising."
+                },
+                {
+                  "name": "Protein for Recovery: How Much and When",
+                  "query": "protein after workout women over 40",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "Post-exercise protein specifics for this demographic. Links back to the master protein guide."
+                },
+                {
+                  "name": "Returning to Exercise After a Long Break",
+                  "query": "how to start exercising again after 40",
+                  "intent": "Informational",
+                  "fmt": "Guide",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "Compassionate restart protocol for readers who have been out for years. High-empathy conversion content."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Metabolic Health",
+          "children": [
+            {
+              "name": "Understanding Metabolism",
+              "children": [
+                {
+                  "name": "What 'Slow Metabolism' Actually Means (and How to Test It)",
+                  "query": "how to test metabolism women",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "Defines RMR and TDEE in plain language with realistic testing options. Corrects a widely misused term."
+                },
+                {
+                  "name": "Insulin Resistance in Perimenopause: Early Warning Signs",
+                  "query": "insulin resistance perimenopause signs",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "High",
+                  "status": "Gap",
+                  "desc": "Early-detection content for a condition that accelerates in midlife. Serious, high-value and links to the blood sugar cluster."
+                },
+                {
+                  "name": "Continuous Glucose Monitors: Worth It for Non-Diabetics?",
+                  "query": "cgm for weight loss women worth it",
+                  "intent": "Commercial",
+                  "fmt": "Blog Post",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "Evaluates a fast-growing consumer category honestly. Timely topic with rising search volume and weak competition."
+                },
+                {
+                  "name": "Building Metabolic Flexibility in Midlife",
+                  "query": "metabolic flexibility women over 40",
+                  "intent": "Informational",
+                  "fmt": "Guide",
+                  "prio": "Low",
+                  "status": "Gap",
+                  "desc": "Advanced concept explained accessibly. Signals depth of expertise to more informed readers."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Working With Danielle",
+      "color": "#db2777",
+      "children": [
+        {
+          "name": "Programs & Packages",
+          "children": [
+            {
+              "name": "Core Offers",
+              "children": [
+                {
+                  "name": "Transform Your Body: 4-Week Program ($500)",
+                  "query": "4 week nutrition coaching program",
+                  "intent": "Transactional",
+                  "fmt": "Service Page",
+                  "prio": "High",
+                  "status": "Needs Update",
+                  "desc": "Standalone sales page for the entry package: 60-minute evaluation, three follow-ups, unlimited access, greens powder. Currently a homepage section with no URL of its own.",
+                  "url": "https://daniellewellnessforlife.com/"
+                },
+                {
+                  "name": "Elevate Your Wellness: 6-Week Program ($700)",
+                  "query": "6 week wellness coaching program",
+                  "intent": "Transactional",
+                  "fmt": "Service Page",
+                  "prio": "High",
+                  "status": "Needs Update",
+                  "desc": "Standalone sales page for the premium package: five follow-ups, supermarket session, deeper habit work. Needs its own URL to rank and to be linked from cluster content.",
+                  "url": "https://daniellewellnessforlife.com/"
+                },
+                {
+                  "name": "Follow-Up Coaching Sessions ($125)",
+                  "query": "nutrition coaching follow up session",
+                  "intent": "Transactional",
+                  "fmt": "Service Page",
+                  "prio": "Medium",
+                  "status": "Needs Update",
+                  "desc": "Page for the 60-minute continuation session that retains graduated clients. Currently buried with no dedicated entry point.",
+                  "url": "https://daniellewellnessforlife.com/"
+                },
+                {
+                  "name": "Book a Free 15-Minute Consultation",
+                  "query": "free nutrition consultation call",
+                  "intent": "Transactional",
+                  "fmt": "Landing Page",
+                  "prio": "High",
+                  "status": "Exists",
+                  "desc": "The primary conversion action across the entire site. Booking works via Acuity but there is no on-site landing page to rank, retarget or measure.",
+                  "url": "https://app.acuityscheduling.com/schedule.php?owner=33887119&appointmentType=71294463"
+                }
+              ]
+            },
+            {
+              "name": "Choosing a Program",
+              "children": [
+                {
+                  "name": "Transform vs. Elevate: Which Program Is Right for You?",
+                  "query": "which nutrition program should i choose",
+                  "intent": "Commercial",
+                  "fmt": "Comparison Page",
+                  "prio": "High",
+                  "status": "Gap",
+                  "desc": "Side-by-side comparison that removes decision friction at the point of purchase. Reliably lifts conversion on service pages."
+                },
+                {
+                  "name": "What's Included in a Nutrition Evaluation",
+                  "query": "what happens in a nutrition consultation",
+                  "intent": "Commercial",
+                  "fmt": "Blog Post",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "Demystifies the 60-minute evaluation step by step. Reduces no-shows and pre-frames the value of the paid plan."
+                },
+                {
+                  "name": "Pricing and Payment: What Nutrition Coaching Costs",
+                  "query": "how much does a nutrition coach cost",
+                  "intent": "Commercial",
+                  "fmt": "Blog Post",
+                  "prio": "High",
+                  "status": "Gap",
+                  "desc": "Transparent pricing page targeting a high-intent commercial query most coaches avoid answering publicly."
+                },
+                {
+                  "name": "Corporate and Group Wellness Programs",
+                  "query": "corporate wellness nutrition program",
+                  "intent": "Transactional",
+                  "fmt": "Service Page",
+                  "prio": "Low",
+                  "status": "Gap",
+                  "desc": "Expansion offer for higher contract values. Low search volume but high revenue per conversion."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "About & Trust",
+          "children": [
+            {
+              "name": "Credibility",
+              "children": [
+                {
+                  "name": "Meet Danielle Esposito, Nutritious Life Master Certified Coach",
+                  "query": "danielle esposito nutrition coach",
+                  "intent": "Navigational",
+                  "fmt": "About Page",
+                  "prio": "High",
+                  "status": "Needs Update",
+                  "desc": "The entity page for the business. Critical: the current /about/ URL serves a different practitioner's biography entirely and must be replaced.",
+                  "url": "https://daniellewellnessforlife.com/about/"
+                },
+                {
+                  "name": "What Nutritious Life Master Certification Means",
+                  "query": "nutritious life certification credential",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "Explains the credential and its training standard. Direct E-E-A-T signal in a YMYL category where credentials are ranking factors."
+                },
+                {
+                  "name": "My Story: How Four Kids and Turning 40 Changed My Approach",
+                  "query": "danielle esposito wellness for life story",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "First-person origin story that makes the brand human and gives the target client someone to see themselves in."
+                },
+                {
+                  "name": "Nutrition Coach vs. Registered Dietitian: Which Do You Need?",
+                  "query": "nutrition coach vs dietitian difference",
+                  "intent": "Commercial",
+                  "fmt": "Comparison Page",
+                  "prio": "High",
+                  "status": "Gap",
+                  "desc": "Honest scope-of-practice comparison. Pre-qualifies the right clients and builds trust by naming what coaching is not."
+                }
+              ]
+            },
+            {
+              "name": "Proof",
+              "children": [
+                {
+                  "name": "Client Results: Before and After Stories",
+                  "query": "nutrition coaching results women over 40",
+                  "intent": "Commercial",
+                  "fmt": "Case Study",
+                  "prio": "High",
+                  "status": "Gap",
+                  "desc": "Structured results page with specifics and timeframes. The single biggest missing conversion asset on the site."
+                },
+                {
+                  "name": "Jami's Story: Change at Her Own Pace",
+                  "query": "nutrition coaching testimonial",
+                  "intent": "Commercial",
+                  "fmt": "Case Study",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "Long-form version of an existing homepage testimonial. Turns a one-line quote into a full narrative proof asset."
+                },
+                {
+                  "name": "What My Clients Say",
+                  "query": "wellness for life danielle reviews",
+                  "intent": "Commercial",
+                  "fmt": "Landing Page",
+                  "prio": "Medium",
+                  "status": "Needs Update",
+                  "desc": "Consolidated testimonial page with review schema. Two quotes currently sit on the homepage with no dedicated page or markup.",
+                  "url": "https://daniellewellnessforlife.com/"
+                },
+                {
+                  "name": "Frequently Asked Questions About Coaching",
+                  "query": "nutrition coaching faq",
+                  "intent": "Informational",
+                  "fmt": "FAQ Page",
+                  "prio": "High",
+                  "status": "Gap",
+                  "desc": "FAQ page with schema markup covering logistics, scope, refunds and results. Strong candidate for AI and voice answer citation."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Getting Started",
+          "children": [
+            {
+              "name": "Onboarding",
+              "children": [
+                {
+                  "name": "What to Expect in Your First Session",
+                  "query": "what to expect first nutrition coaching session",
+                  "intent": "Commercial",
+                  "fmt": "Blog Post",
+                  "prio": "Medium",
+                  "status": "Gap",
+                  "desc": "Walkthrough of session one that lowers anxiety for hesitant buyers. Sits between the consult and the purchase decision."
+                },
+                {
+                  "name": "How to Prepare for Your Nutrition Evaluation",
+                  "query": "how to prepare for nutrition consultation",
+                  "intent": "Informational",
+                  "fmt": "Blog Post",
+                  "prio": "Low",
+                  "status": "Gap",
+                  "desc": "Pre-session checklist covering food logs, labs and goals. Improves session quality and client outcomes."
+                },
+                {
+                  "name": "Is Online Nutrition Coaching Effective?",
+                  "query": "does online nutrition coaching work",
+                  "intent": "Commercial",
+                  "fmt": "Blog Post",
+                  "prio": "High",
+                  "status": "Gap",
+                  "desc": "Addresses the core objection to a fully virtual practice with evidence and mechanics. Essential for a location-independent business."
+                },
+                {
+                  "name": "Contact Danielle",
+                  "query": "contact wellness for life danielle",
+                  "intent": "Navigational",
+                  "fmt": "Contact Page",
+                  "prio": "High",
+                  "status": "Needs Update",
+                  "desc": "Working contact page. Critical: the current /contact/ page routes to charlotte@theunstruckdrum.com and references ceremony bookings, so live inquiries are going to the wrong business.",
+                  "url": "https://daniellewellnessforlife.com/contact/"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
