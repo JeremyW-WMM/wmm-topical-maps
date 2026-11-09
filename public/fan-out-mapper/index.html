@@ -107,6 +107,46 @@ details.more[open] summary{margin-bottom:12px}
 .how{font-size:13px;color:var(--tx-mut)}
 .how dt{color:var(--tx-hi);font-weight:600;margin-top:10px}
 .how dd{margin-left:0}
+.b.vol{color:var(--blue);border-color:#1f3a6e}
+.b.aio{color:var(--violet);border-color:#3d2a6e}
+.b.real{color:var(--green);border-color:#1a5c32}
+.kwbar{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;background:var(--sunk);border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-bottom:12px}
+.kwbar .fl{margin:0}
+.kwbar select{width:auto}
+.toggle{display:inline-flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;padding-bottom:8px}
+.toggle input{accent-color:var(--blue);width:16px;height:16px}
+.brand-list{display:flex;flex-wrap:wrap;gap:6px}
+.brand-list span{font-size:12px;border:1px solid var(--line2);border-radius:6px;padding:4px 8px;background:var(--panel)}
+.brand-list b{color:var(--blue);font-weight:600;margin-left:4px}
+.doc{background:#f6f8fa;color:#1f2328;border-radius:12px;padding:28px;max-width:860px;margin:0 auto;font-family:Georgia,"Times New Roman",serif}
+.doc .serp{font-family:Arial,sans-serif;background:#fff;border:1px solid #d0d7de;border-radius:8px;padding:12px 14px;margin-bottom:22px}
+.doc .serp .t{color:#1a0dab;font-size:18px;line-height:1.3}
+.doc .serp .u{color:#006621;font-size:12px;margin:2px 0}
+.doc .serp .d{color:#4d5156;font-size:13px}
+.doc h1{font-size:30px;line-height:1.2;margin-bottom:14px;color:#1f2328}
+.doc .answer{background:#ddf4ff;border-left:4px solid #0969da;padding:12px 14px;border-radius:6px;font-size:15px;line-height:1.55;margin-bottom:16px}
+.doc .toc{font-family:Arial,sans-serif;display:flex;flex-wrap:wrap;gap:6px;margin-bottom:22px}
+.doc .toc a{font-size:12px;color:#0969da;text-decoration:none;border:1px solid #d0d7de;border-radius:999px;padding:3px 10px;background:#fff}
+.doc .sect{background:#fff;border:1px solid #d0d7de;border-radius:10px;padding:16px 18px;margin-bottom:12px;border-top:3px solid #0969da}
+.doc h2{font-size:21px;margin-bottom:4px;color:#1f2328}
+.doc .goal{font-family:Arial,sans-serif;font-size:13px;color:#57606a;margin-bottom:10px}
+.doc .h3s{margin:0 0 10px 18px;font-size:15px;line-height:1.6}
+.doc .meta{font-family:Arial,sans-serif;display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:10px}
+.doc .el{font-size:11px;background:#fff8c5;border:1px solid #d4a72c55;color:#7d4e00;border-radius:4px;padding:2px 7px}
+.doc .wt{font-size:11px;color:#57606a}
+.doc .covers{font-family:Arial,sans-serif;border-top:1px dashed #d0d7de;padding-top:8px}
+.doc .covers .lbl{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:#57606a;margin-bottom:5px}
+.doc .qc{display:inline-flex;align-items:center;gap:5px;font-size:12px;background:#f6f8fa;border:1px solid #d0d7de;border-radius:6px;padding:3px 7px;margin:0 4px 4px 0;color:#1f2328}
+.doc .qc .d{width:7px;height:7px;border-radius:50%}
+.doc .qc b{color:#0969da;font-weight:600}
+.doc .faq dt{font-weight:700;margin-top:10px;font-size:15px}
+.doc .faq dd{font-family:Arial,sans-serif;font-size:13px;color:#57606a;margin:2px 0 0}
+.doc .side{font-family:Arial,sans-serif;font-size:13px}
+.doc .side li{margin:0 0 8px 18px}
+@media (max-width:560px){.doc{padding:16px}.doc h1{font-size:24px}}
+.engines{display:flex;flex-wrap:wrap;gap:8px}
+.engines a{font-size:13px;text-decoration:none;border:1px solid var(--line2);border-radius:8px;padding:8px 12px;color:var(--tx);background:var(--panel)}
+.engines a:hover{border-color:var(--blue);color:var(--blue)}
 </style>
 </head>
 <body>
@@ -135,6 +175,15 @@ details.more[open] summary{margin-bottom:12px}
       <div class="fl"><label for="aud">Audience</label><input id="aud" type="text" placeholder="e.g. adults 25–45 with acne scarring"></div>
     </div>
   </details>
+
+  <div class="kwbar">
+    <label class="toggle"><input type="checkbox" id="useAhrefs" checked> Ground in real Ahrefs keyword data</label>
+    <div class="fl"><label for="country">Country</label>
+      <select id="country"><option value="us">United States</option><option value="gb">United Kingdom</option><option value="ca">Canada</option><option value="au">Australia</option><option value="ie">Ireland</option><option value="nz">New Zealand</option><option value="in">India</option><option value="de">Germany</option><option value="fr">France</option><option value="es">Spain</option></select></div>
+    <div class="fl"><label for="depth">Keyword depth</label>
+      <select id="depth"><option value="50">50 (~3k units)</option><option value="100" selected>100 (~7k units)</option><option value="200">200 (~13k units)</option></select></div>
+    <div class="status" id="ahrefsStatus" style="padding-bottom:8px"></div>
+  </div>
 
   <div class="fl">
     <label>Fan-out types</label>
@@ -169,6 +218,7 @@ details.more[open] summary{margin-bottom:12px}
   <div class="tabs" style="margin-top:18px">
     <button class="tab on" data-tab="map">Map</button>
     <button class="tab" data-tab="list">Query list</button>
+    <button class="tab" data-tab="perfect">Perfect page</button>
     <button class="tab" data-tab="cov">Content coverage</button>
   </div>
 
@@ -176,7 +226,7 @@ details.more[open] summary{margin-bottom:12px}
   <div id="tab-map">
     <div class="mapbox" id="mapBox"></div>
     <div class="legend" id="mapLegend"></div>
-    <p class="note">Click any outer node to jump to that query in the list. Hover for the full text. Node size reflects priority; once you run a coverage check, nodes are coloured by coverage.</p>
+    <p class="note">Click any outer node to jump to that query in the list. Hover for the full text. Node size reflects priority. A white ring marks a real search from Ahrefs. Once you run a coverage check, nodes are coloured by coverage.</p>
   </div>
 
   <!-- List -->
@@ -188,6 +238,28 @@ details.more[open] summary{margin-bottom:12px}
       <select id="fCov"><option value="">Any coverage</option><option value="covered">Covered</option><option value="partial">Partial</option><option value="missing">Missing</option><option value="unchecked">Not checked</option></select>
     </div>
     <div id="list"></div>
+    <div id="brandBox" class="hidden" style="margin-top:20px">
+      <div class="sec-h" style="margin-top:0"><h2>Branded searches noticed</h2></div>
+      <p class="how" style="margin-bottom:8px">Real searches naming a brand or product. They show which names AI answers are likely to compare, so mention them where it's honest to.</p>
+      <div class="brand-list" id="brandList"></div>
+    </div>
+  </div>
+
+  <!-- Perfect page -->
+  <div id="tab-perfect" class="hidden">
+    <div class="card" style="margin-bottom:14px">
+      <p class="how" style="margin-bottom:12px">Turn the fan-out into one page outline. Every sub-query is assigned to a section, FAQ, or supporting page, so the page can be retrieved for as many of them as possible.</p>
+      <div class="row">
+        <div class="fl" style="margin:0;min-width:200px"><label for="pType">Page type</label>
+          <select id="pType"><option value="auto">Let the AI decide</option><option>Service page</option><option>Local landing page</option><option>Buyer's guide</option><option>Comparison / best-of list</option><option>How-to guide</option><option>Product category page</option></select></div>
+        <div class="spacer"></div>
+        <button class="btn sec sm hidden" id="mdBtn">Download brief (.md)</button>
+        <button class="btn" id="perfBtn">Build the perfect page</button>
+      </div>
+      <div class="prog" id="perfProg"></div>
+      <div id="perfErr"></div>
+    </div>
+    <div id="perfOut"></div>
   </div>
 
   <!-- Coverage -->
@@ -229,6 +301,14 @@ details.more[open] summary{margin-bottom:12px}
   </div>
 </div>
 
+<div id="enginesBox" class="hidden">
+  <div class="sec-h"><h2>Check against real AI engines</h2></div>
+  <div class="card">
+    <p class="how" style="margin-bottom:10px">Run the seed query in each engine and compare what it cites with the map above.</p>
+    <div class="engines" id="engines"></div>
+  </div>
+</div>
+
 <!-- ── About ───────────────────────────────────────────────────────────── -->
 <div class="sec-h"><h2>How query fan-out works</h2></div>
 <div class="card">
@@ -253,13 +333,16 @@ var CATS = [
   { id:'personal', name:'Personalized',     color:'#3fb950', desc:'Variants for a location, budget, persona, life stage or situation.' },
   { id:'reform',   name:'Reformulations',   color:'#39c5cf', desc:'Rephrasings: synonyms, narrower and broader versions, other wording.' },
   { id:'entity',   name:'Entity expansion', color:'#ff7b54', desc:'Specific brands, products, people, places, specs and attributes tied to the topic.' },
-  { id:'followup', name:'Follow-ups',       color:'#c9d1d9', desc:'What the searcher asks next after reading the first answer.' }
+  { id:'followup', name:'Follow-ups',       color:'#c9d1d9', desc:'What the searcher asks next after reading the first answer.' },
+  { id:'extra',    name:'Other real searches', color:'#8b949e', desc:'High-volume Ahrefs keywords that no fan-out type picked up.', auto:true }
 ];
+var CHIP_EXTRA = { ahrefs:{ name:'Ahrefs keywords', color:'#ff8c00' }, perfect:{ name:'Page outline', color:'#58a6ff' } };
 var INTENTS = ['informational','commercial','transactional','navigational','local'];
 var STAGES  = ['awareness','consideration','decision','post-purchase'];
 var COV_COLORS = { covered:'#3fb950', partial:'#d29922', missing:'#f85149' };
 
-var state = { seed:'', ctx:{}, cats:{}, order:[], coverage:null, page:null };
+var state = { seed:'', ctx:{}, cats:{}, order:[], coverage:null, page:null, kw:null, kwMeta:null, perfect:null };
+var kwIdx = {};
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
 function $(id){ return document.getElementById(id); }
@@ -278,6 +361,15 @@ function download(name, text, type){
   a.download=name; document.body.appendChild(a); a.click(); setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); },500);
 }
 function slug(s){ return norm(s).replace(/ /g,'-').slice(0,60) || 'fan-out'; }
+function fmtN(n){ return n >= 10000 ? Math.round(n/1000) + 'k' : n >= 1000 ? (n/1000).toFixed(1).replace(/\.0$/,'') + 'k' : String(n); }
+function buildKwIdx(){ kwIdx = {}; (state.kw || []).forEach(function(r){ kwIdx[norm(r.k)] = r; }); }
+function kwFor(text){ return kwIdx[norm(text)] || null; }
+function attachKw(q){
+  var m = kwFor(q.query);
+  q.source = m ? 'ahrefs' : 'modeled';
+  q.vol = m ? m.v : null; q.kd = m ? m.kd : null; q.aio = m ? m.aio : false;
+  return q;
+}
 
 // ── Claude call (through the site's Netlify proxy) ──────────────────────────
 async function callClaude(system, content, schema, maxTokens){
@@ -320,9 +412,10 @@ var GEN_SCHEMA = {
   type:'object', additionalProperties:false, required:['queries'],
   properties:{ queries:{ type:'array', items:{
     type:'object', additionalProperties:false,
-    required:['query','intent','stage','priority','format','rationale'],
+    required:['query','source','intent','stage','priority','format','rationale'],
     properties:{
       query:{ type:'string' },
+      source:{ type:'string', enum:['ahrefs','modeled'] },
       intent:{ type:'string', enum: INTENTS },
       stage:{ type:'string', enum: STAGES },
       priority:{ type:'integer' },
@@ -356,13 +449,21 @@ function genPrompt(cat, n){
   lines.push('');
   lines.push('Fan-out type: ' + cat.name + ' — ' + cat.desc);
   lines.push('Write exactly ' + n + ' sub-queries of this type.');
+  if (state.kw && state.kw.length) {
+    lines.push('');
+    lines.push('Real searches people make, from Ahrefs (' + state.kwMeta.country.toUpperCase() + '), as "keyword | monthly searches".');
+    lines.push('When one of these genuinely fits this fan-out type, use it VERBATIM and set source to "ahrefs". Otherwise write your own sub-query and set source to "modeled". Do not force a real search into the wrong type.');
+    lines.push('<real_searches>');
+    state.kw.slice(0, 220).forEach(function(r){ lines.push(r.k + ' | ' + (r.v == null ? '?' : r.v)); });
+    lines.push('</real_searches>');
+  }
   return lines.join('\n');
 }
 
 function setChip(box, cid, cls, label){
   var el = box.querySelector('[data-c="'+cid+'"]');
   if (!el) { el = document.createElement('div'); el.dataset.c = cid; box.appendChild(el); }
-  var cat = catById(cid);
+  var cat = catById(cid) || CHIP_EXTRA[cid];
   el.className = 'pchip ' + cls;
   el.innerHTML = (cls==='run' ? '<span class="spin"></span>' : '<span class="dot" style="background:'+cat.color+'"></span>') + esc(cat.name) + (label ? ' · ' + esc(label) : '');
   return el;
@@ -379,14 +480,14 @@ async function genCat(cid, n){
       .map(function(q, i){
         return { id: cid + '-' + i, cat: cid, query: q.query, intent: q.intent, stage: q.stage,
                  priority: Math.max(1, Math.min(10, Math.round(q.priority || 5))), format: q.format, rationale: q.rationale };
-      });
+      }).map(attachKw);
     state.cats[cid] = { queries: qs };
     setChip(box, cid, 'ok', qs.length + '');
   } catch(e){
     state.cats[cid] = { queries: [], error: e.message };
     var el = setChip(box, cid, 'err', 'failed, tap to retry');
     el.title = e.message;
-    el.onclick = function(){ genCat(cid, n).then(afterGen); };
+    el.onclick = function(){ genCat(cid, n).then(function(){ addExtras(); afterGen(); renderAll(); }); };
   }
   renderAll();
 }
@@ -405,15 +506,65 @@ async function run(){
   if (!picked.length) { toast('Pick at least one fan-out type'); return; }
   var n = parseInt($('per').value, 10);
   state = { seed: seed, ctx: { brand: $('brand').value.trim(), loc: $('loc').value.trim(), aud: $('aud').value.trim() },
-            cats: {}, order: picked, coverage: null, page: null };
+            cats: {}, order: picked, coverage: null, page: null, kw: null, kwMeta: null, perfect: null };
+  kwIdx = {}; $('perfOut').innerHTML = ''; $('perfProg').innerHTML = ''; $('perfErr').innerHTML = ''; $('mdBtn').classList.add('hidden');
   $('genProg').innerHTML = ''; $('genErr').innerHTML = ''; $('covProg').innerHTML=''; $('covErr').innerHTML=''; $('covNote').innerHTML='';
   $('covOut').classList.add('hidden');
   $('goBtn').disabled = true; $('goBtn').textContent = 'Mapping…';
   $('results').classList.remove('hidden');
   renderAll();
   // One small request per fan-out type, in parallel: faster and well under function time limits
+  if ($('useAhrefs').checked && !$('useAhrefs').disabled) await fetchKeywords();
   await Promise.all(picked.map(function(cid){ return genCat(cid, n); }));
+  addExtras();
   afterGen();
+  renderAll();
+}
+
+// ── Ahrefs keyword data (fetched server-side) ───────────────────────────────
+async function fetchKeywords(){
+  var box = $('genProg');
+  setChip(box, 'ahrefs', 'run', '');
+  var country = $('country').value;
+  try {
+    var r = await fetch(FN, { method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ action:'ahrefs', seed: state.seed, country: country, depth: parseInt($('depth').value, 10) }) });
+    var d = await r.json().catch(function(){ return {}; });
+    if (!r.ok) throw new Error(d.error || ('HTTP ' + r.status));
+    state.kw = (d.keywords || []).map(function(k){
+      var it = k.intents || {};
+      return { k: k.keyword, v: k.volume, kd: k.difficulty, aio: (k.serp_features || []).indexOf('ai_overview') >= 0,
+               branded: !!it.branded, intent: it.local ? 'local' : it.transactional ? 'transactional' : it.commercial ? 'commercial' : it.navigational ? 'navigational' : 'informational',
+               parent: k.parent_topic || '' };
+    });
+    state.kwMeta = { country: d.country || country, via: d.via, count: state.kw.length };
+    buildKwIdx();
+    setChip(box, 'ahrefs', 'ok', state.kw.length + ' keywords');
+  } catch(e){
+    state.kw = null; state.kwMeta = { country: country, error: e.message };
+    var el = setChip(box, 'ahrefs', 'err', 'skipped');
+    el.title = e.message;
+    $('genErr').innerHTML = '<div class="err-box">Ahrefs data unavailable, so every query below is AI-modeled. ' + esc(e.message) + '</div>';
+  }
+}
+
+// High-volume real keywords that no fan-out type used become their own group
+function addExtras(){
+  delete state.cats.extra;
+  state.order = state.order.filter(function(c){ return c !== 'extra'; });
+  if (!state.kw || !state.kw.length) return;
+  var used = {}; allQueries().forEach(function(q){ used[norm(q.query)] = 1; }); used[norm(state.seed)] = 1;
+  var rows = state.kw.filter(function(r){ return !r.branded && r.v && !used[norm(r.k)]; }).slice(0, 24);
+  if (!rows.length) return;
+  var maxV = Math.max.apply(null, rows.map(function(r){ return r.v; }));
+  var stageOf = { informational:'awareness', commercial:'consideration', transactional:'decision', local:'decision', navigational:'decision' };
+  state.cats.extra = { queries: rows.map(function(r, i){
+    return attachKw({ id:'extra-' + i, cat:'extra', query:r.k, intent:r.intent, stage: stageOf[r.intent] || 'awareness',
+      priority: Math.max(1, Math.round(10 * Math.log(1 + r.v) / Math.log(1 + maxV))),
+      format: r.parent && norm(r.parent) !== norm(r.k) ? 'Parent topic: ' + r.parent : 'Section or FAQ',
+      rationale: fmtN(r.v) + ' monthly searches that no fan-out type picked up.' });
+  }) };
+  state.order.push('extra');
 }
 
 // ── Coverage check ──────────────────────────────────────────────────────────
@@ -505,7 +656,7 @@ async function runCoverage(){
 }
 
 // ── Rendering ───────────────────────────────────────────────────────────────
-function renderAll(){ renderStats(); renderMap(); renderList(); renderCoverage(); }
+function renderAll(){ renderStats(); renderMap(); renderList(); renderCoverage(); renderPerfect(); renderEngines(); }
 
 function renderStats(){
   var qs = allQueries(), n = qs.length;
@@ -514,11 +665,15 @@ function renderStats(){
   var intents = {}; qs.forEach(function(q){ intents[q.intent] = (intents[q.intent]||0)+1; });
   var top = Object.keys(intents).sort(function(a,b){ return intents[b]-intents[a]; })[0];
   var cov = covSummary();
+  var real = qs.filter(function(q){ return q.source === 'ahrefs'; });
+  var vol = real.reduce(function(s,q){ return s + (q.vol || 0); }, 0);
+  var aio = real.filter(function(q){ return q.aio; }).length;
+  var types = state.order.filter(function(c){ return c !== 'extra'; });
   var cards = [
     [n, 'Sub-queries'],
-    [state.order.filter(function(c){ return state.cats[c] && state.cats[c].queries.length; }).length + ' / ' + state.order.length, 'Fan-out types'],
-    [hi, 'High priority (8+)'],
-    cov ? [cov.score + '%', 'Content coverage'] : [top ? top : '–', 'Dominant intent']
+    state.kw ? [real.length + ' / ' + n, 'Backed by real search data'] : [types.filter(function(c){ return state.cats[c] && state.cats[c].queries.length; }).length + ' / ' + types.length, 'Fan-out types'],
+    state.kw ? [fmtN(vol), 'Monthly searches mapped'] : [hi, 'High priority (8+)'],
+    cov ? [cov.score + '%', 'Content coverage'] : state.kw && real.length ? [Math.round(100*aio/real.length) + '%', 'Real searches with AI Overviews'] : [top ? top : '–', 'Dominant intent']
   ];
   $('stats').innerHTML = cards.map(function(c){ return '<div class="stat"><div class="v">' + esc(c[0]) + '</div><div class="l">' + esc(c[1]) + '</div></div>'; }).join('');
 }
@@ -575,8 +730,8 @@ function renderMap(){
       var label = q.query.length > 46 ? q.query.slice(0,44) + '…' : q.query;
       var tx = flip ? -(r+6) : (r+6);
       out.push('<g class="leaf" data-id="'+esc(q.id)+'" transform="translate('+lx.toFixed(1)+','+ly.toFixed(1)+') rotate('+rot.toFixed(1)+')">' +
-        '<title>'+esc(q.query)+' (' + esc(n.c.name) + ', priority ' + q.priority + (cv ? ', ' + cv.status : '') + ')</title>' +
-        '<circle r="'+r.toFixed(1)+'" fill="'+fill+'" stroke="#0d1117" stroke-width="1.5"/>' +
+        '<title>'+esc(q.query)+' (' + esc(n.c.name) + ', priority ' + q.priority + (q.vol != null ? ', ' + q.vol + ' searches/mo' : '') + (cv ? ', ' + cv.status : '') + ')</title>' +
+        '<circle r="'+r.toFixed(1)+'" fill="'+fill+'" stroke="'+(q.source==='ahrefs'?'#ffffff':'#0d1117')+'" stroke-width="'+(q.source==='ahrefs'?2:1.5)+'"/>' +
         '<text x="'+tx+'" dy="0.35em" font-size="12" fill="#c9d1d9" text-anchor="'+(flip?'end':'start')+'">'+esc(label)+'</text></g>');
     });
   });
@@ -621,8 +776,12 @@ function qCard(q, cat){
   var h = '<div class="q" data-id="'+esc(q.id)+'" style="border-left-color:'+cat.color+'">' +
     '<div class="qt">' + esc(q.query) + '</div>' +
     '<div class="badges">' + (cv ? '<span class="b '+cv.status+'">'+cv.status+'</span>' : '') +
+      (q.vol != null ? '<span class="b vol">' + fmtN(q.vol) + '/mo</span>' : '') +
+      (q.kd != null ? '<span class="b">KD ' + q.kd + '</span>' : '') +
+      (q.aio ? '<span class="b aio" title="Google shows an AI Overview for this search">AIO</span>' : '') +
+      (state.kw && q.source !== 'ahrefs' ? '<span class="b" title="Modeled by AI, not found in Ahrefs data">modeled</span>' : '') +
       '<span class="b pri">P' + q.priority + '</span><span class="b">' + esc(q.intent) + '</span><span class="b">' + esc(q.stage) + '</span></div>' +
-    '<div class="qr"><b style="color:var(--tx)">' + esc(q.format) + '</b> · ' + esc(q.rationale) + '</div>';
+    '<div class="qr">' + (q.format ? '<b style="color:var(--tx)">' + esc(q.format) + '</b> · ' : '') + esc(q.rationale) + '</div>';
   if (cv && (cv.evidence || cv.fix)) {
     h += '<div class="qe">' + (cv.evidence ? '<b>On page:</b> "' + esc(cv.evidence) + '"' : '') +
          (cv.evidence && cv.fix ? '<br>' : '') + (cv.fix ? '<b>Fix:</b> ' + esc(cv.fix) : '') + '</div>';
@@ -650,6 +809,9 @@ function renderList(){
       qs.map(function(q){ return qCard(q, cat); }).join('') + '</div>';
   });
   $('list').innerHTML = html || '<div class="empty">No queries match these filters.</div>';
+  var br = (state.kw || []).filter(function(r){ return r.branded; }).slice(0, 40);
+  $('brandBox').classList.toggle('hidden', !br.length);
+  $('brandList').innerHTML = br.map(function(r){ return '<span>' + esc(r.k) + (r.v ? '<b>' + fmtN(r.v) + '</b>' : '') + '</span>'; }).join('');
 }
 
 function renderCoverage(){
@@ -674,21 +836,210 @@ function renderCoverage(){
   $('gaps').innerHTML = gaps.length ? gaps.map(function(q){ return qCard(q, catById(q.cat)); }).join('') : '<div class="empty">No gaps found. This page covers every sub-query it was checked against.</div>';
 }
 
+// ── Perfect page ────────────────────────────────────────────────────────────
+var PERF_SCHEMA = {
+  type:'object', additionalProperties:false,
+  required:['page_type','title_tag','meta_description','url_slug','h1','answer_first','sections','faq','schema_types','supporting_pages'],
+  properties:{
+    page_type:{ type:'string' },
+    title_tag:{ type:'string' },
+    meta_description:{ type:'string' },
+    url_slug:{ type:'string' },
+    h1:{ type:'string' },
+    answer_first:{ type:'string' },
+    sections:{ type:'array', items:{ type:'object', additionalProperties:false,
+      required:['h2','goal','h3s','elements','word_target','covers'],
+      properties:{ h2:{type:'string'}, goal:{type:'string'}, h3s:{type:'array',items:{type:'string'}},
+        elements:{type:'array',items:{type:'string'}}, word_target:{type:'integer'}, covers:{type:'array',items:{type:'string'}} } } },
+    faq:{ type:'array', items:{ type:'object', additionalProperties:false, required:['question','answer_hint','covers'],
+      properties:{ question:{type:'string'}, answer_hint:{type:'string'}, covers:{type:'array',items:{type:'string'}} } } },
+    schema_types:{ type:'array', items:{ type:'string' } },
+    supporting_pages:{ type:'array', items:{ type:'object', additionalProperties:false, required:['title','angle','covers'],
+      properties:{ title:{type:'string'}, angle:{type:'string'}, covers:{type:'array',items:{type:'string'}} } } }
+  }
+};
+var PERF_SYSTEM = [
+  'You are a senior SEO and AI-search content strategist. You design the single page most likely to be retrieved and cited for a query across its whole fan-out of sub-queries (Google AI Mode and AI Overviews, ChatGPT, Perplexity).',
+  'Principles:',
+  '- Answer first: open with a direct 2-3 sentence answer to the seed query that could be quoted on its own.',
+  '- One clear H2 per sub-topic, written as the question or phrase people search for, so each passage can be retrieved independently.',
+  '- Use real search phrasing (sub-queries with volume) in headings where natural.',
+  '- Put sub-queries with a different intent, or that need depth the main page cannot give, on supporting_pages that link back to this page. Do not cram everything onto one page.',
+  '- Short, specific questions belong in the FAQ.',
+  '- elements: the concrete content blocks a section needs (e.g. "comparison table", "pricing table", "step-by-step list", "before/after photos", "local map embed", "expert quote", "stat with source", "checklist").',
+  '- word_target: a realistic word count for the section.',
+  '- covers: the ids of the sub-queries the section answers. Assign EVERY sub-query id exactly once across sections, faq and supporting_pages.',
+  '- Never invent facts about the business (prices, credentials, years, reviews). In answer_first and answer_hint, write placeholders like [price range] or [number of years] where the business must supply facts.',
+  '- 5 to 10 sections, ordered the way a reader moves from understanding to deciding. 4 to 10 FAQ items. 0 to 6 supporting pages.',
+  '- schema_types: the schema.org types worth adding (e.g. FAQPage, Service, LocalBusiness, Product, HowTo, Article, Review).'
+].join('\n');
+
+function perfectPlacement(){
+  var out = {}, p = state.perfect;
+  if (!p) return out;
+  p.sections.forEach(function(sec){ sec.covers.forEach(function(id){ out[id] = out[id] || ('H2: ' + sec.h2); }); });
+  p.faq.forEach(function(f){ f.covers.forEach(function(id){ out[id] = out[id] || ('FAQ: ' + f.question); }); });
+  p.supporting_pages.forEach(function(sp){ sp.covers.forEach(function(id){ out[id] = out[id] || ('Supporting page: ' + sp.title); }); });
+  return out;
+}
+
+async function buildPerfect(){
+  var qs = allQueries();
+  if (!qs.length) { toast('Map a query first'); return; }
+  var btn = $('perfBtn');
+  btn.disabled = true; btn.textContent = 'Designing page…';
+  $('perfErr').innerHTML = ''; $('perfProg').innerHTML = '';
+  setChip($('perfProg'), 'perfect', 'run', '');
+  var c = state.ctx, lines = ['Seed query: "' + state.seed + '"'];
+  if (c.brand) lines.push('Business / brand: ' + c.brand);
+  if (c.loc)   lines.push('Location / market: ' + c.loc);
+  if (c.aud)   lines.push('Audience: ' + c.aud);
+  var pt = $('pType').value;
+  lines.push('Page type: ' + (pt === 'auto' ? 'choose the best page type for this query' : pt));
+  lines.push('Today\'s date: ' + new Date().toISOString().slice(0,10));
+  lines.push('');
+  lines.push('Sub-queries ("id | query | fan-out type | intent | priority | monthly searches | AI Overview"):');
+  qs.forEach(function(q){
+    lines.push([q.id, q.query, catById(q.cat).name, q.intent, 'P' + q.priority, q.vol == null ? '-' : q.vol, q.aio ? 'AIO' : '-'].join(' | '));
+  });
+  var br = (state.kw || []).filter(function(r){ return r.branded; }).slice(0, 15);
+  if (br.length) lines.push('', 'Branded searches seen in keyword data (context only, no ids): ' + br.map(function(r){ return r.k; }).join('; '));
+  try {
+    var res = await callClaude(PERF_SYSTEM, lines.join('\n'), PERF_SCHEMA, 16000);
+    var valid = {}; qs.forEach(function(q){ valid[q.id] = 1; });
+    var clean = function(arr){ return (arr || []).filter(function(id){ return valid[id]; }); };
+    res.sections.forEach(function(x){ x.covers = clean(x.covers); });
+    res.faq.forEach(function(x){ x.covers = clean(x.covers); });
+    res.supporting_pages.forEach(function(x){ x.covers = clean(x.covers); });
+    state.perfect = res;
+    var placed = Object.keys(perfectPlacement()).length;
+    setChip($('perfProg'), 'perfect', 'ok', placed + '/' + qs.length + ' placed');
+    save();
+  } catch(e){
+    setChip($('perfProg'), 'perfect', 'err', 'failed');
+    $('perfErr').innerHTML = '<div class="err-box">' + esc(e.message) + '</div>';
+  }
+  btn.disabled = false; btn.textContent = state.perfect ? 'Rebuild' : 'Build the perfect page';
+  renderPerfect(); renderStats();
+}
+
+function qChips(ids){
+  var byId = {}; allQueries().forEach(function(q){ byId[q.id] = q; });
+  return ids.map(function(id){
+    var q = byId[id]; if (!q) return '';
+    return '<span class="qc" title="' + esc(catById(q.cat).name) + '"><i class="d" style="background:' + catById(q.cat).color + '"></i>' + esc(q.query) +
+      (q.vol != null ? ' <b>' + fmtN(q.vol) + '</b>' : '') + '</span>';
+  }).join('');
+}
+
+function renderPerfect(){
+  var p = state.perfect, out = $('perfOut');
+  $('mdBtn').classList.toggle('hidden', !p);
+  if (!p) { out.innerHTML = ''; return; }
+  if (!$('perfBtn').disabled) $('perfBtn').textContent = 'Rebuild';
+  var placed = perfectPlacement(), qs = allQueries();
+  var missing = qs.filter(function(q){ return !placed[q.id]; });
+  var words = p.sections.reduce(function(s, x){ return s + (x.word_target || 0); }, 0);
+  var slugTxt = (p.url_slug || slug(p.h1)).replace(/^\/+/, '');
+  var h = '<div class="doc">';
+  h += '<div class="serp"><div class="u">' + esc((state.ctx.brand ? slug(state.ctx.brand) + '.com' : 'yoursite.com') + ' › ' + slugTxt) + '</div>' +
+       '<div class="t">' + esc(p.title_tag) + '</div><div class="d">' + esc(p.meta_description) + '</div></div>';
+  h += '<div style="font-family:Arial,sans-serif;font-size:12px;color:#57606a;margin-bottom:6px">' + esc(p.page_type) + ' · ~' + words.toLocaleString() + ' words · ' +
+       Object.keys(placed).length + ' of ' + qs.length + ' sub-queries placed</div>';
+  h += '<h1>' + esc(p.h1) + '</h1>';
+  h += '<div class="answer">' + esc(p.answer_first) + '</div>';
+  h += '<div class="toc">' + p.sections.map(function(x, i){ return '<a href="#ps-' + i + '">' + esc(x.h2) + '</a>'; }).join('') + (p.faq.length ? '<a href="#ps-faq">FAQ</a>' : '') + '</div>';
+  p.sections.forEach(function(x, i){
+    h += '<div class="sect" id="ps-' + i + '"><h2>' + esc(x.h2) + '</h2><div class="goal">' + esc(x.goal) + '</div>';
+    if (x.h3s.length) h += '<ul class="h3s">' + x.h3s.map(function(t){ return '<li>' + esc(t) + '</li>'; }).join('') + '</ul>';
+    h += '<div class="meta">' + x.elements.map(function(e){ return '<span class="el">' + esc(e) + '</span>'; }).join('') +
+         '<span class="wt">~' + (x.word_target || 0) + ' words</span></div>';
+    if (x.covers.length) h += '<div class="covers"><div class="lbl">Answers ' + x.covers.length + ' sub-quer' + (x.covers.length === 1 ? 'y' : 'ies') + '</div>' + qChips(x.covers) + '</div>';
+    h += '</div>';
+  });
+  if (p.faq.length) {
+    h += '<div class="sect" id="ps-faq" style="border-top-color:#8250df"><h2>Frequently asked questions</h2><dl class="faq">' +
+      p.faq.map(function(f){ return '<dt>' + esc(f.question) + '</dt><dd>' + esc(f.answer_hint) + (f.covers.length ? '<div style="margin-top:5px">' + qChips(f.covers) + '</div>' : '') + '</dd>'; }).join('') + '</dl></div>';
+  }
+  if (p.supporting_pages.length) {
+    h += '<div class="sect" style="border-top-color:#1a7f37"><h2>Supporting pages to link from here</h2><ul class="side">' +
+      p.supporting_pages.map(function(sp){ return '<li><b>' + esc(sp.title) + '</b>: ' + esc(sp.angle) + (sp.covers.length ? '<div style="margin-top:5px">' + qChips(sp.covers) + '</div>' : '') + '</li>'; }).join('') + '</ul></div>';
+  }
+  if (p.schema_types.length) h += '<div style="font-family:Arial,sans-serif;font-size:13px;color:#57606a"><b style="color:#1f2328">Schema markup:</b> ' + p.schema_types.map(esc).join(', ') + '</div>';
+  if (missing.length) h += '<div style="font-family:Arial,sans-serif;font-size:13px;color:#9a6700;margin-top:12px"><b>Not placed (' + missing.length + '):</b> ' + qChips(missing.map(function(q){ return q.id; })) + '</div>';
+  h += '</div>';
+  out.innerHTML = h;
+}
+
+function exportBrief(){
+  var p = state.perfect; if (!p) return;
+  var byId = {}; allQueries().forEach(function(q){ byId[q.id] = q; });
+  var ql = function(ids){ return ids.map(function(id){ var q = byId[id]; return q ? '  - ' + q.query + (q.vol != null ? ' (' + q.vol + '/mo' + (q.aio ? ', AI Overview' : '') + ')' : '') : ''; }).filter(Boolean).join('\n'); };
+  var md = ['# Page brief: ' + p.h1, '',
+    '**Seed query:** ' + state.seed + (state.ctx.brand ? '  \n**Business:** ' + state.ctx.brand : '') + (state.ctx.loc ? '  \n**Location:** ' + state.ctx.loc : ''),
+    '**Page type:** ' + p.page_type, '**Title tag:** ' + p.title_tag, '**Meta description:** ' + p.meta_description, '**URL:** /' + (p.url_slug || '').replace(/^\/+/, ''), '',
+    '## Answer first', p.answer_first, ''];
+  p.sections.forEach(function(x){
+    md.push('## ' + x.h2, '_' + x.goal + '_  ', '**Target:** ~' + x.word_target + ' words' + (x.elements.length ? ' · **Include:** ' + x.elements.join(', ') : ''), '');
+    x.h3s.forEach(function(t){ md.push('### ' + t); });
+    if (x.covers.length) md.push('', 'Answers:', ql(x.covers));
+    md.push('');
+  });
+  if (p.faq.length) { md.push('## FAQ'); p.faq.forEach(function(f){ md.push('### ' + f.question, f.answer_hint, ql(f.covers), ''); }); }
+  if (p.supporting_pages.length) { md.push('## Supporting pages'); p.supporting_pages.forEach(function(sp){ md.push('- **' + sp.title + '**: ' + sp.angle, ql(sp.covers).replace(/^  /gm, '    ')); }); md.push(''); }
+  if (p.schema_types.length) md.push('**Schema:** ' + p.schema_types.join(', '), '');
+  md.push('---', 'Generated by the WMM Query Fan-Out Mapper' + (state.kwMeta && state.kwMeta.count ? ' with Ahrefs keyword data (' + state.kwMeta.country.toUpperCase() + ')' : '') + ' on ' + new Date().toISOString().slice(0,10) + '.');
+  download('page-brief-' + slug(state.seed) + '.md', md.join('\n'), 'text/markdown');
+}
+
+// ── Check against real AI engines ───────────────────────────────────────────
+function renderEngines(){
+  $('enginesBox').classList.toggle('hidden', !state.seed);
+  if (!state.seed) return;
+  var q = encodeURIComponent(state.seed);
+  var links = [
+    ['Google AI Mode', 'https://www.google.com/search?udm=50&q=' + q],
+    ['Google (AI Overview)', 'https://www.google.com/search?q=' + q],
+    ['ChatGPT', 'https://chatgpt.com/?q=' + q],
+    ['Perplexity', 'https://www.perplexity.ai/search?q=' + q],
+    ['Microsoft Copilot', 'https://copilot.microsoft.com/?q=' + q],
+    ['Claude', 'https://claude.ai/new?q=' + q]
+  ];
+  $('engines').innerHTML = links.map(function(l){ return '<a href="' + l[1] + '" target="_blank" rel="noopener">' + esc(l[0]) + ' ↗</a>'; }).join('');
+}
+
+// Is Ahrefs configured on the server?
+(async function(){
+  var st = $('ahrefsStatus'), tg = $('useAhrefs');
+  try {
+    var r = await fetch(FN, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'ahrefs-status' }) });
+    var d = await r.json();
+    if (d.configured) { st.textContent = 'Ahrefs connected'; st.style.color = 'var(--green)'; return; }
+    throw new Error('not configured');
+  } catch(e){
+    tg.checked = false; tg.disabled = true;
+    st.textContent = 'Ahrefs not connected: add AHREFS_API_KEY in Netlify to enable';
+    ['country','depth'].forEach(function(id){ $(id).disabled = true; });
+  }
+})();
+
 // ── Export ──────────────────────────────────────────────────────────────────
 function csvCell(v){ v = String(v == null ? '' : v); return /[",\n]/.test(v) ? '"' + v.replace(/"/g,'""') + '"' : v; }
 function exportCSV(){
-  var head = ['seed','fan_out_type','query','intent','stage','priority','format','rationale','coverage','evidence','fix'];
+  var head = ['seed','fan_out_type','query','source','monthly_volume','keyword_difficulty','ai_overview','intent','stage','priority','format','rationale','coverage','evidence','fix','page_section'];
+  var placed = perfectPlacement();
   var rows = allQueries().map(function(q){
     var cv = (state.coverage && state.coverage[q.id]) || {};
-    return [state.seed, catById(q.cat).name, q.query, q.intent, q.stage, q.priority, q.format, q.rationale, cv.status||'', cv.evidence||'', cv.fix||''].map(csvCell).join(',');
+    return [state.seed, catById(q.cat).name, q.query, q.source||'modeled', q.vol==null?'':q.vol, q.kd==null?'':q.kd, q.aio?'yes':'', q.intent, q.stage, q.priority, q.format, q.rationale, cv.status||'', cv.evidence||'', cv.fix||'', placed[q.id]||''].map(csvCell).join(',');
   });
   download('fan-out-' + slug(state.seed) + '.csv', '﻿' + head.join(',') + '\n' + rows.join('\n'), 'text/csv');
 }
 function exportJSON(){
-  var data = { seed: state.seed, context: state.ctx, generated: new Date().toISOString(), page: state.page, coverage_score: (covSummary()||{}).score,
+  var data = { seed: state.seed, context: state.ctx, generated: new Date().toISOString(), keyword_data: state.kwMeta, page: state.page, coverage_score: (covSummary()||{}).score,
+    perfect_page: state.perfect, branded_searches: (state.kw||[]).filter(function(r){ return r.branded; }),
     fan_out: state.order.map(function(cid){ return { type: catById(cid).name, queries: ((state.cats[cid]||{}).queries||[]).map(function(q){
       var cv = state.coverage && state.coverage[q.id];
-      return { query:q.query, intent:q.intent, stage:q.stage, priority:q.priority, format:q.format, rationale:q.rationale, coverage: cv || null };
+      return { id:q.id, query:q.query, source:q.source||'modeled', volume:q.vol, difficulty:q.kd, ai_overview:!!q.aio, intent:q.intent, stage:q.stage, priority:q.priority, format:q.format, rationale:q.rationale, coverage: cv || null };
     }) }; }) };
   download('fan-out-' + slug(state.seed) + '.json', JSON.stringify(data, null, 2), 'application/json');
 }
@@ -700,15 +1051,15 @@ function copyQueries(){
 // ── UI wiring ───────────────────────────────────────────────────────────────
 function showTab(t){
   document.querySelectorAll('.tab').forEach(function(b){ b.classList.toggle('on', b.dataset.tab === t); });
-  ['map','list','cov'].forEach(function(k){ $('tab-'+k).classList.toggle('hidden', k !== t); });
+  ['map','list','perfect','cov'].forEach(function(k){ $('tab-'+k).classList.toggle('hidden', k !== t); });
 }
 document.querySelectorAll('.tab').forEach(function(b){ b.addEventListener('click', function(){ showTab(b.dataset.tab); }); });
 
-$('catPicker').innerHTML = CATS.map(function(c){
+$('catPicker').innerHTML = CATS.filter(function(c){ return !c.auto; }).map(function(c){
   return '<label class="chk" title="'+esc(c.desc)+'"><input type="checkbox" value="'+c.id+'" checked><span class="dot" style="background:'+c.color+'"></span>'+esc(c.name)+'</label>';
 }).join('');
 $('howList').innerHTML = '<dt>One query in, many queries out</dt><dd>Google AI Mode, AI Overviews, ChatGPT and Perplexity break a prompt into sub-queries, run them at the same time, and build one answer from the passages they retrieve. A page that answers only the head term misses most of those retrievals.</dd>' +
-  CATS.map(function(c){ return '<dt><span class="dot" style="background:'+c.color+';margin-right:6px"></span>'+esc(c.name)+'</dt><dd>'+esc(c.desc)+'</dd>'; }).join('');
+  CATS.filter(function(c){ return !c.auto; }).map(function(c){ return '<dt><span class="dot" style="background:'+c.color+';margin-right:6px"></span>'+esc(c.name)+'</dt><dd>'+esc(c.desc)+'</dd>'; }).join('');
 $('fIntent').innerHTML += INTENTS.map(function(i){ return '<option>'+i+'</option>'; }).join('');
 $('fStage').innerHTML += STAGES.map(function(s){ return '<option>'+s+'</option>'; }).join('');
 
@@ -718,6 +1069,8 @@ $('covBtn').addEventListener('click', runCoverage);
 $('csvBtn').addEventListener('click', exportCSV);
 $('jsonBtn').addEventListener('click', exportJSON);
 $('copyBtn').addEventListener('click', copyQueries);
+$('perfBtn').addEventListener('click', buildPerfect);
+$('mdBtn').addEventListener('click', exportBrief);
 ['fText','fIntent','fStage','fCov'].forEach(function(id){ $(id).addEventListener('input', renderList); });
 
 // Restore the last run (this browser only)
@@ -727,6 +1080,8 @@ $('copyBtn').addEventListener('click', copyQueries);
     if (s && s.seed && s.order && s.cats) s.order = s.order.filter(function(c){ return s.cats[c] && catById(c); });
     if (s && s.seed && s.order && s.order.length) {
       state = s;
+      buildKwIdx();
+      if (s.kwMeta && s.kwMeta.country) $('country').value = s.kwMeta.country;
       $('seed').value = s.seed;
       $('brand').value = s.ctx.brand || ''; $('loc').value = s.ctx.loc || ''; $('aud').value = s.ctx.aud || '';
       if (s.ctx.brand || s.ctx.loc || s.ctx.aud) $('ctxDetails').open = true;
