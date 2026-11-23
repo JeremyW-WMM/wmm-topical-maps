@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Query Fan-Out Mapper</title>
+<meta name="description" content="Map how AI search (Google AI Mode, AI Overviews, ChatGPT, Perplexity) fans one query out into many sub-queries, and check whether your page covers them.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d1117;--panel:#161b22;--sunk:#010409;--line:#21262d;--line2:#30363d;
+  --tx:#c9d1d9;--tx-hi:#e6edf3;--tx-mut:#8b949e;--tx-dim:#6e7681;
+  --blue:#58a6ff;--green:#3fb950;--amber:#d29922;--red:#f85149;--violet:#a371f7;
+}
+body{background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;color:var(--tx);min-height:100vh;line-height:1.45}
+a{color:var(--blue)}
+.wrap{max-width:1180px;margin:0 auto;padding:24px 16px 60px}
+header{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-bottom:18px;border-bottom:1px solid var(--line);margin-bottom:22px}
+h1{font-size:20px;font-weight:700;color:var(--tx-hi);letter-spacing:-.2px}
+.sub{font-size:13px;color:var(--tx-mut);margin-top:4px;max-width:640px}
+.tag{font-size:10px;text-transform:uppercase;letter-spacing:1.4px;color:var(--tx-dim);font-weight:600}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px;position:relative;overflow:hidden}
+.card.accent::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#1a4a9e,#7c3aed)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media (max-width:760px){.grid2,.grid3{grid-template-columns:1fr}}
+.fl{margin-bottom:12px}
+.fl label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.7px;color:var(--tx-mut);margin-bottom:5px;font-weight:600}
+.fl .hint{font-size:11px;color:var(--tx-dim);margin-top:4px}
+input[type=text],input[type=url],textarea,select{width:100%;background:var(--sunk);border:1px solid var(--line);border-radius:7px;padding:9px 12px;color:var(--tx);font-size:14px;outline:none;font-family:inherit}
+textarea{resize:vertical;min-height:70px}
+input:focus,textarea:focus,select:focus{border-color:var(--blue)}
+.seed input{font-size:17px;padding:13px 14px}
+details.more{margin:4px 0 12px}
+details.more summary{cursor:pointer;font-size:12px;color:var(--blue);list-style:none}
+details.more summary::-webkit-details-marker{display:none}
+details.more[open] summary{margin-bottom:12px}
+.btn{padding:10px 18px;background:#238636;border:1px solid #2ea043;border-radius:8px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
+.btn:hover:not(:disabled){background:#2ea043}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.sec{background:transparent;border-color:var(--line2);color:var(--tx)}
+.btn.sec:hover:not(:disabled){border-color:var(--blue);color:var(--blue);background:transparent}
+.btn.sm{padding:6px 11px;font-size:12px;font-weight:600}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.spacer{flex:1}
+.cats{display:flex;flex-wrap:wrap;gap:6px}
+.chk{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:5px 10px;font-size:12px;cursor:pointer;user-select:none;background:var(--sunk)}
+.fl label.chk{display:inline-flex;text-transform:none;letter-spacing:0;font-size:12px;font-weight:500;color:var(--tx);margin:0}
+.chk input{accent-color:var(--blue);margin-right:2px}
+.dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;display:inline-block}
+.sec-h{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:28px 0 12px;flex-wrap:wrap}
+.sec-h h2{font-size:15px;color:var(--tx-hi)}
+.hidden{display:none!important}
+.status{font-size:12px;color:var(--tx-mut);font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.prog{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.pchip{font-size:11px;border:1px solid var(--line);border-radius:6px;padding:4px 8px;display:flex;align-items:center;gap:6px;background:var(--sunk);color:var(--tx-mut)}
+.pchip.run{color:var(--blue);border-color:#1f3a6e}
+.pchip.ok{color:var(--green);border-color:#1a5c32}
+.pchip.err{color:var(--red);border-color:#6e2a28;cursor:pointer}
+.spin{width:10px;height:10px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:sp .8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media (max-width:760px){.stats{grid-template-columns:repeat(2,1fr)}}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.stat .v{font-size:24px;font-weight:700;color:var(--tx-hi);font-variant-numeric:tabular-nums}
+.stat .l{font-size:11px;color:var(--tx-mut);text-transform:uppercase;letter-spacing:.6px;margin-top:2px}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:14px;overflow-x:auto}
+.tab{background:none;border:none;border-bottom:2px solid transparent;color:var(--tx-mut);padding:9px 12px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap}
+.tab.on{color:var(--tx-hi);border-bottom-color:var(--blue)}
+.mapbox{background:var(--sunk);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.mapbox svg{display:block;width:100%;height:auto}
+.mapbox text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif}
+.leaf{cursor:pointer}
+.leaf:hover text{fill:#fff}
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:12px;color:var(--tx-mut);margin-top:10px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.filters input,.filters select{width:auto;flex:1;min-width:140px;font-size:13px;padding:7px 10px}
+.catblock{margin-bottom:14px}
+.catblock .ch{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.catblock .ch b{font-size:14px;color:var(--tx-hi)}
+.catblock .ch small{color:var(--tx-dim);font-size:12px}
+.q{display:grid;grid-template-columns:1fr auto;gap:4px 12px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--panel);margin-bottom:6px;border-left:3px solid var(--line2)}
+.q.flash{outline:2px solid var(--blue)}
+.q .qt{font-size:14px;color:var(--tx-hi)}
+.q .qr{font-size:12px;color:var(--tx-mut);grid-column:1/-1}
+.q .qe{font-size:12px;color:var(--tx);grid-column:1/-1;background:var(--sunk);border:1px solid var(--line);border-radius:6px;padding:6px 8px;margin-top:4px}
+.q .qe b{color:var(--tx-hi)}
+.badges{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end;align-items:flex-start}
+.b{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;border:1px solid var(--line2);border-radius:4px;padding:2px 6px;color:var(--tx-mut);white-space:nowrap}
+.b.pri{color:var(--tx-hi)}
+.b.covered{color:var(--green);border-color:#1a5c32;background:#0f2a1a}
+.b.partial{color:var(--amber);border-color:#5c4813;background:#2a2108}
+.b.missing{color:var(--red);border-color:#6e2a28;background:#2a1110}
+.covbars{display:grid;gap:8px}
+.cb{display:grid;grid-template-columns:170px 1fr 48px;gap:10px;align-items:center;font-size:13px}
+@media (max-width:560px){.cb{grid-template-columns:110px 1fr 40px}}
+.cb .track{height:10px;background:var(--sunk);border:1px solid var(--line);border-radius:5px;overflow:hidden;display:flex}
+.cb .track i{display:block;height:100%}
+.cb .pct{text-align:right;font-variant-numeric:tabular-nums;color:var(--tx-hi)}
+.gauge{font-size:44px;font-weight:800;color:var(--tx-hi);font-variant-numeric:tabular-nums;line-height:1}
+.err-box{background:#2a1110;border:1px solid #6e2a28;color:#ffb4ae;border-radius:8px;padding:10px 12px;font-size:13px;margin-top:12px}
+.note{background:var(--sunk);border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--tx-mut);margin-top:10px}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--line);border:1px solid var(--line2);border-radius:8px;padding:8px 16px;font-size:13px;color:var(--tx);z-index:200;opacity:0;transition:all .2s;pointer-events:none}
+.toast.sh{opacity:1;transform:translateX(-50%) translateY(0)}
+.empty{text-align:center;color:var(--tx-dim);padding:30px;font-size:13px;border:1px dashed var(--line);border-radius:10px}
+.how{font-size:13px;color:var(--tx-mut)}
+.how dt{color:var(--tx-hi);font-weight:600;margin-top:10px}
+.how dd{margin-left:0}
+.b.vol{color:var(--blue);border-color:#1f3a6e}
+.b.aio{color:var(--violet);border-color:#3d2a6e}
+.b.real{color:var(--green);border-color:#1a5c32}
+.kwbar{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;background:var(--sunk);border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-bottom:12px}
+.kwbar .fl{margin:0}
+.kwbar select{width:auto}
+.toggle{display:inline-flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;padding-bottom:8px}
+.toggle input{accent-color:var(--blue);width:16px;height:16px}
+.brand-list{display:flex;flex-wrap:wrap;gap:6px}
+.brand-list span{font-size:12px;border:1px solid var(--line2);border-radius:6px;padding:4px 8px;background:var(--panel)}
+.brand-list b{color:var(--blue);font-weight:600;margin-left:4px}
+.doc{background:#f6f8fa;color:#1f2328;border-radius:12px;padding:28px;max-width:860px;margin:0 auto;font-family:Georgia,"Times New Roman",serif}
+.doc .serp{font-family:Arial,sans-serif;background:#fff;border:1px solid #d0d7de;border-radius:8px;padding:12px 14px;margin-bottom:22px}
+.doc .serp .t{color:#1a0dab;font-size:18px;line-height:1.3}
+.doc .serp .u{color:#006621;font-size:12px;margin:2px 0}
+.doc .serp .d{color:#4d5156;font-size:13px}
+.doc h1{font-size:30px;line-height:1.2;margin-bottom:14px;color:#1f2328}
+.doc .answer{background:#ddf4ff;border-left:4px solid #0969da;padding:12px 14px;border-radius:6px;font-size:15px;line-height:1.55;margin-bottom:16px}
+.doc .toc{font-family:Arial,sans-serif;display:flex;flex-wrap:wrap;gap:6px;margin-bottom:22px}
+.doc .toc a{font-size:12px;color:#0969da;text-decoration:none;border:1px solid #d0d7de;border-radius:999px;padding:3px 10px;background:#fff}
+.doc .sect{background:#fff;border:1px solid #d0d7de;border-radius:10px;padding:16px 18px;margin-bottom:12px;border-top:3px solid #0969da}
+.doc h2{font-size:21px;margin-bottom:4px;color:#1f2328}
+.doc .goal{font-family:Arial,sans-serif;font-size:13px;color:#57606a;margin-bottom:10px}
+.doc .h3s{margin:0 0 10px 18px;font-size:15px;line-height:1.6}
+.doc .meta{font-family:Arial,sans-serif;display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:10px}
+.doc .el{font-size:11px;background:#fff8c5;border:1px solid #d4a72c55;color:#7d4e00;border-radius:4px;padding:2px 7px}
+.doc .wt{font-size:11px;color:#57606a}
+.doc .covers{font-family:Arial,sans-serif;border-top:1px dashed #d0d7de;padding-top:8px}
+.doc .covers .lbl{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:#57606a;margin-bottom:5px}
+.doc .qc{display:inline-flex;align-items:center;gap:5px;font-size:12px;background:#f6f8fa;border:1px solid #d0d7de;border-radius:6px;padding:3px 7px;margin:0 4px 4px 0;color:#1f2328}
+.doc .qc .d{width:7px;height:7px;border-radius:50%}
+.doc .qc b{color:#0969da;font-weight:600}
+.doc .faq dt{font-weight:700;margin-top:10px;font-size:15px}
+.doc .faq dd{font-family:Arial,sans-serif;font-size:13px;color:#57606a;margin:2px 0 0}
+.doc .side{font-family:Arial,sans-serif;font-size:13px}
+.doc .side li{margin:0 0 8px 18px}
+@media (max-width:560px){.doc{padding:16px}.doc h1{font-size:24px}}
+.engines{display:flex;flex-wrap:wrap;gap:8px}
+.engines a{font-size:13px;text-decoration:none;border:1px solid var(--line2);border-radius:8px;padding:8px 12px;color:var(--tx);background:var(--panel)}
+.engines a:hover{border-color:var(--blue);color:var(--blue)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div>
+    <div class="tag">Weiss Media Marketing · AI Search Tools</div>
+    <h1>Query Fan-Out Mapper</h1>
+    <p class="sub">AI search engines don't answer the query you typed. They split it into a dozen or more hidden sub-queries and blend the results. Map those sub-queries, then check whether your page answers them.</p>
+  </div>
+</header>
+
+<!-- ── Input ───────────────────────────────────────────────────────────── -->
+<div class="card accent">
+  <div class="fl seed">
+    <label for="seed">Target query or prompt</label>
+    <input id="seed" type="text" placeholder="e.g. best dermatologist for acne scars in Austin" autocomplete="off">
+  </div>
+
+  <details class="more" id="ctxDetails">
+    <summary>+ Add context (business, audience, location)</summary>
+    <div class="grid3">
+      <div class="fl"><label for="brand">Business / brand</label><input id="brand" type="text" placeholder="e.g. Dermeleve Skin Clinic"></div>
+      <div class="fl"><label for="loc">Location / market</label><input id="loc" type="text" placeholder="e.g. Austin, TX"></div>
+      <div class="fl"><label for="aud">Audience</label><input id="aud" type="text" placeholder="e.g. adults 25–45 with acne scarring"></div>
+    </div>
+  </details>
+
+  <div class="kwbar">
+    <label class="toggle"><input type="checkbox" id="useAhrefs" checked> Ground in real Ahrefs keyword data</label>
+    <div class="fl"><label for="country">Country</label>
+      <select id="country"><option value="us">United States</option><option value="gb">United Kingdom</option><option value="ca">Canada</option><option value="au">Australia</option><option value="ie">Ireland</option><option value="nz">New Zealand</option><option value="in">India</option><option value="de">Germany</option><option value="fr">France</option><option value="es">Spain</option></select></div>
+    <div class="fl"><label for="depth">Keyword depth</label>
+      <select id="depth"><option value="50">50 (~3k units)</option><option value="100" selected>100 (~7k units)</option><option value="200">200 (~13k units)</option></select></div>
+    <div class="status" id="ahrefsStatus" style="padding-bottom:8px"></div>
+  </div>
+
+  <div class="fl">
+    <label>Fan-out types</label>
+    <div class="cats" id="catPicker"></div>
+  </div>
+
+  <div class="row">
+    <div class="fl" style="margin:0;min-width:170px">
+      <label for="per">Queries per type</label>
+      <select id="per"><option>4</option><option selected>6</option><option>8</option><option>10</option></select>
+    </div>
+    <div class="spacer"></div>
+    <button class="btn" id="goBtn">Map fan-out</button>
+  </div>
+  <div class="prog" id="genProg"></div>
+  <div id="genErr"></div>
+</div>
+
+<!-- ── Results ─────────────────────────────────────────────────────────── -->
+<div id="results" class="hidden">
+  <div class="sec-h">
+    <h2 id="resTitle">Fan-out map</h2>
+    <div class="row">
+      <button class="btn sec sm" id="copyBtn">Copy queries</button>
+      <button class="btn sec sm" id="csvBtn">Export CSV</button>
+      <button class="btn sec sm" id="jsonBtn">Export JSON</button>
+    </div>
+  </div>
+
+  <div class="stats" id="stats"></div>
+
+  <div class="tabs" style="margin-top:18px">
+    <button class="tab on" data-tab="map">Map</button>
+    <button class="tab" data-tab="list">Query list</button>
+    <button class="tab" data-tab="perfect">Perfect page</button>
+    <button class="tab" data-tab="cov">Content coverage</button>
+  </div>
+
+  <!-- Map -->
+  <div id="tab-map">
+    <div class="mapbox" id="mapBox"></div>
+    <div class="legend" id="mapLegend"></div>
+    <p class="note">Click any outer node to jump to that query in the list. Hover for the full text. Node size reflects priority. A white ring marks a real search from Ahrefs. Once you run a coverage check, nodes are coloured by coverage.</p>
+  </div>
+
+  <!-- List -->
+  <div id="tab-list" class="hidden">
+    <div class="filters">
+      <input id="fText" type="text" placeholder="Filter queries…">
+      <select id="fIntent"><option value="">All intents</option></select>
+      <select id="fStage"><option value="">All funnel stages</option></select>
+      <select id="fCov"><option value="">Any coverage</option><option value="covered">Covered</option><option value="partial">Partial</option><option value="missing">Missing</option><option value="unchecked">Not checked</option></select>
+    </div>
+    <div id="list"></div>
+    <div id="brandBox" class="hidden" style="margin-top:20px">
+      <div class="sec-h" style="margin-top:0"><h2>Branded searches noticed</h2></div>
+      <p class="how" style="margin-bottom:8px">Real searches naming a brand or product. They show which names AI answers are likely to compare, so mention them where it's honest to.</p>
+      <div class="brand-list" id="brandList"></div>
+    </div>
+  </div>
+
+  <!-- Perfect page -->
+  <div id="tab-perfect" class="hidden">
+    <div class="card" style="margin-bottom:14px">
+      <p class="how" style="margin-bottom:12px">Turn the fan-out into one page outline. Every sub-query is assigned to a section, FAQ, or supporting page, so the page can be retrieved for as many of them as possible.</p>
+      <div class="row">
+        <div class="fl" style="margin:0;min-width:200px"><label for="pType">Page type</label>
+          <select id="pType"><option value="auto">Let the AI decide</option><option>Service page</option><option>Local landing page</option><option>Buyer's guide</option><option>Comparison / best-of list</option><option>How-to guide</option><option>Product category page</option></select></div>
+        <div class="spacer"></div>
+        <button class="btn sec sm hidden" id="mdBtn">Download brief (.md)</button>
+        <button class="btn" id="perfBtn">Build the perfect page</button>
+      </div>
+      <div class="prog" id="perfProg"></div>
+      <div id="perfErr"></div>
+    </div>
+    <div id="perfOut"></div>
+  </div>
+
+  <!-- Coverage -->
+  <div id="tab-cov" class="hidden">
+    <div class="card">
+      <p class="how" style="margin-bottom:12px">Check a page against every sub-query. Each one is graded <b style="color:var(--green)">covered</b>, <b style="color:var(--amber)">partial</b>, or <b style="color:var(--red)">missing</b>, with a fix for each gap.</p>
+      <div class="fl">
+        <label for="covUrl">Page URL</label>
+        <input id="covUrl" type="url" placeholder="https://example.com/service-page">
+      </div>
+      <details class="more">
+        <summary>…or paste the page content instead (for JavaScript-rendered or private pages)</summary>
+        <div class="fl"><textarea id="covText" rows="7" placeholder="Paste the page's text here"></textarea></div>
+      </details>
+      <div class="row">
+        <div class="spacer"></div>
+        <button class="btn" id="covBtn">Check coverage</button>
+      </div>
+      <div class="prog" id="covProg"></div>
+      <div id="covErr"></div>
+      <div id="covNote"></div>
+    </div>
+    <div id="covOut" class="hidden" style="margin-top:14px">
+      <div class="grid2">
+        <div class="card">
+          <div class="tag">Fan-out coverage score</div>
+          <div class="gauge" id="covScore" style="margin-top:8px">–</div>
+          <div class="status" id="covBreak" style="margin-top:8px"></div>
+          <div class="status" id="covPage" style="margin-top:6px;word-break:break-all"></div>
+        </div>
+        <div class="card">
+          <div class="tag" style="margin-bottom:10px">By fan-out type</div>
+          <div class="covbars" id="covBars"></div>
+        </div>
+      </div>
+      <div class="sec-h"><h2>Biggest gaps to close</h2></div>
+      <div id="gaps"></div>
+    </div>
+  </div>
+</div>
+
+<div id="enginesBox" class="hidden">
+  <div class="sec-h"><h2>Check against real AI engines</h2></div>
+  <div class="card">
+    <p class="how" style="margin-bottom:10px">Run the seed query in each engine and compare what it cites with the map above.</p>
+    <div class="engines" id="engines"></div>
+  </div>
+</div>
+
+<!-- ── About ───────────────────────────────────────────────────────────── -->
+<div class="sec-h"><h2>How query fan-out works</h2></div>
+<div class="card">
+  <dl class="how" id="howList"></dl>
+  <p class="note">Queries are modelled by Claude from how AI search systems describe their fan-out behaviour. They are not scraped from Google, and they don't come with search volumes. Use them to plan which sub-topics a page must answer.</p>
+</div>
+
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ── Config ──────────────────────────────────────────────────────────────────
+var FN = '/.netlify/functions/maps';
+var MODEL = 'claude-opus-5-5';
+var STORE_KEY = 'wmm-fanout-last';
+
+var CATS = [
+  { id:'related',  name:'Related',          color:'#58a6ff', desc:'Adjacent topics people research alongside the main query.' },
+  { id:'implicit', name:'Implicit needs',   color:'#a371f7', desc:'Unstated questions the AI infers, such as cost, safety, eligibility, prerequisites and risks.' },
+  { id:'compare',  name:'Comparative',      color:'#f778ba', desc:'"X vs Y", alternatives, "best" lists and trade-offs between options.' },
+  { id:'recent',   name:'Recent / temporal',color:'#d29922', desc:'Freshness signals: this year, latest, new rules, trends, prices now.' },
+  { id:'personal', name:'Personalized',     color:'#3fb950', desc:'Variants for a location, budget, persona, life stage or situation.' },
+  { id:'reform',   name:'Reformulations',   color:'#39c5cf', desc:'Rephrasings: synonyms, narrower and broader versions, other wording.' },
+  { id:'entity',   name:'Entity expansion', color:'#ff7b54', desc:'Specific brands, products, people, places, specs and attributes tied to the topic.' },
+  { id:'followup', name:'Follow-ups',       color:'#c9d1d9', desc:'What the searcher asks next after reading the first answer.' },
+  { id:'extra',    name:'Other real searches', color:'#8b949e', desc:'High-volume Ahrefs keywords that no fan-out type picked up.', auto:true }
+];
+var CHIP_EXTRA = { ahrefs:{ name:'Ahrefs keywords', color:'#ff8c00' }, perfect:{ name:'Page outline', color:'#58a6ff' } };
+var INTENTS = ['informational','commercial','transactional','navigational','local'];
+var STAGES  = ['awareness','consideration','decision','post-purchase'];
+var COV_COLORS = { covered:'#3fb950', partial:'#d29922', missing:'#f85149' };
+
+var state = { seed:'', ctx:{}, cats:{}, order:[], coverage:null, page:null, kw:null, kwMeta:null, perfect:null };
+var kwIdx = {};
+
+// ── Helpers ─────────────────────────────────────────────────────────────────
+function $(id){ return document.getElementById(id); }
+function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function catById(id){ for (var i=0;i<CATS.length;i++) if (CATS[i].id===id) return CATS[i]; }
+function toast(m){ var t=$('toast'); t.textContent=m; t.classList.add('sh'); clearTimeout(toast._t); toast._t=setTimeout(function(){ t.classList.remove('sh'); },2200); }
+function norm(s){ return String(s).toLowerCase().replace(/[^a-z0-9 ]/g,'').replace(/\s+/g,' ').trim(); }
+function allQueries(){
+  var out=[];
+  state.order.forEach(function(cid){ (state.cats[cid] && state.cats[cid].queries || []).forEach(function(q){ out.push(q); }); });
+  return out;
+}
+function save(){ try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch(e){} }
+function download(name, text, type){
+  var a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([text],{type:type}));
+  a.download=name; document.body.appendChild(a); a.click(); setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); },500);
+}
+function slug(s){ return norm(s).replace(/ /g,'-').slice(0,60) || 'fan-out'; }
+function fmtN(n){ return n >= 10000 ? Math.round(n/1000) + 'k' : n >= 1000 ? (n/1000).toFixed(1).replace(/\.0$/,'') + 'k' : String(n); }
+function buildKwIdx(){ kwIdx = {}; (state.kw || []).forEach(function(r){ kwIdx[norm(r.k)] = r; }); }
+function kwFor(text){ return kwIdx[norm(text)] || null; }
+function attachKw(q){
+  var m = kwFor(q.query);
+  q.source = m ? 'ahrefs' : 'modeled';
+  q.vol = m ? m.v : null; q.kd = m ? m.kd : null; q.aio = m ? m.aio : false;
+  return q;
+}
+
+// ── Claude call (through the site's Netlify proxy) ──────────────────────────
+async function callClaude(system, content, schema, maxTokens){
+  var payload = {
+    model: MODEL,
+    max_tokens: maxTokens || 8000,
+    output_config: { effort: 'low', format: { type: 'json_schema', schema: schema } },
+    system: system,
+    messages: [{ role: 'user', content: content }],
+    // Route safety-classifier declines to a fallback model instead of failing
+    fallbacks: 'default',
+    betas: ['server-side-fallback-2026-07-01']
+  };
+  var d = await post(payload);
+  if (d.__badFallback) { delete payload.fallbacks; delete payload.betas; d = await post(payload); }
+  if (d.__error) throw new Error(d.__error);
+  if (d.stop_reason === 'refusal') throw new Error('The model declined this request.');
+  if (d.stop_reason === 'max_tokens') throw new Error('Response was cut off. Try fewer queries per type.');
+  var txt = (d.content || []).filter(function(b){ return b.type === 'text'; }).map(function(b){ return b.text; }).join('');
+  try { return JSON.parse(txt); } catch(e){ throw new Error('Could not read the model response.'); }
+}
+async function post(payload){
+  var r, d;
+  try {
+    r = await fetch(FN, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'claude', payload: payload }) });
+  } catch(e){ return { __error: 'Network error: ' + e.message }; }
+  try { d = await r.json(); } catch(e){ d = {}; }
+  if (!r.ok) {
+    var msg = (d.error && (d.error.message || d.error)) || ('HTTP ' + r.status);
+    if (typeof msg !== 'string') msg = JSON.stringify(msg);
+    if (r.status === 400 && /fallback/i.test(msg) && payload.fallbacks) return { __badFallback: true };
+    if (r.status === 502 || r.status === 504) msg = 'The server timed out. Retry this type, or use fewer queries per type.';
+    return { __error: msg };
+  }
+  return d;
+}
+
+// ── Generation ──────────────────────────────────────────────────────────────
+var GEN_SCHEMA = {
+  type:'object', additionalProperties:false, required:['queries'],
+  properties:{ queries:{ type:'array', items:{
+    type:'object', additionalProperties:false,
+    required:['query','source','intent','stage','priority','format','rationale'],
+    properties:{
+      query:{ type:'string' },
+      source:{ type:'string', enum:['ahrefs','modeled'] },
+      intent:{ type:'string', enum: INTENTS },
+      stage:{ type:'string', enum: STAGES },
+      priority:{ type:'integer' },
+      format:{ type:'string' },
+      rationale:{ type:'string' }
+    }
+  }}}
+};
+
+var GEN_SYSTEM = [
+  'You model "query fan-out": how AI search systems (Google AI Mode and AI Overviews, ChatGPT search, Perplexity, Gemini) take one user query and silently issue many sub-queries, then synthesize an answer from the pages that rank for them.',
+  'Given a seed query and ONE fan-out type, write the sub-queries such a system would most plausibly generate for that type.',
+  'Rules:',
+  '- Write each sub-query the way the system would issue it: natural search phrasing, specific and self-contained (it must make sense without the seed).',
+  '- Stay strictly within the requested fan-out type. No near-duplicates of each other or of the seed.',
+  '- Use the business, location and audience context when it is given; never invent facts about the business.',
+  '- intent: informational | commercial | transactional | navigational | local.',
+  '- stage: the buyer-journey stage the sub-query serves.',
+  '- priority: integer 1-10 — how likely the AI is to issue it AND how much it shapes the final answer.',
+  '- format: the content element that best answers it (e.g. "FAQ answer", "comparison table", "pricing section", "step-by-step guide", "local landing page", "stat with source").',
+  '- rationale: one short sentence on why the AI would fan out to this.',
+  'Order the queries from highest to lowest priority.'
+].join('\n');
+
+function genPrompt(cat, n){
+  var c = state.ctx, lines = ['Seed query: "' + state.seed + '"'];
+  if (c.brand) lines.push('Business / brand: ' + c.brand);
+  if (c.loc)   lines.push('Location / market: ' + c.loc);
+  if (c.aud)   lines.push('Audience: ' + c.aud);
+  lines.push('Today\'s date: ' + new Date().toISOString().slice(0,10));
+  lines.push('');
+  lines.push('Fan-out type: ' + cat.name + ' — ' + cat.desc);
+  lines.push('Write exactly ' + n + ' sub-queries of this type.');
+  if (state.kw && state.kw.length) {
+    lines.push('');
+    lines.push('Real searches people make, from Ahrefs (' + state.kwMeta.country.toUpperCase() + '), as "keyword | monthly searches".');
+    lines.push('When one of these genuinely fits this fan-out type, use it VERBATIM and set source to "ahrefs". Otherwise write your own sub-query and set source to "modeled". Do not force a real search into the wrong type.');
+    lines.push('<real_searches>');
+    state.kw.slice(0, 220).forEach(function(r){ lines.push(r.k + ' | ' + (r.v == null ? '?' : r.v)); });
+    lines.push('</real_searches>');
+  }
+  return lines.join('\n');
+}
+
+function setChip(box, cid, cls, label){
+  var el = box.querySelector('[data-c="'+cid+'"]');
+  if (!el) { el = document.createElement('div'); el.dataset.c = cid; box.appendChild(el); }
+  var cat = catById(cid) || CHIP_EXTRA[cid];
+  el.className = 'pchip ' + cls;
+  el.innerHTML = (cls==='run' ? '<span class="spin"></span>' : '<span class="dot" style="background:'+cat.color+'"></span>') + esc(cat.name) + (label ? ' · ' + esc(label) : '');
+  return el;
+}
+
+async function genCat(cid, n){
+  var cat = catById(cid), box = $('genProg');
+  setChip(box, cid, 'run', '');
+  try {
+    var res = await callClaude(GEN_SYSTEM, genPrompt(cat, n), GEN_SCHEMA, 6000);
+    var seen = {}; allQueries().forEach(function(q){ if (q.cat !== cid) seen[norm(q.query)] = 1; });
+    seen[norm(state.seed)] = 1;
+    var qs = (res.queries || []).filter(function(q){ var k = norm(q.query); if (!k || seen[k]) return false; seen[k]=1; return true; })
+      .map(function(q, i){
+        return { id: cid + '-' + i, cat: cid, query: q.query, intent: q.intent, stage: q.stage,
+                 priority: Math.max(1, Math.min(10, Math.round(q.priority || 5))), format: q.format, rationale: q.rationale };
+      }).map(attachKw);
+    state.cats[cid] = { queries: qs };
+    setChip(box, cid, 'ok', qs.length + '');
+  } catch(e){
+    state.cats[cid] = { queries: [], error: e.message };
+    var el = setChip(box, cid, 'err', 'failed, tap to retry');
+    el.title = e.message;
+    el.onclick = function(){ genCat(cid, n).then(function(){ addExtras(); afterGen(); renderAll(); }); };
+  }
+  renderAll();
+}
+
+function afterGen(){
+  var errs = state.order.filter(function(c){ return state.cats[c] && state.cats[c].error; });
+  $('genErr').innerHTML = errs.length ? '<div class="err-box">' + errs.length + ' type(s) failed: ' + esc(state.cats[errs[0]].error) + '</div>' : '';
+  $('goBtn').disabled = false; $('goBtn').textContent = 'Map fan-out';
+  save();
+}
+
+async function run(){
+  var seed = $('seed').value.trim();
+  if (!seed) { $('seed').focus(); toast('Enter a query first'); return; }
+  var picked = Array.prototype.slice.call(document.querySelectorAll('#catPicker input:checked')).map(function(i){ return i.value; });
+  if (!picked.length) { toast('Pick at least one fan-out type'); return; }
+  var n = parseInt($('per').value, 10);
+  state = { seed: seed, ctx: { brand: $('brand').value.trim(), loc: $('loc').value.trim(), aud: $('aud').value.trim() },
+            cats: {}, order: picked, coverage: null, page: null, kw: null, kwMeta: null, perfect: null };
+  kwIdx = {}; $('perfOut').innerHTML = ''; $('perfProg').innerHTML = ''; $('perfErr').innerHTML = ''; $('mdBtn').classList.add('hidden');
+  $('genProg').innerHTML = ''; $('genErr').innerHTML = ''; $('covProg').innerHTML=''; $('covErr').innerHTML=''; $('covNote').innerHTML='';
+  $('covOut').classList.add('hidden');
+  $('goBtn').disabled = true; $('goBtn').textContent = 'Mapping…';
+  $('results').classList.remove('hidden');
+  renderAll();
+  // One small request per fan-out type, in parallel: faster and well under function time limits
+  if ($('useAhrefs').checked && !$('useAhrefs').disabled) await fetchKeywords();
+  await Promise.all(picked.map(function(cid){ return genCat(cid, n); }));
+  addExtras();
+  afterGen();
+  renderAll();
+}
+
+// ── Ahrefs keyword data (fetched server-side) ───────────────────────────────
+async function fetchKeywords(){
+  var box = $('genProg');
+  setChip(box, 'ahrefs', 'run', '');
+  var country = $('country').value;
+  try {
+    var r = await fetch(FN, { method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ action:'ahrefs', seed: state.seed, country: country, depth: parseInt($('depth').value, 10) }) });
+    var d = await r.json().catch(function(){ return {}; });
+    if (!r.ok) throw new Error(d.error || ('HTTP ' + r.status));
+    state.kw = (d.keywords || []).map(function(k){
+      var it = k.intents || {};
+      return { k: k.keyword, v: k.volume, kd: k.difficulty, aio: (k.serp_features || []).indexOf('ai_overview') >= 0,
+               branded: !!it.branded, intent: it.local ? 'local' : it.transactional ? 'transactional' : it.commercial ? 'commercial' : it.navigational ? 'navigational' : 'informational',
+               parent: k.parent_topic || '' };
+    });
+    state.kwMeta = { country: d.country || country, via: d.via, count: state.kw.length };
+    buildKwIdx();
+    setChip(box, 'ahrefs', 'ok', state.kw.length + ' keywords');
+  } catch(e){
+    state.kw = null; state.kwMeta = { country: country, error: e.message };
+    var el = setChip(box, 'ahrefs', 'err', 'skipped');
+    el.title = e.message;
+    $('genErr').innerHTML = '<div class="err-box">Ahrefs data unavailable, so every query below is AI-modeled. ' + esc(e.message) + '</div>';
+  }
+}
+
+// High-volume real keywords that no fan-out type used become their own group
+function addExtras(){
+  delete state.cats.extra;
+  state.order = state.order.filter(function(c){ return c !== 'extra'; });
+  if (!state.kw || !state.kw.length) return;
+  var used = {}; allQueries().forEach(function(q){ used[norm(q.query)] = 1; }); used[norm(state.seed)] = 1;
+  var rows = state.kw.filter(function(r){ return !r.branded && r.v && !used[norm(r.k)]; }).slice(0, 24);
+  if (!rows.length) return;
+  var maxV = Math.max.apply(null, rows.map(function(r){ return r.v; }));
+  var stageOf = { informational:'awareness', commercial:'consideration', transactional:'decision', local:'decision', navigational:'decision' };
+  state.cats.extra = { queries: rows.map(function(r, i){
+    return attachKw({ id:'extra-' + i, cat:'extra', query:r.k, intent:r.intent, stage: stageOf[r.intent] || 'awareness',
+      priority: Math.max(1, Math.round(10 * Math.log(1 + r.v) / Math.log(1 + maxV))),
+      format: r.parent && norm(r.parent) !== norm(r.k) ? 'Parent topic: ' + r.parent : 'Section or FAQ',
+      rationale: fmtN(r.v) + ' monthly searches that no fan-out type picked up.' });
+  }) };
+  state.order.push('extra');
+}
+
+// ── Coverage check ──────────────────────────────────────────────────────────
+var COV_SCHEMA = {
+  type:'object', additionalProperties:false, required:['results'],
+  properties:{ results:{ type:'array', items:{
+    type:'object', additionalProperties:false, required:['id','status','evidence','fix'],
+    properties:{
+      id:{ type:'string' },
+      status:{ type:'string', enum:['covered','partial','missing'] },
+      evidence:{ type:'string' },
+      fix:{ type:'string' }
+    }
+  }}}
+};
+var COV_SYSTEM = [
+  'You audit whether a web page would be retrieved and cited by an AI search system for specific fan-out sub-queries.',
+  'For each sub-query decide:',
+  '- covered: the page directly and specifically answers it, so a passage could be quoted as the answer.',
+  '- partial: the topic is touched on, but the answer is thin, vague, buried or missing key specifics.',
+  '- missing: the page does not answer it.',
+  'evidence: for covered/partial, quote or closely paraphrase the relevant passage (max ~20 words); for missing, an empty string.',
+  'fix: for partial/missing, one concrete instruction for what to add (section, heading, FAQ, table, data point). For covered, an empty string.',
+  'Judge only from the page content provided. Return one result per sub-query, using its id.'
+].join('\n');
+
+async function getPage(){
+  var pasted = $('covText').value.trim();
+  if (pasted) return { url: '', title: 'Pasted content', headings: [], text: pasted.slice(0, 60000), truncated: pasted.length > 60000, fullLength: pasted.length };
+  var url = $('covUrl').value.trim();
+  if (!url) throw new Error('Enter a page URL or paste the content.');
+  if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+  var r = await fetch(FN, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'fetchpage', url: url }) });
+  var d = await r.json().catch(function(){ return {}; });
+  if (!r.ok) throw new Error(d.error || ('Could not fetch the page (HTTP ' + r.status + ')'));
+  if (!d.text || d.text.length < 200) throw new Error('Very little text was found on that page. It may be rendered with JavaScript. Paste the content instead.');
+  return d;
+}
+
+function pageDoc(p){
+  return '<page>\nURL: ' + (p.url || 'n/a') + '\nTitle: ' + (p.title || '') + (p.metaDesc ? '\nMeta description: ' + p.metaDesc : '') +
+    (p.headings && p.headings.length ? '\n\nHeadings:\n' + p.headings.join('\n') : '') + '\n\nBody text:\n' + p.text + '\n</page>';
+}
+
+async function covCat(cid, doc){
+  var qs = (state.cats[cid] && state.cats[cid].queries) || [];
+  if (!qs.length) return;
+  var box = $('covProg');
+  setChip(box, cid, 'run', '');
+  try {
+    var list = 'Sub-queries to grade (id: query):\n' + qs.map(function(q){ return q.id + ': ' + q.query; }).join('\n');
+    var content = [
+      { type:'text', text: doc, cache_control: { type:'ephemeral' } },
+      { type:'text', text: list }
+    ];
+    var res = await callClaude(COV_SYSTEM, content, COV_SCHEMA, 6000);
+    (res.results || []).forEach(function(r){ if (state.coverage) state.coverage[r.id] = r; });
+    var got = qs.filter(function(q){ return state.coverage[q.id]; }).length;
+    setChip(box, cid, 'ok', got + '/' + qs.length);
+  } catch(e){
+    var el = setChip(box, cid, 'err', 'failed, tap to retry');
+    el.title = e.message;
+    el.onclick = function(){ covCat(cid, doc).then(function(){ renderAll(); save(); }); };
+    $('covErr').innerHTML = '<div class="err-box">' + esc(e.message) + '</div>';
+  }
+  renderAll();
+}
+
+async function runCoverage(){
+  if (!allQueries().length) { toast('Map a query first'); return; }
+  var btn = $('covBtn');
+  btn.disabled = true; btn.textContent = 'Reading page…';
+  $('covErr').innerHTML = ''; $('covNote').innerHTML = ''; $('covProg').innerHTML = '';
+  try {
+    var p = await getPage();
+    state.page = { url: p.url, title: p.title, truncated: p.truncated, fullLength: p.fullLength };
+    state.coverage = {};
+    if (p.truncated) $('covNote').innerHTML = '<div class="note">This page is long, so only the first 60,000 of ' + p.fullLength.toLocaleString() + ' characters were checked. Gaps late in the page may be false negatives.</div>';
+    btn.textContent = 'Checking…';
+    var doc = pageDoc(p), cids = state.order.filter(function(c){ return state.cats[c] && state.cats[c].queries.length; });
+    // First request writes the page to the prompt cache; the rest read it in parallel
+    await covCat(cids[0], doc);
+    await Promise.all(cids.slice(1).map(function(c){ return covCat(c, doc); }));
+    save();
+  } catch(e){
+    $('covErr').innerHTML = '<div class="err-box">' + esc(e.message) + '</div>';
+  }
+  btn.disabled = false; btn.textContent = 'Check coverage';
+}
+
+// ── Rendering ───────────────────────────────────────────────────────────────
+function renderAll(){ renderStats(); renderMap(); renderList(); renderCoverage(); renderPerfect(); renderEngines(); }
+
+function renderStats(){
+  var qs = allQueries(), n = qs.length;
+  $('resTitle').textContent = 'Fan-out map: "' + state.seed + '"';
+  var hi = qs.filter(function(q){ return q.priority >= 8; }).length;
+  var intents = {}; qs.forEach(function(q){ intents[q.intent] = (intents[q.intent]||0)+1; });
+  var top = Object.keys(intents).sort(function(a,b){ return intents[b]-intents[a]; })[0];
+  var cov = covSummary();
+  var real = qs.filter(function(q){ return q.source === 'ahrefs'; });
+  var vol = real.reduce(function(s,q){ return s + (q.vol || 0); }, 0);
+  var aio = real.filter(function(q){ return q.aio; }).length;
+  var types = state.order.filter(function(c){ return c !== 'extra'; });
+  var cards = [
+    [n, 'Sub-queries'],
+    state.kw ? [real.length + ' / ' + n, 'Backed by real search data'] : [types.filter(function(c){ return state.cats[c] && state.cats[c].queries.length; }).length + ' / ' + types.length, 'Fan-out types'],
+    state.kw ? [fmtN(vol), 'Monthly searches mapped'] : [hi, 'High priority (8+)'],
+    cov ? [cov.score + '%', 'Content coverage'] : state.kw && real.length ? [Math.round(100*aio/real.length) + '%', 'Real searches with AI Overviews'] : [top ? top : '–', 'Dominant intent']
+  ];
+  $('stats').innerHTML = cards.map(function(c){ return '<div class="stat"><div class="v">' + esc(c[0]) + '</div><div class="l">' + esc(c[1]) + '</div></div>'; }).join('');
+}
+
+function covSummary(){
+  if (!state.coverage) return null;
+  var qs = allQueries().filter(function(q){ return state.coverage[q.id]; });
+  if (!qs.length) return null;
+  var c = { covered:0, partial:0, missing:0 }, w = 0, wt = 0;
+  qs.forEach(function(q){ var s = state.coverage[q.id].status; c[s]++; var pw = q.priority; wt += pw; w += pw * (s==='covered'?1:s==='partial'?0.5:0); });
+  c.total = qs.length;
+  c.score = Math.round(100 * w / wt);  // priority-weighted
+  return c;
+}
+
+function renderMap(){
+  var qs = allQueries();
+  var box = $('mapBox');
+  if (!state.order.length) { box.innerHTML = ''; return; }
+  var W = 1400, H = 1400, cx = W/2, cy = H/2, R1 = 200, R2 = 320;
+  var cats = state.order.map(catById);
+  var total = Math.max(1, cats.reduce(function(s,c){ return s + Math.max(2, (state.cats[c.id] && state.cats[c.id].queries.length) || 2); }, 0));
+  var a0 = -Math.PI/2, out = [];
+  out.push('<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Radial map of fan-out sub-queries for ' + esc(state.seed) + '">');
+  var acc = a0, catNodes = [];
+  cats.forEach(function(c){
+    var cq = (state.cats[c.id] && state.cats[c.id].queries) || [];
+    var slots = Math.max(2, cq.length), span = 2*Math.PI*slots/total;
+    var mid = acc + span/2;
+    catNodes.push({ c:c, start:acc, span:span, mid:mid, qs:cq });
+    acc += span;
+  });
+  // links
+  catNodes.forEach(function(n){
+    var x = cx + R1*Math.cos(n.mid), y = cy + R1*Math.sin(n.mid);
+    out.push('<line x1="'+cx+'" y1="'+cy+'" x2="'+x.toFixed(1)+'" y2="'+y.toFixed(1)+'" stroke="'+n.c.color+'" stroke-opacity=".45" stroke-width="2"/>');
+    n.qs.forEach(function(q, i){
+      var a = n.start + n.span*(i+0.5)/n.qs.length;
+      var lx = cx + R2*Math.cos(a), ly = cy + R2*Math.sin(a);
+      var mx = cx + (R1+55)*Math.cos(a), my = cy + (R1+55)*Math.sin(a);
+      out.push('<path d="M'+x.toFixed(1)+','+y.toFixed(1)+' Q'+mx.toFixed(1)+','+my.toFixed(1)+' '+lx.toFixed(1)+','+ly.toFixed(1)+'" fill="none" stroke="'+n.c.color+'" stroke-opacity=".3" stroke-width="1.2"/>');
+    });
+  });
+  // leaves
+  catNodes.forEach(function(n){
+    n.qs.forEach(function(q, i){
+      var a = n.start + n.span*(i+0.5)/n.qs.length;
+      var lx = cx + R2*Math.cos(a), ly = cy + R2*Math.sin(a);
+      var deg = a*180/Math.PI, flip = Math.cos(a) < 0;
+      var rot = flip ? deg + 180 : deg;
+      var cv = state.coverage && state.coverage[q.id];
+      var fill = cv ? COV_COLORS[cv.status] : n.c.color;
+      var r = 3 + q.priority*0.45;
+      var label = q.query.length > 46 ? q.query.slice(0,44) + '…' : q.query;
+      var tx = flip ? -(r+6) : (r+6);
+      out.push('<g class="leaf" data-id="'+esc(q.id)+'" transform="translate('+lx.toFixed(1)+','+ly.toFixed(1)+') rotate('+rot.toFixed(1)+')">' +
+        '<title>'+esc(q.query)+' (' + esc(n.c.name) + ', priority ' + q.priority + (q.vol != null ? ', ' + q.vol + ' searches/mo' : '') + (cv ? ', ' + cv.status : '') + ')</title>' +
+        '<circle r="'+r.toFixed(1)+'" fill="'+fill+'" stroke="'+(q.source==='ahrefs'?'#ffffff':'#0d1117')+'" stroke-width="'+(q.source==='ahrefs'?2:1.5)+'"/>' +
+        '<text x="'+tx+'" dy="0.35em" font-size="12" fill="#c9d1d9" text-anchor="'+(flip?'end':'start')+'">'+esc(label)+'</text></g>');
+    });
+  });
+  // category nodes
+  catNodes.forEach(function(n){
+    var x = cx + R1*Math.cos(n.mid), y = cy + R1*Math.sin(n.mid);
+    var st = state.cats[n.c.id], loading = !st, err = st && st.error;
+    var lbl = n.c.name + (loading ? ' …' : err ? ' ⚠' : ' (' + n.qs.length + ')');
+    var w = lbl.length*7.4 + 22;
+    out.push('<g><rect x="'+(x-w/2).toFixed(1)+'" y="'+(y-14)+'" width="'+w.toFixed(1)+'" height="28" rx="14" fill="#161b22" stroke="'+n.c.color+'" stroke-width="1.5"/>' +
+      '<text x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" dy="0.35em" text-anchor="middle" font-size="13" font-weight="600" fill="'+n.c.color+'">'+esc(lbl)+'</text></g>');
+  });
+  // center
+  var words = state.seed.split(/\s+/), lines = [], cur = '';
+  words.forEach(function(wd){ if ((cur + ' ' + wd).trim().length > 20) { if (cur) lines.push(cur); cur = wd; } else cur = (cur + ' ' + wd).trim(); });
+  if (cur) lines.push(cur);
+  lines = lines.slice(0,5);
+  out.push('<circle cx="'+cx+'" cy="'+cy+'" r="92" fill="#0d1117" stroke="#58a6ff" stroke-width="2"/>');
+  lines.forEach(function(l, i){
+    out.push('<text x="'+cx+'" y="'+(cy + (i - (lines.length-1)/2)*18).toFixed(1)+'" dy="0.35em" text-anchor="middle" font-size="15" font-weight="700" fill="#e6edf3">'+esc(l)+'</text>');
+  });
+  out.push('</svg>');
+  box.innerHTML = out.join('');
+  box.querySelectorAll('.leaf').forEach(function(g){ g.addEventListener('click', function(){ jumpTo(g.getAttribute('data-id')); }); });
+
+  var leg = state.coverage
+    ? Object.keys(COV_COLORS).map(function(k){ return '<span><i class="dot" style="background:'+COV_COLORS[k]+'"></i>'+k+'</span>'; }).join('') + ''
+    : cats.map(function(c){ return '<span><i class="dot" style="background:'+c.color+'"></i>'+esc(c.name)+'</span>'; }).join('');
+  $('mapLegend').innerHTML = leg;
+}
+
+function jumpTo(id){
+  showTab('list');
+  $('fText').value = ''; $('fIntent').value=''; $('fStage').value=''; $('fCov').value='';
+  renderList();
+  var el = document.querySelector('.q[data-id="'+id+'"]');
+  if (el) { el.scrollIntoView({ behavior:'smooth', block:'center' }); el.classList.add('flash'); setTimeout(function(){ el.classList.remove('flash'); }, 1600); }
+}
+
+function qCard(q, cat){
+  var cv = state.coverage && state.coverage[q.id];
+  var h = '<div class="q" data-id="'+esc(q.id)+'" style="border-left-color:'+cat.color+'">' +
+    '<div class="qt">' + esc(q.query) + '</div>' +
+    '<div class="badges">' + (cv ? '<span class="b '+cv.status+'">'+cv.status+'</span>' : '') +
+      (q.vol != null ? '<span class="b vol">' + fmtN(q.vol) + '/mo</span>' : '') +
+      (q.kd != null ? '<span class="b">KD ' + q.kd + '</span>' : '') +
+      (q.aio ? '<span class="b aio" title="Google shows an AI Overview for this search">AIO</span>' : '') +
+      (state.kw && q.source !== 'ahrefs' ? '<span class="b" title="Modeled by AI, not found in Ahrefs data">modeled</span>' : '') +
+      '<span class="b pri">P' + q.priority + '</span><span class="b">' + esc(q.intent) + '</span><span class="b">' + esc(q.stage) + '</span></div>' +
+    '<div class="qr">' + (q.format ? '<b style="color:var(--tx)">' + esc(q.format) + '</b> · ' : '') + esc(q.rationale) + '</div>';
+  if (cv && (cv.evidence || cv.fix)) {
+    h += '<div class="qe">' + (cv.evidence ? '<b>On page:</b> "' + esc(cv.evidence) + '"' : '') +
+         (cv.evidence && cv.fix ? '<br>' : '') + (cv.fix ? '<b>Fix:</b> ' + esc(cv.fix) : '') + '</div>';
+  }
+  return h + '</div>';
+}
+
+function renderList(){
+  var ft = norm($('fText').value), fi = $('fIntent').value, fs = $('fStage').value, fc = $('fCov').value;
+  var html = '', shown = 0;
+  state.order.forEach(function(cid){
+    var cat = catById(cid), st = state.cats[cid];
+    if (!st) { html += '<div class="catblock"><div class="ch"><span class="dot" style="background:'+cat.color+'"></span><b>'+esc(cat.name)+'</b><small>generating…</small></div></div>'; return; }
+    var qs = st.queries.filter(function(q){
+      if (ft && norm(q.query).indexOf(ft) < 0) return false;
+      if (fi && q.intent !== fi) return false;
+      if (fs && q.stage !== fs) return false;
+      if (fc) { var cv = state.coverage && state.coverage[q.id]; if (fc === 'unchecked' ? !!cv : (!cv || cv.status !== fc)) return false; }
+      return true;
+    });
+    if (!qs.length && (ft||fi||fs||fc)) return;
+    shown += qs.length;
+    html += '<div class="catblock"><div class="ch"><span class="dot" style="background:'+cat.color+'"></span><b>'+esc(cat.name)+'</b><small>'+esc(cat.desc)+'</small></div>' +
+      (st.error ? '<div class="err-box">'+esc(st.error)+'</div>' : '') +
+      qs.map(function(q){ return qCard(q, cat); }).join('') + '</div>';
+  });
+  $('list').innerHTML = html || '<div class="empty">No queries match these filters.</div>';
+  var br = (state.kw || []).filter(function(r){ return r.branded; }).slice(0, 40);
+  $('brandBox').classList.toggle('hidden', !br.length);
+  $('brandList').innerHTML = br.map(function(r){ return '<span>' + esc(r.k) + (r.v ? '<b>' + fmtN(r.v) + '</b>' : '') + '</span>'; }).join('');
+}
+
+function renderCoverage(){
+  var s = covSummary();
+  if (!s) { $('covOut').classList.add('hidden'); return; }
+  $('covOut').classList.remove('hidden');
+  $('covScore').textContent = s.score + '%';
+  $('covScore').style.color = s.score >= 70 ? 'var(--green)' : s.score >= 40 ? 'var(--amber)' : 'var(--red)';
+  $('covBreak').innerHTML = '<span style="color:var(--green)">' + s.covered + ' covered</span> · <span style="color:var(--amber)">' + s.partial + ' partial</span> · <span style="color:var(--red)">' + s.missing + ' missing</span> of ' + s.total + ' (weighted by priority)';
+  $('covPage').textContent = state.page ? (state.page.title || '') + (state.page.url ? ' — ' + state.page.url : '') : '';
+  $('covBars').innerHTML = state.order.map(function(cid){
+    var cat = catById(cid), qs = ((state.cats[cid]||{}).queries||[]).filter(function(q){ return state.coverage[q.id]; });
+    if (!qs.length) return '';
+    var c = {covered:0,partial:0,missing:0}; qs.forEach(function(q){ c[state.coverage[q.id].status]++; });
+    var pct = Math.round(100*(c.covered + c.partial*0.5)/qs.length);
+    var seg = ['covered','partial','missing'].map(function(k){ return c[k] ? '<i style="width:'+(100*c[k]/qs.length)+'%;background:'+COV_COLORS[k]+'" title="'+c[k]+' '+k+'"></i>' : ''; }).join('');
+    return '<div class="cb"><span style="display:flex;align-items:center;gap:6px"><span class="dot" style="background:'+cat.color+'"></span>'+esc(cat.name)+'</span><div class="track">'+seg+'</div><span class="pct">'+pct+'%</span></div>';
+  }).join('');
+  var gaps = allQueries().filter(function(q){ var cv = state.coverage[q.id]; return cv && cv.status !== 'covered'; })
+    .sort(function(a,b){ var sa = state.coverage[a.id].status==='missing'?1:0, sb = state.coverage[b.id].status==='missing'?1:0; return (b.priority + sb) - (a.priority + sa); })
+    .slice(0, 12);
+  $('gaps').innerHTML = gaps.length ? gaps.map(function(q){ return qCard(q, catById(q.cat)); }).join('') : '<div class="empty">No gaps found. This page covers every sub-query it was checked against.</div>';
+}
+
+// ── Perfect page ────────────────────────────────────────────────────────────
+var PERF_SCHEMA = {
+  type:'object', additionalProperties:false,
+  required:['page_type','title_tag','meta_description','url_slug','h1','answer_first','sections','faq','schema_types','supporting_pages'],
+  properties:{
+    page_type:{ type:'string' },
+    title_tag:{ type:'string' },
+    meta_description:{ type:'string' },
+    url_slug:{ type:'string' },
+    h1:{ type:'string' },
+    answer_first:{ type:'string' },
+    sections:{ type:'array', items:{ type:'object', additionalProperties:false,
+      required:['h2','goal','h3s','elements','word_target','covers'],
+      properties:{ h2:{type:'string'}, goal:{type:'string'}, h3s:{type:'array',items:{type:'string'}},
+        elements:{type:'array',items:{type:'string'}}, word_target:{type:'integer'}, covers:{type:'array',items:{type:'string'}} } } },
+    faq:{ type:'array', items:{ type:'object', additionalProperties:false, required:['question','answer_hint','covers'],
+      properties:{ question:{type:'string'}, answer_hint:{type:'string'}, covers:{type:'array',items:{type:'string'}} } } },
+    schema_types:{ type:'array', items:{ type:'string' } },
+    supporting_pages:{ type:'array', items:{ type:'object', additionalProperties:false, required:['title','angle','covers'],
+      properties:{ title:{type:'string'}, angle:{type:'string'}, covers:{type:'array',items:{type:'string'}} } } }
+  }
+};
+var PERF_SYSTEM = [
+  'You are a senior SEO and AI-search content strategist. You design the single page most likely to be retrieved and cited for a query across its whole fan-out of sub-queries (Google AI Mode and AI Overviews, ChatGPT, Perplexity).',
+  'Principles:',
+  '- Answer first: open with a direct 2-3 sentence answer to the seed query that could be quoted on its own.',
+  '- One clear H2 per sub-topic, written as the question or phrase people search for, so each passage can be retrieved independently.',
+  '- Use real search phrasing (sub-queries with volume) in headings where natural.',
+  '- Put sub-queries with a different intent, or that need depth the main page cannot give, on supporting_pages that link back to this page. Do not cram everything onto one page.',
+  '- Short, specific questions belong in the FAQ.',
+  '- elements: the concrete content blocks a section needs (e.g. "comparison table", "pricing table", "step-by-step list", "before/after photos", "local map embed", "expert quote", "stat with source", "checklist").',
+  '- word_target: a realistic word count for the section.',
+  '- covers: the ids of the sub-queries the section answers. Assign EVERY sub-query id exactly once across sections, faq and supporting_pages.',
+  '- Never invent facts about the business (prices, credentials, years, reviews). In answer_first and answer_hint, write placeholders like [price range] or [number of years] where the business must supply facts.',
+  '- 5 to 10 sections, ordered the way a reader moves from understanding to deciding. 4 to 10 FAQ items. 0 to 6 supporting pages.',
+  '- schema_types: the schema.org types worth adding (e.g. FAQPage, Service, LocalBusiness, Product, HowTo, Article, Review).'
+].join('\n');
+
+function perfectPlacement(){
+  var out = {}, p = state.perfect;
+  if (!p) return out;
+  p.sections.forEach(function(sec){ sec.covers.forEach(function(id){ out[id] = out[id] || ('H2: ' + sec.h2); }); });
+  p.faq.forEach(function(f){ f.covers.forEach(function(id){ out[id] = out[id] || ('FAQ: ' + f.question); }); });
+  p.supporting_pages.forEach(function(sp){ sp.covers.forEach(function(id){ out[id] = out[id] || ('Supporting page: ' + sp.title); }); });
+  return out;
+}
+
+async function buildPerfect(){
+  var qs = allQueries();
+  if (!qs.length) { toast('Map a query first'); return; }
+  var btn = $('perfBtn');
+  btn.disabled = true; btn.textContent = 'Designing page…';
+  $('perfErr').innerHTML = ''; $('perfProg').innerHTML = '';
+  setChip($('perfProg'), 'perfect', 'run', '');
+  var c = state.ctx, lines = ['Seed query: "' + state.seed + '"'];
+  if (c.brand) lines.push('Business / brand: ' + c.brand);
+  if (c.loc)   lines.push('Location / market: ' + c.loc);
+  if (c.aud)   lines.push('Audience: ' + c.aud);
+  var pt = $('pType').value;
+  lines.push('Page type: ' + (pt === 'auto' ? 'choose the best page type for this query' : pt));
+  lines.push('Today\'s date: ' + new Date().toISOString().slice(0,10));
+  lines.push('');
+  lines.push('Sub-queries ("id | query | fan-out type | intent | priority | monthly searches | AI Overview"):');
+  qs.forEach(function(q){
+    lines.push([q.id, q.query, catById(q.cat).name, q.intent, 'P' + q.priority, q.vol == null ? '-' : q.vol, q.aio ? 'AIO' : '-'].join(' | '));
+  });
+  var br = (state.kw || []).filter(function(r){ return r.branded; }).slice(0, 15);
+  if (br.length) lines.push('', 'Branded searches seen in keyword data (context only, no ids): ' + br.map(function(r){ return r.k; }).join('; '));
+  try {
+    var res = await callClaude(PERF_SYSTEM, lines.join('\n'), PERF_SCHEMA, 16000);
+    var valid = {}; qs.forEach(function(q){ valid[q.id] = 1; });
+    var clean = function(arr){ return (arr || []).filter(function(id){ return valid[id]; }); };
+    res.sections.forEach(function(x){ x.covers = clean(x.covers); });
+    res.faq.forEach(function(x){ x.covers = clean(x.covers); });
+    res.supporting_pages.forEach(function(x){ x.covers = clean(x.covers); });
+    state.perfect = res;
+    var placed = Object.keys(perfectPlacement()).length;
+    setChip($('perfProg'), 'perfect', 'ok', placed + '/' + qs.length + ' placed');
+    save();
+  } catch(e){
+    setChip($('perfProg'), 'perfect', 'err', 'failed');
+    $('perfErr').innerHTML = '<div class="err-box">' + esc(e.message) + '</div>';
+  }
+  btn.disabled = false; btn.textContent = state.perfect ? 'Rebuild' : 'Build the perfect page';
+  renderPerfect(); renderStats();
+}
+
+function qChips(ids){
+  var byId = {}; allQueries().forEach(function(q){ byId[q.id] = q; });
+  return ids.map(function(id){
+    var q = byId[id]; if (!q) return '';
+    return '<span class="qc" title="' + esc(catById(q.cat).name) + '"><i class="d" style="background:' + catById(q.cat).color + '"></i>' + esc(q.query) +
+      (q.vol != null ? ' <b>' + fmtN(q.vol) + '</b>' : '') + '</span>';
+  }).join('');
+}
+
+function renderPerfect(){
+  var p = state.perfect, out = $('perfOut');
+  $('mdBtn').classList.toggle('hidden', !p);
+  if (!p) { out.innerHTML = ''; return; }
+  if (!$('perfBtn').disabled) $('perfBtn').textContent = 'Rebuild';
+  var placed = perfectPlacement(), qs = allQueries();
+  var missing = qs.filter(function(q){ return !placed[q.id]; });
+  var words = p.sections.reduce(function(s, x){ return s + (x.word_target || 0); }, 0);
+  var slugTxt = (p.url_slug || slug(p.h1)).replace(/^\/+/, '');
+  var h = '<div class="doc">';
+  h += '<div class="serp"><div class="u">' + esc((state.ctx.brand ? slug(state.ctx.brand) + '.com' : 'yoursite.com') + ' › ' + slugTxt) + '</div>' +
+       '<div class="t">' + esc(p.title_tag) + '</div><div class="d">' + esc(p.meta_description) + '</div></div>';
+  h += '<div style="font-family:Arial,sans-serif;font-size:12px;color:#57606a;margin-bottom:6px">' + esc(p.page_type) + ' · ~' + words.toLocaleString() + ' words · ' +
+       Object.keys(placed).length + ' of ' + qs.length + ' sub-queries placed</div>';
+  h += '<h1>' + esc(p.h1) + '</h1>';
+  h += '<div class="answer">' + esc(p.answer_first) + '</div>';
+  h += '<div class="toc">' + p.sections.map(function(x, i){ return '<a href="#ps-' + i + '">' + esc(x.h2) + '</a>'; }).join('') + (p.faq.length ? '<a href="#ps-faq">FAQ</a>' : '') + '</div>';
+  p.sections.forEach(function(x, i){
+    h += '<div class="sect" id="ps-' + i + '"><h2>' + esc(x.h2) + '</h2><div class="goal">' + esc(x.goal) + '</div>';
+    if (x.h3s.length) h += '<ul class="h3s">' + x.h3s.map(function(t){ return '<li>' + esc(t) + '</li>'; }).join('') + '</ul>';
+    h += '<div class="meta">' + x.elements.map(function(e){ return '<span class="el">' + esc(e) + '</span>'; }).join('') +
+         '<span class="wt">~' + (x.word_target || 0) + ' words</span></div>';
+    if (x.covers.length) h += '<div class="covers"><div class="lbl">Answers ' + x.covers.length + ' sub-quer' + (x.covers.length === 1 ? 'y' : 'ies') + '</div>' + qChips(x.covers) + '</div>';
+    h += '</div>';
+  });
+  if (p.faq.length) {
+    h += '<div class="sect" id="ps-faq" style="border-top-color:#8250df"><h2>Frequently asked questions</h2><dl class="faq">' +
+      p.faq.map(function(f){ return '<dt>' + esc(f.question) + '</dt><dd>' + esc(f.answer_hint) + (f.covers.length ? '<div style="margin-top:5px">' + qChips(f.covers) + '</div>' : '') + '</dd>'; }).join('') + '</dl></div>';
+  }
+  if (p.supporting_pages.length) {
+    h += '<div class="sect" style="border-top-color:#1a7f37"><h2>Supporting pages to link from here</h2><ul class="side">' +
+      p.supporting_pages.map(function(sp){ return '<li><b>' + esc(sp.title) + '</b>: ' + esc(sp.angle) + (sp.covers.length ? '<div style="margin-top:5px">' + qChips(sp.covers) + '</div>' : '') + '</li>'; }).join('') + '</ul></div>';
+  }
+  if (p.schema_types.length) h += '<div style="font-family:Arial,sans-serif;font-size:13px;color:#57606a"><b style="color:#1f2328">Schema markup:</b> ' + p.schema_types.map(esc).join(', ') + '</div>';
+  if (missing.length) h += '<div style="font-family:Arial,sans-serif;font-size:13px;color:#9a6700;margin-top:12px"><b>Not placed (' + missing.length + '):</b> ' + qChips(missing.map(function(q){ return q.id; })) + '</div>';
+  h += '</div>';
+  out.innerHTML = h;
+}
+
+function exportBrief(){
+  var p = state.perfect; if (!p) return;
+  var byId = {}; allQueries().forEach(function(q){ byId[q.id] = q; });
+  var ql = function(ids){ return ids.map(function(id){ var q = byId[id]; return q ? '  - ' + q.query + (q.vol != null ? ' (' + q.vol + '/mo' + (q.aio ? ', AI Overview' : '') + ')' : '') : ''; }).filter(Boolean).join('\n'); };
+  var md = ['# Page brief: ' + p.h1, '',
+    '**Seed query:** ' + state.seed + (state.ctx.brand ? '  \n**Business:** ' + state.ctx.brand : '') + (state.ctx.loc ? '  \n**Location:** ' + state.ctx.loc : ''),
+    '**Page type:** ' + p.page_type, '**Title tag:** ' + p.title_tag, '**Meta description:** ' + p.meta_description, '**URL:** /' + (p.url_slug || '').replace(/^\/+/, ''), '',
+    '## Answer first', p.answer_first, ''];
+  p.sections.forEach(function(x){
+    md.push('## ' + x.h2, '_' + x.goal + '_  ', '**Target:** ~' + x.word_target + ' words' + (x.elements.length ? ' · **Include:** ' + x.elements.join(', ') : ''), '');
+    x.h3s.forEach(function(t){ md.push('### ' + t); });
+    if (x.covers.length) md.push('', 'Answers:', ql(x.covers));
+    md.push('');
+  });
+  if (p.faq.length) { md.push('## FAQ'); p.faq.forEach(function(f){ md.push('### ' + f.question, f.answer_hint, ql(f.covers), ''); }); }
+  if (p.supporting_pages.length) { md.push('## Supporting pages'); p.supporting_pages.forEach(function(sp){ md.push('- **' + sp.title + '**: ' + sp.angle, ql(sp.covers).replace(/^  /gm, '    ')); }); md.push(''); }
+  if (p.schema_types.length) md.push('**Schema:** ' + p.schema_types.join(', '), '');
+  md.push('---', 'Generated by the WMM Query Fan-Out Mapper' + (state.kwMeta && state.kwMeta.count ? ' with Ahrefs keyword data (' + state.kwMeta.country.toUpperCase() + ')' : '') + ' on ' + new Date().toISOString().slice(0,10) + '.');
+  download('page-brief-' + slug(state.seed) + '.md', md.join('\n'), 'text/markdown');
+}
+
+// ── Check against real AI engines ───────────────────────────────────────────
+function renderEngines(){
+  $('enginesBox').classList.toggle('hidden', !state.seed);
+  if (!state.seed) return;
+  var q = encodeURIComponent(state.seed);
+  var links = [
+    ['Google AI Mode', 'https://www.google.com/search?udm=50&q=' + q],
+    ['Google (AI Overview)', 'https://www.google.com/search?q=' + q],
+    ['ChatGPT', 'https://chatgpt.com/?q=' + q],
+    ['Perplexity', 'https://www.perplexity.ai/search?q=' + q],
+    ['Microsoft Copilot', 'https://copilot.microsoft.com/?q=' + q],
+    ['Claude', 'https://claude.ai/new?q=' + q]
+  ];
+  $('engines').innerHTML = links.map(function(l){ return '<a href="' + l[1] + '" target="_blank" rel="noopener">' + esc(l[0]) + ' ↗</a>'; }).join('');
+}
+
+// Is Ahrefs configured on the server?
+(async function(){
+  var st = $('ahrefsStatus'), tg = $('useAhrefs');
+  try {
+    var r = await fetch(FN, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'ahrefs-status' }) });
+    var d = await r.json();
+    if (d.configured) { st.textContent = 'Ahrefs connected'; st.style.color = 'var(--green)'; return; }
+    throw new Error('not configured');
+  } catch(e){
+    tg.checked = false; tg.disabled = true;
+    st.textContent = 'Ahrefs not connected: add AHREFS_API_KEY in Netlify to enable';
+    ['country','depth'].forEach(function(id){ $(id).disabled = true; });
+  }
+})();
+
+// ── Export ──────────────────────────────────────────────────────────────────
+function csvCell(v){ v = String(v == null ? '' : v); return /[",\n]/.test(v) ? '"' + v.replace(/"/g,'""') + '"' : v; }
+function exportCSV(){
+  var head = ['seed','fan_out_type','query','source','monthly_volume','keyword_difficulty','ai_overview','intent','stage','priority','format','rationale','coverage','evidence','fix','page_section'];
+  var placed = perfectPlacement();
+  var rows = allQueries().map(function(q){
+    var cv = (state.coverage && state.coverage[q.id]) || {};
+    return [state.seed, catById(q.cat).name, q.query, q.source||'modeled', q.vol==null?'':q.vol, q.kd==null?'':q.kd, q.aio?'yes':'', q.intent, q.stage, q.priority, q.format, q.rationale, cv.status||'', cv.evidence||'', cv.fix||'', placed[q.id]||''].map(csvCell).join(',');
+  });
+  download('fan-out-' + slug(state.seed) + '.csv', '﻿' + head.join(',') + '\n' + rows.join('\n'), 'text/csv');
+}
+function exportJSON(){
+  var data = { seed: state.seed, context: state.ctx, generated: new Date().toISOString(), keyword_data: state.kwMeta, page: state.page, coverage_score: (covSummary()||{}).score,
+    perfect_page: state.perfect, branded_searches: (state.kw||[]).filter(function(r){ return r.branded; }),
+    fan_out: state.order.map(function(cid){ return { type: catById(cid).name, queries: ((state.cats[cid]||{}).queries||[]).map(function(q){
+      var cv = state.coverage && state.coverage[q.id];
+      return { id:q.id, query:q.query, source:q.source||'modeled', volume:q.vol, difficulty:q.kd, ai_overview:!!q.aio, intent:q.intent, stage:q.stage, priority:q.priority, format:q.format, rationale:q.rationale, coverage: cv || null };
+    }) }; }) };
+  download('fan-out-' + slug(state.seed) + '.json', JSON.stringify(data, null, 2), 'application/json');
+}
+function copyQueries(){
+  var txt = allQueries().map(function(q){ return q.query; }).join('\n');
+  navigator.clipboard.writeText(txt).then(function(){ toast('Copied ' + allQueries().length + ' queries'); }, function(){ toast('Copy failed'); });
+}
+
+// ── UI wiring ───────────────────────────────────────────────────────────────
+function showTab(t){
+  document.querySelectorAll('.tab').forEach(function(b){ b.classList.toggle('on', b.dataset.tab === t); });
+  ['map','list','perfect','cov'].forEach(function(k){ $('tab-'+k).classList.toggle('hidden', k !== t); });
+}
+document.querySelectorAll('.tab').forEach(function(b){ b.addEventListener('click', function(){ showTab(b.dataset.tab); }); });
+
+$('catPicker').innerHTML = CATS.filter(function(c){ return !c.auto; }).map(function(c){
+  return '<label class="chk" title="'+esc(c.desc)+'"><input type="checkbox" value="'+c.id+'" checked><span class="dot" style="background:'+c.color+'"></span>'+esc(c.name)+'</label>';
+}).join('');
+$('howList').innerHTML = '<dt>One query in, many queries out</dt><dd>Google AI Mode, AI Overviews, ChatGPT and Perplexity break a prompt into sub-queries, run them at the same time, and build one answer from the passages they retrieve. A page that answers only the head term misses most of those retrievals.</dd>' +
+  CATS.filter(function(c){ return !c.auto; }).map(function(c){ return '<dt><span class="dot" style="background:'+c.color+';margin-right:6px"></span>'+esc(c.name)+'</dt><dd>'+esc(c.desc)+'</dd>'; }).join('');
+$('fIntent').innerHTML += INTENTS.map(function(i){ return '<option>'+i+'</option>'; }).join('');
+$('fStage').innerHTML += STAGES.map(function(s){ return '<option>'+s+'</option>'; }).join('');
+
+$('goBtn').addEventListener('click', run);
+$('seed').addEventListener('keydown', function(e){ if (e.key === 'Enter') run(); });
+$('covBtn').addEventListener('click', runCoverage);
+$('csvBtn').addEventListener('click', exportCSV);
+$('jsonBtn').addEventListener('click', exportJSON);
+$('copyBtn').addEventListener('click', copyQueries);
+$('perfBtn').addEventListener('click', buildPerfect);
+$('mdBtn').addEventListener('click', exportBrief);
+['fText','fIntent','fStage','fCov'].forEach(function(id){ $(id).addEventListener('input', renderList); });
+
+// Restore the last run (this browser only)
+(function(){
+  try {
+    var s = JSON.parse(localStorage.getItem(STORE_KEY) || 'null');
+    if (s && s.seed && s.order && s.cats) s.order = s.order.filter(function(c){ return s.cats[c] && catById(c); });
+    if (s && s.seed && s.order && s.order.length) {
+      state = s;
+      buildKwIdx();
+      if (s.kwMeta && s.kwMeta.country) $('country').value = s.kwMeta.country;
+      $('seed').value = s.seed;
+      $('brand').value = s.ctx.brand || ''; $('loc').value = s.ctx.loc || ''; $('aud').value = s.ctx.aud || '';
+      if (s.ctx.brand || s.ctx.loc || s.ctx.aud) $('ctxDetails').open = true;
+      if (s.page && s.page.url) $('covUrl').value = s.page.url;
+      $('results').classList.remove('hidden');
+      renderAll();
+    }
+  } catch(e){}
+})();
+</script>
+</body>
+</html>
